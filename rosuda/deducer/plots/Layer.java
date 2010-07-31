@@ -3,9 +3,13 @@ package org.rosuda.deducer.plots;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.widgets.param.Param;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class Layer implements ElementModel{
 
@@ -93,7 +97,7 @@ public class Layer implements ElementModel{
 				paramCalls.add("stat = '"+stat.name+"'");
 		}else if(isStat){
 			func = "stat_"+stat.name;
-			if(stat.defaultGeom != geom.name)
+			if(stat.defaultGeom.equals(geom.name))
 				paramCalls.add("geom = '"+geom.name+"'");
 		}
 		if(!(pos.name.equals(geom.defaultPosition) && pos.height==null && pos.width==null)){
@@ -135,7 +139,7 @@ public class Layer implements ElementModel{
 			boolean contained = false;
 			for(int j=0;j<s.size();j++){
 				saes = (Aes) s.get(j);
-				if(gaes.name == saes.name){
+				if(gaes.name.equals(saes.name)){
 					contained = true;
 					break;
 				}
@@ -159,7 +163,7 @@ public class Layer implements ElementModel{
 			Aes aes;
 			for(int j=0;j<aess.size();j++){
 				aes = (Aes) aess.get(j);
-				if(saes.name == aes.name){
+				if(saes.name.equals(aes.name)){
 					contained = true;
 					break;
 				}
@@ -232,4 +236,74 @@ public class Layer implements ElementModel{
 		return name;
 	}
 	
+	
+	public Element toXML(){
+		try{
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			
+			Element node = doc.createElement("ElementModel");
+			if(name!=null)
+				node.setAttribute("name", name);
+			if(data!=null)
+				node.setAttribute("data", data);
+			node.setAttribute("isGeom", isGeom ? "true" : "false");
+			node.setAttribute("isStat", isStat ? "true" : "false");
+
+			Element e;
+			
+			e = stat.toXML();
+			e = (Element) doc.importNode(e, true);
+			node.appendChild(e);
+			
+			e = geom.toXML();
+			e = (Element) doc.importNode(e, true);
+			node.appendChild(e);
+			
+			e = pos.toXML();
+			e = (Element) doc.importNode(e, true);
+			node.appendChild(e);
+			
+			
+			node.setAttribute("className", "org.rosuda.deducer.plots.Layer");
+			doc.appendChild(node);
+			return node;
+			
+        }catch(Exception e){e.printStackTrace();return null;}
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.plots.Layer")){
+			System.out.println("Error Layer: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		if(node.hasAttribute("name"))
+			name = node.getAttribute("name");
+		else
+			name = null;
+		if(node.hasAttribute("data"))
+			data = node.getAttribute("data");
+		else
+			data = null;
+		isGeom = node.getAttribute("isGeom").equals("true");
+		isStat = node.getAttribute("isStat").equals("true");
+		
+		Element e;
+		
+		e = (Element) node.getElementsByTagName("Geom").item(0);
+		geom = new Geom();
+		geom.setFromXML(e);
+		
+		e = (Element) node.getElementsByTagName("Stat").item(0);
+		stat = new Stat();
+		stat.setFromXML(e);
+		
+		e = (Element) node.getElementsByTagName("Position").item(0);
+		pos = new Position();
+		pos.setFromXML(e);
+		
+		this.generateAes();
+	}
 }

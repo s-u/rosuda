@@ -1,5 +1,7 @@
 package org.rosuda.deducer.widgets.param;
 
+import org.w3c.dom.Element;
+
 public class ParamNumeric extends Param{
 
 	
@@ -33,7 +35,7 @@ public class ParamNumeric extends Param{
 	}
 	
 	public ParamWidget getView(){
-		if(view == ParamNumeric.VIEW_COMBO || view == ParamNumeric.VIEW_EDITABLE_COMBO)
+		if(view.equals(ParamNumeric.VIEW_COMBO) || view.equals(ParamNumeric.VIEW_EDITABLE_COMBO))
 			return new ParamComboBoxWidget(this);
 		else
 			return new ParamTextFieldWidget(this);
@@ -120,5 +122,31 @@ public class ParamNumeric extends Param{
 		return value;
 	}
 
+	public Element toXML(){
+		Element e = super.toXML();
+		if(value!=null)
+			e.setAttribute("value", value.toString());
+		if(defaultValue!=null)
+			e.setAttribute("defaultValue", defaultValue.toString());
+		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamNumeric");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.widgets.param.ParamNumeric")){
+			System.out.println("Error ParamNumeric: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		if(node.hasAttribute("value"))
+			value = new Double(Double.parseDouble(node.getAttribute("value")));
+		else
+			value = null;
+		if(node.hasAttribute("defaultValue"))
+			defaultValue = new Double(Double.parseDouble(node.getAttribute("defaultValue")));
+		else
+			defaultValue = null;
+	}
 	
 }

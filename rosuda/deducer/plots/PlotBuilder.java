@@ -3,8 +3,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -23,13 +21,16 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.REngine.REXP;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.WindowTracker;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
+import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.javaGD.JGDBufferedPanel;
-import org.rosuda.javaGD.JGDPanel;
 
 import java.awt.BorderLayout;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -39,10 +40,11 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -62,7 +64,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
-public class PlotBuilder extends JFrame implements ActionListener, WindowListener{
+public class PlotBuilder extends TJFrame implements ActionListener, WindowListener{
 	private JLayeredPane pane;
 	private JPanel bottomPanel;
 	private JPanel rightPanel;
@@ -86,6 +88,8 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 
 	private PlotPanel device;
 	private JPanel plotHolder;
+	
+	private MenuListener menuListener = new MenuListener();
 	
 	private Vector addElementTabNames;
 	private HashMap addElementListModels;
@@ -401,6 +405,12 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 				}
 
 			}
+			
+			String[] Menu = { "+", "File", "@O New plot","new","@O Load plot","open", "@S Save plot","save",
+					"+","Tools",
+					"~Window","0" };
+			JMenuBar mb = EzMenuSwing.getEzMenu(this, menuListener, Menu);
+			
 			setContentPane(pane);
 			pack();
 			this.addWindowListener(this);
@@ -815,13 +825,13 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		public void mouseEntered(MouseEvent e) {}
 		public void mouseExited(MouseEvent e) {}
 		public void mousePressed(MouseEvent e) {
-			maybePopup(e);
+			maybePopup(e,true);
 		}
 		public void mouseReleased(MouseEvent e) {
-			maybePopup(e);
+			maybePopup(e,false);
 		}
 		
-		public void maybePopup(MouseEvent e){
+		public void maybePopup(MouseEvent e,boolean pressed){
 			if(e.isPopupTrigger()){
 				JList list = (JList) e.getSource();
 				int i = list.locationToIndex(e.getPoint());
@@ -832,7 +842,29 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 				AddElementPopupMenu.pBuilder = PlotBuilder.this;
 				AddElementPopupMenu.getPopup().show(e.getComponent(),
 						e.getX(),e.getY());
-			}								
+			}else if(e.getClickCount() == 2 && pressed){
+				JList list = (JList) e.getSource();
+				int i = list.locationToIndex(e.getPoint());
+				PlottingElement pe =(PlottingElement) list.getModel().getElementAt(i);
+				PlottingElement p = (PlottingElement) pe.clone();
+				if(p.getModel() instanceof Layer){
+					Layer layer = (Layer) p.getModel();
+					model.tryToFillRequiredAess(layer);
+					String s = layer.checkValid();
+					if(s!=null){
+						PlottingElementDialog d = 
+							new PlottingElementDialog(PlotBuilder.this,p);
+						d.setModal(true);
+						d.setLocationRelativeTo(PlotBuilder.this);
+						d.setVisible(true);
+						s = layer.checkValid();
+						if(s!=null)
+							return;
+					}
+				}
+				model.getListModel().addElement(p.clone());
+				updatePlot();
+			}
 		}
 		
 	}
@@ -875,7 +907,6 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 				menuItem.addActionListener(new ActionListener(){
 					
 					public void actionPerformed(ActionEvent e) {
-						JOptionPane.showMessageDialog(null, "get info:" + element.getName());
 						String url = element.getUrl();
 						if(url!=null && url.length()>0)
 							HelpButton.showInBrowser(url);
@@ -967,6 +998,50 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 	public void windowDeiconified(WindowEvent arg0) {}
 	public void windowIconified(WindowEvent arg0) {}
 	public void windowOpened(WindowEvent arg0) {}
+	
+	public class MenuListener implements ActionListener{
+
+		public void actionPerformed(ActionEvent ae) {
+			String cmd = ae.getActionCommand();
+			if(cmd.equals("save")){
+				JFileChooser c = new JFileChooser("Save plot");
+				int ret = c.showDialog(null, "Save");
+				if(ret == JFileChooser.APPROVE_OPTION){
+					File f = c.getSelectedFile();
+					if(!f.getName().endsWith(".ggp"))
+						f = new File(f.getPath() + ".ggp");
+					if(f.exists()){
+						int o =JOptionPane.showConfirmDialog(null, "File exists: Overwrite" + f.getName() + "?");
+						if(o != JOptionPane.OK_OPTION)
+							return;
+					}
+					model.saveToFile(f);
+				}
+			}else if(cmd.equals("open")){
+				JFileChooser c = new JFileChooser("Open plot");
+				int ret = c.showOpenDialog(null);
+				if(ret == JFileChooser.APPROVE_OPTION){
+					File f = c.getSelectedFile();
+					if(!f.getName().endsWith(".ggp")){
+						JOptionPane.showMessageDialog(null, "This does not appear to be a"
+								+" ggplot2 PlotBuilder file (extension .ggp)");
+						return;
+					}
+					if(f!=null && f.exists()){
+						PlotBuilderModel newModel = new PlotBuilderModel();
+						newModel.setFromFile(f);
+						setModel(newModel);
+						updatePlot();
+					}
+				}
+			}else if(cmd.equals("new")){
+				PlotBuilder pb = new PlotBuilder(new PlotBuilderModel());
+				pb.setVisible(true);
+				WindowTracker.addWindow(pb);
+			}
+		}
+		
+	}
 	
 }
 

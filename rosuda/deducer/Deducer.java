@@ -4,6 +4,7 @@ package org.rosuda.deducer;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,6 +12,7 @@ import java.util.Vector;
 
 
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -161,7 +163,8 @@ public class Deducer {
 
 		    
 		    insertMenu(JGR.MAINRCONSOLE,"Plots",menuIndex);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open plot", "openplot", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot builder", "plotbuilder", cListener);
 		    menuIndex++;
 			
 	    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
@@ -416,6 +419,25 @@ public class Deducer {
 			d.setLocationRelativeTo(null);
 			d.setVisible(true);
 			WindowTracker.addWindow(d);			
+		}else if(cmd.equals("openplot")){
+			JFileChooser c = new JFileChooser("Open plot");
+			int ret = c.showOpenDialog(null);
+			if(ret == JFileChooser.APPROVE_OPTION){
+				File f = c.getSelectedFile();
+				if(!f.getName().endsWith(".ggp")){
+					JOptionPane.showMessageDialog(null, "This does not appear to be a"
+							+" ggplot2 PlotBuilder file (extension .ggp)");
+					return;
+				}
+				if(f!=null && f.exists()){
+					PlotBuilderModel newModel = new PlotBuilderModel();
+					newModel.setFromFile(f);
+					PlotBuilder d = new PlotBuilder(newModel);
+					d.setLocationRelativeTo(null);
+					d.setVisible(true);
+					WindowTracker.addWindow(d);	
+				}
+			}
 		}
 		
 		if(needsRLocked && fromConsole && !isJGR()){

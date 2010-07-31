@@ -13,15 +13,14 @@ import org.rosuda.deducer.widgets.param.ParamWidget;
 
 import javax.swing.BorderFactory;
 
-import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.BoxLayout;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -112,6 +111,8 @@ public class LayerPanel extends ElementView implements ActionListener{
 					geomScroller = new JScrollPane();
 					geomScroller.setHorizontalScrollBarPolicy(
 							ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+					Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
+					geomScroller.setBorder(border);
 					tabs.addTab("Mappings", null, geomScroller, null);
 					{
 						aesPanel = new JPanel();
@@ -122,6 +123,8 @@ public class LayerPanel extends ElementView implements ActionListener{
 					statScroller = new JScrollPane();
 					statScroller.setHorizontalScrollBarPolicy(
 							ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+					Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
+					statScroller.setBorder(border);
 					tabs.addTab("Options", null, statScroller, null);
 					{
 						paramPanel = new JPanel();

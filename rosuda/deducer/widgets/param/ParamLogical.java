@@ -1,5 +1,7 @@
 package org.rosuda.deducer.widgets.param;
 
+import org.w3c.dom.Element;
+
 public class ParamLogical extends Param{
 	protected Boolean value;
 	protected Boolean defaultValue;			//default	
@@ -32,8 +34,10 @@ public class ParamLogical extends Param{
 	}
 	
 	public ParamWidget getView(){
-		if(getViewType() == Param.VIEW_CHECK_BOX)
+		if(getViewType().equals(Param.VIEW_CHECK_BOX))
 			return new ParamCheckBoxWidget(this);
+		System.out.println("invalid view: " + getViewType());
+		(new Exception()).printStackTrace();
 		return null;
 	}
 	
@@ -100,5 +104,31 @@ public class ParamLogical extends Param{
 		return value;
 	}
 	
+	public Element toXML(){
+		Element e = super.toXML();
+		if(value!=null)
+			e.setAttribute("value", value.toString());
+		if(defaultValue!=null)
+			e.setAttribute("defaultValue", defaultValue.toString());
+		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamLogical");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.widgets.param.ParamLogical")){
+			System.out.println("Error ParamLogical: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		if(node.hasAttribute("value"))
+			value = new Boolean(node.getAttribute("value").equals("true"));
+		else
+			value = null;
+		if(node.hasAttribute("defaultValue"))
+			defaultValue = new Boolean(node.getAttribute("defaultValue").equals("true"));
+		else
+			defaultValue = null;
+	}
 	
 }

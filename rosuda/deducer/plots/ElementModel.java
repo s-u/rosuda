@@ -2,6 +2,8 @@ package org.rosuda.deducer.plots;
 
 import java.util.Vector;
 
+import org.w3c.dom.Element;
+
 
 public interface ElementModel {
 
@@ -11,4 +13,6 @@ public interface ElementModel {
 	public abstract ElementView getView();
 	public abstract Vector getParams();
 	public abstract Object clone();
+	public abstract Element toXML();
+	public abstract void setFromXML(Element node);
 }

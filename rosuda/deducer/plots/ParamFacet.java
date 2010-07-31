@@ -2,12 +2,21 @@ package org.rosuda.deducer.plots;
 
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.rosuda.deducer.widgets.VariableSelectorWidget;
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamWidget;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 public class ParamFacet extends Param{
 
+	public static String VIEW_FACET = "facet";
+	
 	public String[] yVarsGrid = new String[]{};
 	public String[] xVarsGrid = new String[]{};
 	public String[] varsWrap = new String[]{};
@@ -37,6 +46,7 @@ public class ParamFacet extends Param{
 		scaleWrap = "fixed";
 		spaceFixed = new Boolean(true);
 		facetType = "wrap";
+		view = VIEW_FACET;
 	}
 	
 	public ParamWidget getView(){
@@ -133,6 +143,132 @@ public class ParamFacet extends Param{
 			
 		return calls;
 	}
+	
+	public Element toXML(){
+		Element node = super.toXML();
+		Document doc = node.getOwnerDocument();
+		
+		Element varNode = doc.createElement("yVarsGrid");
+		if(yVarsGrid!=null)
+			for(int i=0;i<yVarsGrid.length;i++)
+				varNode.setAttribute("element_"+i, yVarsGrid[i]);
+		node.appendChild(varNode);
+
+		varNode = doc.createElement("xVarsGrid");
+		if(xVarsGrid!=null)
+			for(int i=0;i<xVarsGrid.length;i++)
+				varNode.setAttribute("element_"+i, xVarsGrid[i]);
+		node.appendChild(varNode);
+		
+		varNode = doc.createElement("varsWrap");
+		if(varsWrap!=null)
+			for(int i=0;i<varsWrap.length;i++)
+				varNode.setAttribute("element_"+i, varsWrap[i]);
+		node.appendChild(varNode);
+		
+		if(facetType!=null)
+			node.setAttribute("facetType", facetType);
+		if(scaleGrid!=null)
+			node.setAttribute("scaleGrid", scaleGrid);
+		if(margins!=null)
+			node.setAttribute("margins", margins.toString());
+		if(spaceFixed!=null)
+			node.setAttribute("spaceFixed", spaceFixed.toString());
+		if(asTableGrid!=null)
+			node.setAttribute("asTableGrid", asTableGrid.toString());
+		
+		if(asTableWrap!=null)
+			node.setAttribute("asTableWrap", asTableWrap.toString());
+		if(drop!=null)
+			node.setAttribute("drop", drop.toString());
+		if(scaleWrap!=null)
+			node.setAttribute("scaleWrap", scaleWrap);
+		if(nrow!=null)
+			node.setAttribute("nrow", nrow.toString());
+		if(ncol!=null)
+			node.setAttribute("ncol", ncol.toString());
+		node.setAttribute("className", "org.rosuda.deducer.plots.ParamFacet");
+		return node;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.plots.ParamFacet")){
+			System.out.println("Error ParamFacet: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		if(node.hasAttribute("facetType"))
+			facetType = node.getAttribute("facetType");
+		else
+			facetType = null;
+		if(node.hasAttribute("scaleGrid"))
+			scaleGrid = node.getAttribute("scaleGrid");
+		else
+			scaleGrid = null;
+		if(node.hasAttribute("margins"))
+			margins = new Boolean(node.getAttribute("margins").equals("true"));
+		else
+			margins = null;		
+		if(node.hasAttribute("margins"))
+			margins = new Boolean(node.getAttribute("margins").equals("true"));
+		else
+			margins = null;	
+		if(node.hasAttribute("spaceFixed"))
+			spaceFixed = new Boolean(node.getAttribute("spaceFixed").equals("true"));
+		else
+			spaceFixed = null;	
+		if(node.hasAttribute("asTableGrid"))
+			asTableGrid = new Boolean(node.getAttribute("asTableGrid").equals("true"));
+		else
+			asTableGrid = null;	
+		if(node.hasAttribute("asTableWrap"))
+			asTableWrap = new Boolean(node.getAttribute("asTableWrap").equals("true"));
+		else
+			asTableWrap = null;		
+		if(node.hasAttribute("drop"))
+			drop = new Boolean(node.getAttribute("drop").equals("true"));
+		else
+			drop = null;
+		if(node.hasAttribute("scaleWrap"))
+			scaleGrid = node.getAttribute("scaleWrap");
+		else
+			scaleGrid = null;
+		if(node.hasAttribute("nrow"))
+			nrow = new Integer(Integer.parseInt(node.getAttribute("nrow")));
+		else
+			nrow = null;		
+		if(node.hasAttribute("ncol"))
+			ncol = new Integer(Integer.parseInt(node.getAttribute("ncol")));
+		else
+			ncol = null;
+		Node varNode =node.getElementsByTagName("yVarsGrid").item(0);
+		NamedNodeMap attr = varNode.getAttributes();
+		if(attr.getLength()>0){
+			yVarsGrid = new String[attr.getLength()];
+			for(int i=0;i<attr.getLength();i++)
+				yVarsGrid[i] = attr.item(i).getNodeValue();
+		}
+		
+		varNode =node.getElementsByTagName("xVarsGrid").item(0);
+		attr = varNode.getAttributes();
+		if(attr.getLength()>0){
+			xVarsGrid = new String[attr.getLength()];
+			for(int i=0;i<attr.getLength();i++)
+				xVarsGrid[i] = attr.item(i).getNodeValue();
+		}
+		
+		varNode =node.getElementsByTagName("varsWrap").item(0);
+		attr = varNode.getAttributes();
+		if(attr.getLength()>0){
+			varsWrap = new String[attr.getLength()];
+			for(int i=0;i<attr.getLength();i++)
+				varsWrap[i] = attr.item(i).getNodeValue();
+		}
+		
+	}
+	
+	
 
 	public Object getDefaultValue() {
 		// TODO Auto-generated method stub
@@ -153,4 +289,6 @@ public class ParamFacet extends Param{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 }

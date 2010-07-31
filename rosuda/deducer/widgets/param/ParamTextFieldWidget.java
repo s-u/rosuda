@@ -25,7 +25,7 @@ public class ParamTextFieldWidget extends ParamWidget implements FocusListener{
 	
 	public void setModel(Param p){
 		model = p;
-		if(p.getViewType() == Param.VIEW_ENTER){
+		if(p.getViewType().equals(Param.VIEW_ENTER)){
 			initAsShortTextField();
 			label.setText(p.getTitle());
 			if(p.getValue() !=null)

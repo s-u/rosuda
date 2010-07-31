@@ -3,6 +3,7 @@ package org.rosuda.deducer.widgets.param;
 import java.awt.Color;
 
 import org.rosuda.deducer.Deducer;
+import org.w3c.dom.Element;
 
 public class ParamColor extends Param{
 	protected Color value;
@@ -47,8 +48,10 @@ public class ParamColor extends Param{
 	}
 	
 	public ParamWidget getView(){
-		if(getViewType() == Param.VIEW_COLOR)
+		if(getViewType().equals(Param.VIEW_COLOR))
 			return new ParamColorWidget(this);
+		System.out.println("invalid view");
+		(new Exception()).printStackTrace();
 		return null;
 	}
 	
@@ -100,5 +103,33 @@ public class ParamColor extends Param{
 	}
 	public Object getValue() {
 		return value;
+	}
+	
+	public Element toXML(){
+		Element e = super.toXML();
+		String val;
+		if(value!=null){
+			val = "#"+ Integer.toHexString(((Color)getValue()).getRGB()).substring(2);
+			e.setAttribute("value", val);
+		}
+		if(defaultValue!=null){
+			val = "#"+ Integer.toHexString(((Color)getDefaultValue()).getRGB()).substring(2);
+			e.setAttribute("defaultValue", val);
+		}
+		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamColor");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.widgets.param.ParamColor")){
+			System.out.println("Error ParamColor: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		if(node.hasAttribute("value"))
+			value = Color.decode(node.getAttribute("value"));
+		if(node.hasAttribute("defaultValue"))
+			defaultValue = Color.decode(node.getAttribute("defaultValue"));
 	}
 }

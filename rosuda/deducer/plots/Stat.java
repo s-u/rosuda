@@ -3,11 +3,19 @@ package org.rosuda.deducer.plots;
 import java.awt.Color;
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamNumeric;
 import org.rosuda.deducer.widgets.param.ParamRFunction;
 import org.rosuda.deducer.widgets.param.ParamVector;
 import org.rosuda.deducer.widgets.param.RFunction;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class Stat {
 	
@@ -653,5 +661,88 @@ public class Stat {
 		return null;
 	}
 
+	public Element toXML() {
+		try{
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			Element node = doc.createElement("Stat");
+			node.setAttribute("className", "org.rosuda.deducer.plots.Stat");
+			if(name!=null)
+				node.setAttribute("name", name);
+			if(defaultGeom!=null)
+				node.setAttribute("defaultGeom", defaultGeom);
+			Element paramNode = doc.createElement("params");
+			for(int i=0;i<params.size();i++){
+				Element pEl = ((Param)params.get(i)).toXML();
+				pEl = (Element) doc.importNode(pEl, true);
+				paramNode.appendChild(pEl);
+			}
+			node.appendChild(paramNode);
+			
+			Element aesNode = doc.createElement("aess");
+			for(int i=0;i<aess.size();i++){
+				Element pEl = ((Aes)aess.get(i)).toXML();
+				pEl = (Element) doc.importNode(pEl, true);
+				aesNode.appendChild(pEl);
+			}
+			node.appendChild(aesNode);
+			
+			Element generatedNode = doc.createElement("generated");
+			if(generated!=null)
+				for(int i=0;i<generated.size();i++)
+					generatedNode.setAttribute("element_"+i, generated.get(i).toString());
+			node.appendChild(generatedNode);
+			
+			doc.appendChild(node);
+			
+			return node;
+		}catch(Exception ex){ex.printStackTrace();return null;}		
+	}
+
+	public void setFromXML(Element node) {
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.plots.Stat")){
+			System.out.println("Error Stat: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		if(node.hasAttribute("name"))
+			name = node.getAttribute("name");
+		else 
+			name = null;
+		if(node.hasAttribute("defaultGeom"))
+			defaultGeom = node.getAttribute("defaultGeom");
+		else 
+			defaultGeom = null;
+		
+		Element child = (Element) node.getElementsByTagName("params").item(0);
+		params = new Vector();
+		NodeList nl = child.getElementsByTagName("Param");
+		for(int i=0;i<nl.getLength();i++){
+			Element n = (Element) nl.item(i);
+			cn = n.getAttribute("className");
+			Param p = org.rosuda.deducer.widgets.param.ParamFactory.getParam(cn);
+			p.setFromXML(n);
+			params.add(p);
+		}
+		
+		child = (Element) node.getElementsByTagName("aess").item(0);
+		aess = new Vector();
+		nl = child.getElementsByTagName("Aes");
+		for(int i=0;i<nl.getLength();i++){
+			Element n = (Element) nl.item(i);
+			Aes aes = new Aes();
+			aes.setFromXML(n);
+			aess.add(aes);
+		}
+		
+		generated = new Vector();
+		Node generatedNode = node.getElementsByTagName("generated").item(0);
+		NamedNodeMap attr = generatedNode.getAttributes();
+		if(attr.getLength()>0){
+			for(int i=0;i<attr.getLength();i++)
+				generated.add(attr.item(i).getNodeValue());
+		}
+	}	
 	
 }

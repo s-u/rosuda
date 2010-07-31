@@ -1,6 +1,7 @@
 package org.rosuda.deducer.widgets.param;
 
 import org.rosuda.deducer.Deducer;
+import org.w3c.dom.Element;
 
 public class ParamCharacter extends Param{
 	
@@ -42,7 +43,8 @@ public class ParamCharacter extends Param{
 		else if(getViewType().equals(Param.VIEW_COMBO) || 
 				getViewType().equals(Param.VIEW_EDITABLE_COMBO))
 			return new ParamComboBoxWidget(this);
-		
+		System.out.println("invalid view");
+		(new Exception()).printStackTrace();
 		return null;
 	}
 	
@@ -101,4 +103,28 @@ public class ParamCharacter extends Param{
 	public Object getValue() {
 		return value;
 	}
+	
+	public Element toXML(){
+		Element e = super.toXML();
+		if(value!=null)
+			e.setAttribute("value", value);
+		if(defaultValue!=null)
+			e.setAttribute("defaultValue", defaultValue);
+		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamCharacter");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.widgets.param.ParamCharacter")){
+			System.out.println("Error ParamCharacter: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		if(node.hasAttribute("value"))
+			value = node.getAttribute("value");
+		if(node.hasAttribute("defaultValue"))
+			defaultValue = node.getAttribute("defaultValue");
+	}
+	
 }

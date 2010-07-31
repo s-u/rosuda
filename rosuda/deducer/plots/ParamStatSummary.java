@@ -4,6 +4,9 @@ import java.util.Vector;
 
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamWidget;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class ParamStatSummary extends Param{
 
@@ -46,6 +49,8 @@ public class ParamStatSummary extends Param{
 	public ParamWidget getView(){
 		if(getViewType().equals(VIEW_SUMMARY))
 			return new ParamStatSummaryWidget(this);
+		System.out.println("invalid view");
+		(new Exception()).printStackTrace();
 		return null;
 	}
 	
@@ -143,5 +148,79 @@ public class ParamStatSummary extends Param{
 	
 	public Object getValue() {
 		return value;
+	}
+	
+	public Element toXML(){
+		Element e = super.toXML();
+		Document doc = e.getOwnerDocument();
+		if(value!=null){
+			Vector vec = value;
+			Element node = doc.createElement("value");
+			node.setAttribute("combo", vec.get(0).toString());
+			node.setAttribute("conf", vec.get(1).toString());
+			node.setAttribute("mult", vec.get(2).toString());
+			node.setAttribute("n", vec.get(3).toString());
+			node.setAttribute("y", vec.get(4).toString());
+			node.setAttribute("ymin", vec.get(5).toString());
+			node.setAttribute("ymax", vec.get(6).toString());
+			node.setAttribute("data", vec.get(7).toString());
+			e.appendChild(node);
+		}
+		if(defaultValue!=null){
+			Vector vec = defaultValue;
+			Element node = doc.createElement("defaultValue");
+			node.setAttribute("combo", vec.get(0).toString());
+			node.setAttribute("conf", vec.get(1).toString());
+			node.setAttribute("mult", vec.get(2).toString());
+			node.setAttribute("n", vec.get(3).toString());
+			node.setAttribute("y", vec.get(4).toString());
+			node.setAttribute("ymin", vec.get(5).toString());
+			node.setAttribute("ymax", vec.get(6).toString());
+			node.setAttribute("data", vec.get(7).toString());
+			e.appendChild(node);
+		}
+		e.setAttribute("className", "org.rosuda.deducer.plots.ParamSummary");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.plots.ParamSummary")){
+			System.out.println("Error ParamStatSummary: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		
+		value = null;
+		NodeList nl = node.getElementsByTagName("value");
+		if(nl.getLength()>0){
+			Element valNode = (Element) nl.item(0);
+			Vector v = new Vector();
+			v.add(new Integer(Integer.parseInt(valNode.getAttribute("combo"))));
+			v.add(valNode.getAttribute("conf"));
+			v.add(valNode.getAttribute("mult"));
+			v.add(valNode.getAttribute("n"));
+			v.add(valNode.getAttribute("y"));
+			v.add(valNode.getAttribute("ymin"));
+			v.add(valNode.getAttribute("ymax"));
+			v.add(valNode.getAttribute("data"));
+			value = v;
+		}
+		
+		defaultValue = null;
+		nl = node.getElementsByTagName("defaultValue");
+		if(nl.getLength()>0){
+			Element valNode = (Element) nl.item(0);
+			Vector v = new Vector();
+			v.add(new Integer(Integer.parseInt(valNode.getAttribute("combo"))));
+			v.add(valNode.getAttribute("conf"));
+			v.add(valNode.getAttribute("mult"));
+			v.add(valNode.getAttribute("n"));
+			v.add(valNode.getAttribute("y"));
+			v.add(valNode.getAttribute("ymin"));
+			v.add(valNode.getAttribute("ymax"));
+			v.add(valNode.getAttribute("data"));
+			defaultValue = v;
+		}
 	}
 }

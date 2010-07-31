@@ -6,11 +6,14 @@ import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.ExDefaultTableModel;
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamWidget;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class ParamScaleLegend extends Param{
 	
-	final public static String DATA_SCALE_NUMERIC = "scale numeric";
-	final public static String DATA_SCALE_CHARACTER = "scale char";
 	
 	final public static String VIEW_SCALE = "scale";
 	
@@ -31,6 +34,8 @@ public class ParamScaleLegend extends Param{
 	public ParamWidget getView(){
 		if(getViewType().equals(ParamScaleLegend.VIEW_SCALE))
 			return new ParamScaleWidget(this);
+		System.out.println("invalid view");
+		(new Exception()).printStackTrace();
 		return null;
 	}
 	
@@ -175,5 +180,116 @@ public class ParamScaleLegend extends Param{
 	public boolean isNumeric() {
 		return numeric;
 	}
+	
+	public Element toXML(){
+		Element e = super.toXML();
+		Document doc = e.getOwnerDocument();
+		if(value!=null){
+			Vector v = (Vector) getValue();
+			String text = (String) v.get(0);
+			Boolean show = (Boolean) v.get(1);
+			ExDefaultTableModel tm = (ExDefaultTableModel) v.get(2);
+			Element node = doc.createElement("value");
+			node.setAttribute("legendTitle", text);
+			node.setAttribute("show", show.toString());
+			node.setAttribute("nrow", tm.getRowCount()+"");
+			
+			Element cNode = doc.createElement("column_0");
+			for(int i=0;i<tm.getRowCount();i++)
+				cNode.setAttribute("element_"+i, tm.getValueAt(i, 0)==null ? null : tm.getValueAt(i, 0).toString());
+			node.appendChild(cNode);
+			
+			cNode = doc.createElement("column_1");
+			for(int i=0;i<tm.getRowCount();i++)
+				cNode.setAttribute("element_"+i, tm.getValueAt(i, 1)==null ? null : tm.getValueAt(i, 1).toString());
+			node.appendChild(cNode);
+			e.appendChild(node);
+		}
+		
+		if(defaultValue!=null){
+			Vector v = (Vector) getDefaultValue();
+			String text = (String) v.get(0);
+			Boolean show = (Boolean) v.get(1);
+			ExDefaultTableModel tm = (ExDefaultTableModel) v.get(2);
+			Element node = doc.createElement("defaultValue");
+			node.setAttribute("legendTitle", text);
+			node.setAttribute("show", show.toString());
+			node.setAttribute("nrow", tm.getRowCount()+"");
+			
+			Element cNode = doc.createElement("column_0");
+			for(int i=0;i<tm.getRowCount();i++)
+				cNode.setAttribute("element_"+i, tm.getValueAt(i, 0)==null ? null : tm.getValueAt(i, 0).toString());
+			node.appendChild(cNode);
+			
+			cNode = doc.createElement("column_1");
+			for(int i=0;i<tm.getRowCount();i++)
+				cNode.setAttribute("element_"+i, tm.getValueAt(i, 1)==null ? null : tm.getValueAt(i, 1).toString());
+			node.appendChild(cNode);
+			e.appendChild(node);
+		}
+		
+		e.setAttribute("className", "org.rosuda.deducer.plots.ParamScaleLegend");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.plots.ParamScaleLegend")){
+			System.out.println("Error ParamScaleLegend: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		NodeList valEls = node.getElementsByTagName("value");
+		value = null;
+		defaultValue = null;
+		if(valEls.getLength()>0){
+			Element e = (Element) valEls.item(0);
+			Vector v = new Vector();
+			v.add(e.getAttribute("legendTitle"));
+			v.add(new Boolean(e.getAttribute("show").equals("true")));
+			ExDefaultTableModel tm = new ExDefaultTableModel();
+			tm.addColumn("value");
+			tm.addColumn("label");
+			tm.setRowCount(Integer.parseInt(e.getAttribute("nrow")));
+			
+			Node cNode =e.getElementsByTagName("column_0").item(0);
+			NamedNodeMap attr = cNode.getAttributes();
+			Node c1Node =e.getElementsByTagName("column_1").item(0);
+			NamedNodeMap attr1 = c1Node.getAttributes();
+			if(attr.getLength()>0){
+				for(int i=0;i<attr.getLength();i++){
+					tm.setValueAt(attr.item(i).getNodeValue(),i,0);
+					tm.setValueAt(attr1.item(i).getNodeValue(),i,1);
+				}
+			}
+			v.add(tm);
+			value = v;
+		}
+		NodeList deValEls = node.getElementsByTagName("defaultValue");
+		if(deValEls.getLength()>0){
+			Element e = (Element) deValEls.item(0);
+			Vector v = new Vector();
+			v.add(e.getAttribute("legendTitle"));
+			v.add(new Boolean(e.getAttribute("show").equals("true")));
+			ExDefaultTableModel tm = new ExDefaultTableModel();
+			tm.addColumn("value");
+			tm.addColumn("label");
+			tm.setRowCount(Integer.parseInt(e.getAttribute("nrow")));
+			
+			Node cNode =e.getElementsByTagName("column_0").item(0);
+			NamedNodeMap attr = cNode.getAttributes();
+			Node c1Node =e.getElementsByTagName("column_1").item(0);
+			NamedNodeMap attr1 = c1Node.getAttributes();
+			if(attr.getLength()>0){
+				for(int i=0;i<attr.getLength();i++){
+					tm.setValueAt(attr.item(i).getNodeValue(),i,0);
+					tm.setValueAt(attr1.item(i).getNodeValue(),i,1);
+				}
+			}
+			v.add(tm);
+			defaultValue = v;
+		}
+	}
+	
 	
 }

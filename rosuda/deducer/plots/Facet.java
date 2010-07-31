@@ -2,6 +2,15 @@ package org.rosuda.deducer.plots;
 
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 
 public class Facet implements ElementModel{
 
@@ -75,4 +84,53 @@ public class Facet implements ElementModel{
 	public String getName() {
 		return name;
 	}
+	
+	public Element toXML() {
+		try{
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			Element node = doc.createElement("ElementModel");
+			node.setAttribute("className", "org.rosuda.deducer.plots.Facet");
+			if(name!=null)
+				node.setAttribute("name", name);
+			if(data!=null)
+				node.setAttribute("data", data);
+			if(facetType!=null)
+				node.setAttribute("facetType", facetType);
+			
+			Element pEl = param.toXML();
+			pEl = (Element) doc.importNode(pEl, true);
+			node.appendChild(pEl);
+			
+			doc.appendChild(node);
+			return node;
+		}catch(Exception ex){ex.printStackTrace();return null;}		
+	}
+
+	public void setFromXML(Element node) {
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.plots.Facet")){
+			System.out.println("Error Facet: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		if(node.hasAttribute("name"))
+			name = node.getAttribute("name");
+		else 
+			name = null;
+		
+		if(node.hasAttribute("data"))
+			data = node.getAttribute("data");
+		else 
+			data = null;
+		
+		if(node.hasAttribute("facetType"))
+			facetType = node.getAttribute("facetType");
+		else 
+			facetType = null;
+		
+		param = new ParamFacet();
+		Element el = (Element) node.getElementsByTagName("*").item(0);
+		param.setFromXML(el);
+	}	
 }

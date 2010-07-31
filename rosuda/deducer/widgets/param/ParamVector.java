@@ -3,6 +3,10 @@ package org.rosuda.deducer.widgets.param;
 import javax.swing.DefaultComboBoxModel;
 
 import org.rosuda.deducer.Deducer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 public class ParamVector extends Param{
 
@@ -10,8 +14,6 @@ public class ParamVector extends Param{
 	protected String[] defaultValue = new String[]{};			//default	
 	protected boolean numeric = true;
 	
-	protected Double lowerBound ;			//If bounded, the lower bound
-	protected Double upperBound ;			//if bounded, the upper bound
 	
 	public ParamVector(){
 		name = "";
@@ -37,10 +39,12 @@ public class ParamVector extends Param{
 	}
 	
 	public ParamWidget getView(){
-		if(getViewType() == Param.VIEW_TWO_VALUE_ENTER)
+		if(getViewType().equals(Param.VIEW_TWO_VALUE_ENTER))
 			return new ParamTwoValueWidget(this);
-		else if(getViewType() == Param.VIEW_VECTOR_BUILDER)
+		else if(getViewType().equals(Param.VIEW_VECTOR_BUILDER))
 			return new ParamVectorBuilderWidget(this);
+		System.out.println("invalid view");
+		(new Exception()).printStackTrace();
 		return null;
 	}
 	
@@ -125,22 +129,6 @@ public class ParamVector extends Param{
 	public Object getValue() {
 		return value;
 	}
-	
-	public void setLowerBound(Double lowerBound) {
-		this.lowerBound = lowerBound;
-	}
-
-	public Double getLowerBound() {
-		return lowerBound;
-	}
-
-	public void setUpperBound(Double upperBound) {
-		this.upperBound = upperBound;
-	}
-
-	public Double getUpperBound() {
-		return upperBound;
-	}
 
 	public void setNumeric(boolean numeric) {
 		this.numeric = numeric;
@@ -149,4 +137,54 @@ public class ParamVector extends Param{
 	public boolean isNumeric() {
 		return numeric;
 	}
+
+	public Element toXML(){
+		Element e = super.toXML();
+		Document doc = e.getOwnerDocument();
+		Element node = doc.createElement("value");
+		if(value!=null){
+			for(int i=0;i<value.length;i++)
+				node.setAttribute("element_"+i, value[i]);
+		}
+		e.appendChild(node);
+		
+		node = doc.createElement("defaultValue");
+		if(defaultValue!=null){
+			for(int i=0;i<defaultValue.length;i++)
+				node.setAttribute("element_"+i, defaultValue[i]);
+		}
+		e.appendChild(node);
+		e.setAttribute("numeric", numeric ? "true" : "false");
+		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamVector");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.widgets.param.ParamVector")){
+			System.out.println("Error ParamVector: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		value = new String[]{};
+		defaultValue = new String[]{};
+		Node vNode =node.getElementsByTagName("value").item(0);
+		NamedNodeMap attr = vNode.getAttributes();
+		if(attr.getLength()>0){
+			value = new String[attr.getLength()];
+			for(int i=0;i<attr.getLength();i++)
+				value[i] = attr.item(i).getNodeValue();
+		}
+		
+		vNode =node.getElementsByTagName("defaultValue").item(0);
+		attr = vNode.getAttributes();
+		if(attr.getLength()>0){
+			defaultValue = new String[attr.getLength()];
+			for(int i=0;i<attr.getLength();i++)
+				defaultValue[i] = attr.item(i).getNodeValue();
+		}
+		
+	}
+	
+
 }

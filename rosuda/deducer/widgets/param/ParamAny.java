@@ -1,14 +1,12 @@
 package org.rosuda.deducer.widgets.param;
 
 import org.rosuda.deducer.Deducer;
+import org.w3c.dom.Element;
 
 public class ParamAny extends Param{
 	
 	protected String value;
 	protected String defaultValue;			//default	
-	
-	final public static String VIEW_ENTER = "enter";
-	final public static String VIEW_ENTER_LONG = "enter long";
 	
 	public ParamAny(){
 		name = "";
@@ -92,6 +90,33 @@ public class ParamAny extends Param{
 	}
 	public Object getValue() {
 		return value;
+	}
+	
+	public Element toXML(){
+		Element e = super.toXML();
+		if(value!=null)
+			e.setAttribute("value", value);
+		if(defaultValue!=null)
+			e.setAttribute("defaultValue", defaultValue);
+		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamAny");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.widgets.param.ParamAny")){
+			System.out.println("Error ParamAny: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		if(node.hasAttribute("value"))
+			value = node.getAttribute("value");
+		else
+			value = null;
+		if(node.hasAttribute("defaultValue"))
+			defaultValue = node.getAttribute("defaultValue");
+		else
+			defaultValue = null;
 	}
 	
 }

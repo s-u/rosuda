@@ -3,14 +3,21 @@ package org.rosuda.deducer.plots;
 import java.awt.Color;
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamCharacter;
 import org.rosuda.deducer.widgets.param.ParamColor;
+import org.rosuda.deducer.widgets.param.ParamFactory;
 import org.rosuda.deducer.widgets.param.ParamNumeric;
 import org.rosuda.deducer.widgets.param.ParamRFunction;
 import org.rosuda.deducer.widgets.param.ParamVector;
 import org.rosuda.deducer.widgets.param.RFunction;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class Theme implements ElementModel{
 
@@ -319,7 +326,7 @@ public class Theme implements ElementModel{
 		rfpn.setDefaultValue(new Double(0));
 		rf.add(rfpn);
 		
-		rfp = new ParamNumeric();
+		rfpn = new ParamNumeric();
 		rfpn.setName("lineheight");
 		rfpn.setTitle("lineheight");
 		rfpn.setViewType(Param.VIEW_ENTER);
@@ -519,6 +526,47 @@ public class Theme implements ElementModel{
 	public String getName() {
 		return name;
 	}
+	
+	public Element toXML() {
+		try{
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			Element node = doc.createElement("ElementModel");
+			node.setAttribute("className", "org.rosuda.deducer.plots.Theme");
+			if(name!=null)
+				node.setAttribute("name", name);
+			
+			for(int i=0;i<params.size();i++){
+				Element pEl = ((Param)params.get(i)).toXML();
+				pEl = (Element) doc.importNode(pEl, true);
+				node.appendChild(pEl);
+			}
+			doc.appendChild(node);
+			return node;
+		}catch(Exception ex){ex.printStackTrace();return null;}		
+	}
+
+	public void setFromXML(Element node) {
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.plots.Theme")){
+			System.out.println("Error Theme: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		if(node.hasAttribute("name"))
+			name = node.getAttribute("name");
+		else 
+			name = null;
+		params = new Vector();
+		NodeList nl = node.getElementsByTagName("Param");
+		for(int i=0;i<nl.getLength();i++){
+			Element n = (Element) nl.item(i);
+			cn = n.getAttribute("className");
+			Param p = ParamFactory.getParam(cn);
+			p.setFromXML(n);
+			params.add(p);
+		}
+	}	
 	
 	
 }

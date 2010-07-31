@@ -14,6 +14,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class PlottingElement implements Transferable{
 	
@@ -21,6 +26,7 @@ public class PlottingElement implements Transferable{
 	
 	
 	private ImageIcon icon;
+	private String iconUrl;
 	
 	private String name;
 	private String type;
@@ -36,6 +42,7 @@ public class PlottingElement implements Transferable{
 	public PlottingElement(String filename,String elementType,String elementName){
 		super();
 		URL url = getClass().getResource(filename);
+		iconUrl = filename;
 		name=elementName;
 		type = elementType;
 		Layer l;
@@ -43,16 +50,24 @@ public class PlottingElement implements Transferable{
 			l = Layer.makeGeomLayer(name);
 			model = l;			
 			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
-			if(url==null)
-				url = getClass().getResource("/icons/ggplot_icons/layer_default.png");
-			icon = new ImageIcon(url);
+			if(url==null){
+				iconUrl = "/icons/ggplot_icons/layer_default.png";
+				url = getClass().getResource(iconUrl);
+			}
+			if(url!=null){
+				icon = new ImageIcon(url);	
+			}
 		}else if(type.equals("stat")){
 			l = Layer.makeStatLayer(name);
 			model = l;
 			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
-			if(url==null)
-				url = getClass().getResource("/icons/ggplot_icons/layer_default.png");
-			icon = new ImageIcon(url);
+			if(url==null){
+				iconUrl = "/icons/ggplot_icons/layer_default.png";
+				url = getClass().getResource(iconUrl);
+			}
+			if(url!=null){
+				icon = new ImageIcon(url);	
+			}
 		}else if(type.equals("scale")){
 			String[] s = name.split("_");
 			if(s.length>1){
@@ -62,33 +77,61 @@ public class PlottingElement implements Transferable{
 				model = Scale.makeScale(null, s[0]);
 				helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+s[0]+".html";
 			}
-			if(url==null)
-				url = getClass().getResource("/icons/ggplot_icons/scale_default.png");
-			icon = new ImageIcon(url);
+			if(url==null){
+				iconUrl = "/icons/ggplot_icons/scale_default.png";
+				url = getClass().getResource(iconUrl);
+			}
+			if(url!=null){
+				icon = new ImageIcon(url);	
+			}
 		}else if(type.equals("coord")){
 			Coord c = Coord.makeCoord(name);
 			model = c;
 			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
-			if(url==null)
-				url = getClass().getResource("/icons/ggplot_icons/default.png");
-			icon = new ImageIcon(url);
+			if(url==null){
+				iconUrl = "/icons/ggplot_icons/default.png";
+				url = getClass().getResource(iconUrl);
+			}
+			if(url!=null){
+				icon = new ImageIcon(url);	
+			}
 		}else if(type.equals("facet")){
 			Facet f = Facet.makeFacet(name);
 			model = f;
 			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
-			if(url==null)
-				url = getClass().getResource("/icons/ggplot_icons/default.png");
-			icon = new ImageIcon(url);
+			if(url==null){
+				iconUrl = "/icons/ggplot_icons/default.png";
+				url = getClass().getResource(iconUrl);
+			}
+			if(url!=null){
+				icon = new ImageIcon(url);	
+			}
 		}else if(type.equals("theme")){
 			Theme t = Theme.makeTheme(name);
 			model = t;
-			if(url==null)
-				url = getClass().getResource("/icons/ggplot_icons/default.png");
-			icon = new ImageIcon(url);
+			if(url==null){
+				iconUrl = "/icons/ggplot_icons/default.png";
+				url = getClass().getResource(iconUrl);
+			}
+			if(url!=null){
+				icon = new ImageIcon(url);	
+			}
 		}else if(type.equals("template")){
-			if(url==null)
-				url = getClass().getResource("/icons/ggplot_icons/template_default.png");
-			icon = new ImageIcon(url);			
+			if(url==null){
+				iconUrl = "/icons/ggplot_icons/template_default.png";
+				url = getClass().getResource(iconUrl);
+			}
+			if(url!=null){
+				icon = new ImageIcon(url);	
+			}
+		}
+	}
+	
+	public void setIconFromUrl(String url){
+		URL loc = getClass().getResource(url);
+		if(loc!=null){
+			icon = new ImageIcon(loc);
+			iconUrl = url;
 		}
 	}
 	
@@ -99,6 +142,7 @@ public class PlottingElement implements Transferable{
 		p.name = this.name;
 		p.type = this.type;
 		p.helpUrl = this.helpUrl;
+		p.iconUrl = this.iconUrl;
 		return p;
 	}
 	
@@ -107,7 +151,9 @@ public class PlottingElement implements Transferable{
 		String[] s = nm.split("_");
 		if(s.length>1)
 			nm = s[s.length-1];
-		PlottingElement el = new PlottingElement("/icons/ggplot_icons/"+type+"_"+nm+".png",type,name);
+		PlottingElement el = 
+			new PlottingElement("/icons/ggplot_icons/"+type+"_"+nm+".png",
+				type,name);
 		return el;
 	}
 	
@@ -196,6 +242,75 @@ public class PlottingElement implements Transferable{
 
 	public boolean isDataFlavorSupported(DataFlavor arg0) {
 		return true;
+	}
+	
+	public Element toXML(){
+		try{
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			
+			Element node = doc.createElement("PlottingElement");
+			if(name!=null)
+				node.setAttribute("name", name);
+			if(type!=null)
+				node.setAttribute("type", type);
+			if(helpUrl!=null)
+				node.setAttribute("helpUrl", helpUrl);
+			if(iconUrl!=null)
+				node.setAttribute("iconUrl", iconUrl);
+			node.setAttribute("active", active ? "true" : "false");
+			node.setAttribute("compound", compound ? "true" : "false");
+			Element e = model.toXML();
+			e = (Element) doc.importNode(e, true);
+			node.appendChild(e);
+			
+			node.setAttribute("className", "org.rosuda.deducer.plots.PlottingElement");
+			doc.appendChild(node);
+			return node;
+			
+        }catch(Exception e){e.printStackTrace();return null;}
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.plots.PlottingElement")){
+			System.out.println("Error Position: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		if(node.hasAttribute("name"))
+			name = node.getAttribute("name");
+		else
+			name = null;
+		
+		if(node.hasAttribute("type"))
+			type = node.getAttribute("type");
+		else
+			type = null;
+		
+		if(node.hasAttribute("helpUrl"))
+			helpUrl = node.getAttribute("helpUrl");
+		else
+			helpUrl = null;
+		
+		if(node.hasAttribute("iconUrl"))
+			iconUrl = node.getAttribute("iconUrl");
+		else
+			iconUrl = null;
+		URL url;
+		if(iconUrl==null)
+			url = getClass().getResource("/icons/ggplot_icons/default.png");
+		else
+			url = getClass().getResource(iconUrl);
+		if(iconUrl!=null)
+			icon = new ImageIcon(url);
+		Element e = (Element) node.getElementsByTagName("ElementModel").item(0);
+		String className = e.getAttribute("className");
+		try {
+			ElementModel mod = (ElementModel) Class.forName(className).newInstance();
+			mod.setFromXML(e);
+			model = mod;
+		} catch (Exception e1) {e1.printStackTrace();}
 	}
 }
 

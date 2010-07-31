@@ -2,7 +2,14 @@ package org.rosuda.deducer.widgets.param;
 
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.rosuda.deducer.Deducer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class RFunction {
 
@@ -54,6 +61,43 @@ public class RFunction {
 	}
 	public void remove(Param p){
 		params.remove(p);
+	}
+	
+	public Element toXML(){
+		try{
+		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+		Document doc = docBuilder.newDocument();
+		
+		Element node = doc.createElement("RFunction");
+		if(name!=null)
+			node.setAttribute("name", name);
+		for(int i=0;i<params.size();i++){
+			Param p = (Param) params.get(i);
+			Element el = p.toXML();
+			Node n = doc.importNode(el, true);
+			node.appendChild(n);
+		}
+		doc.appendChild(node);
+		return node;
+		
+		}catch(Exception e){e.printStackTrace();return null;}
+	}
+	
+	public void setFromXML(Element node){
+		if(node.hasAttribute("name"))
+			name = node.getAttribute(name);
+		else
+			name = null;
+		params = new Vector();
+		NodeList nl = node.getChildNodes();
+		for(int i=0;i<nl.getLength();i++){
+			Element n = (Element) nl.item(i);
+			String cn = n.getAttribute("className");
+			Param p = ParamFactory.getParam(cn);
+			p.setFromXML(n);
+			params.add(p);
+		}
 	}
 	
 }

@@ -3,6 +3,10 @@ package org.rosuda.deducer.widgets.param;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 public class ParamRFunction extends Param{
 	
 	protected Vector value;
@@ -26,8 +30,10 @@ public class ParamRFunction extends Param{
 	}
 	
 	public ParamWidget getView(){
-		if(getViewType() == Param.VIEW_RFUNCTION)
+		if(getViewType().equals(Param.VIEW_RFUNCTION))
 			return new ParamRFunctionWidget(this);
+		System.out.println("invalid view");
+		(new Exception()).printStackTrace();
 		return null;
 	}
 	
@@ -129,4 +135,92 @@ public class ParamRFunction extends Param{
 		setOptions(opts);
 		hm.put(name, rf);
 	}
+	
+	
+	public Element toXML(){
+		Element e = super.toXML();
+		Document doc = e.getOwnerDocument();
+		if(value!=null){
+			e.setAttribute("selectedFunction", value.get(0).toString());
+			HashMap hm = (HashMap) value.get(1);
+			Element el = doc.createElement("valueMap");
+			for(int i=0;i<options.length;i++){
+				RFunction fn = (RFunction) hm.get(options[i]);
+				Element element = fn.toXML();
+				element = (Element) doc.importNode(element, true);
+				Element element1 = doc.createElement("keyValuePair");
+				element1.setAttribute("key", options[i]);
+				element1.appendChild(element);
+				el.appendChild(element1);
+			}
+			e.appendChild(el);
+		}
+		if(defaultValue!=null){
+			e.setAttribute("defaultSelectedFunction", defaultValue.get(0).toString());
+			HashMap hm = (HashMap) defaultValue.get(1);
+			Element el = doc.createElement("defaultValueMap");
+			for(int i=0;i<options.length;i++){
+				RFunction fn = (RFunction) hm.get(options[i]);
+				Element element = fn.toXML();
+				element = (Element) doc.importNode(element, true);
+				Element element1 = doc.createElement("keyValuePair");
+				element1.setAttribute("key", options[i]);
+				element1.appendChild(element1);
+				el.appendChild(element1);
+			}
+			e.appendChild(el);			
+		}
+		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamRFunction");
+		return e;
+	}
+	
+	public void setFromXML(Element node){
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.widgets.param.ParamRFunction")){
+			System.out.println("Error ParamRFunction: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		super.setFromXML(node);
+		
+		value = null;
+		defaultValue = null;
+		if(node.hasAttribute("selectedFunction")){
+			String selectedFunction = node.getAttribute("selectedFunction");
+			HashMap hm = new HashMap();
+			Element map = (Element) node.getElementsByTagName("valueMap").item(0);
+			NodeList pairs = map.getChildNodes();
+			for(int i=0;i<pairs.getLength();i++){
+				Element pair = (Element) pairs.item(i);
+				String key = pair.getAttribute("key");
+				Element val = (Element) pair.getFirstChild();
+				RFunction rf = new RFunction();
+				rf.setFromXML(val);
+				hm.put(key, rf);
+			}
+			Vector v = new Vector();
+			v.add(selectedFunction);
+			v.add(hm);
+			value = v;
+		}
+		if(node.hasAttribute("defaultSelectedFunction")){
+			String selectedFunction = node.getAttribute("defaultSelectedFunction");
+			HashMap hm = new HashMap();
+			Element map = (Element) node.getElementsByTagName("defaultValueMap").item(0);
+			NodeList pairs = map.getChildNodes();
+			for(int i=0;i<pairs.getLength();i++){
+				Element pair = (Element) pairs.item(i);
+				String key = pair.getAttribute("key");
+				Element val = (Element) pair.getFirstChild();
+				RFunction rf = new RFunction();
+				rf.setFromXML(val);
+				hm.put(key, rf);
+			}
+			Vector v = new Vector();
+			v.add(selectedFunction);
+			v.add(hm);
+			defaultValue = v;
+		}
+	}
+	
+	
 }
