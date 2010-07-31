@@ -86,15 +86,15 @@ public class RFunction {
 	
 	public void setFromXML(Element node){
 		if(node.hasAttribute("name"))
-			name = node.getAttribute(name);
+			name = node.getAttribute("name");
 		else
 			name = null;
 		params = new Vector();
-		NodeList nl = node.getChildNodes();
+		NodeList nl = node.getElementsByTagName("Param");
 		for(int i=0;i<nl.getLength();i++){
 			Element n = (Element) nl.item(i);
 			String cn = n.getAttribute("className");
-			Param p = ParamFactory.getParam(cn);
+			Param p = Param.makeParam(cn);
 			p.setFromXML(n);
 			params.add(p);
 		}

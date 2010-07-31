@@ -107,7 +107,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 	}
 	
 	public PlotBuilder(PlotBuilderModel pbm) {
-		super();
+		super("Plot builder",false,91);
 		try{
 			PlotController.init();
 			init();
@@ -651,38 +651,50 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 
 		public boolean importData(JComponent comp, Transferable t) {
 			try {		
-			JList l = (JList) comp;
+			final JList l = (JList) comp;
 			
-			DefaultListModel mod = (DefaultListModel) l.getModel();
-			PlottingElement p;
+			final DefaultListModel mod = (DefaultListModel) l.getModel();
+			final PlottingElement p;
 	
 				p = (PlottingElement) t.getTransferData(
 						new DataFlavor(PlottingElement.class,"Plotting element"));
-	
-				if(p.getModel() instanceof Layer){
-					Layer layer = (Layer) p.getModel();
-					model.tryToFillRequiredAess(layer);
-					String s = layer.checkValid();
-					if(s!=null){
-						PlottingElementDialog d = 
-							new PlottingElementDialog(PlotBuilder.this,p);
-						d.setModal(true);
-						d.setLocationRelativeTo(PlotBuilder.this);
-						d.setVisible(true);
-						s = layer.checkValid();
-						if(s!=null)
-							return false;
-					}
-				}
+				(new Thread(new Runnable(){
+
+					public void run() {
+						if(p.getModel() instanceof Layer){
+							Layer layer = (Layer) p.getModel();
+							model.tryToFillRequiredAess(layer);
+							String s = layer.checkValid();
+							if(s!=null){
+								PlottingElementDialog d = 
+									new PlottingElementDialog(PlotBuilder.this,p);
+								d.setModal(true);
+								d.setLocationRelativeTo(PlotBuilder.this);
+								d.setVisible(true);
+								s = layer.checkValid();
+								if(s!=null)
+									return;
+							}
+						}
 				
-				int ind = l.getSelectedIndex();
-				if(ind+1 < lastIndex)
-					lastIndex++;
-				if(ind<0)
-					mod.insertElementAt(p, 0);
-				else
-					mod.insertElementAt(p, ind+1);
-				updatePlot();
+						final int ind = l.getSelectedIndex();
+						if(ind+1 < lastIndex)
+							lastIndex++;
+						SwingUtilities.invokeLater(new Runnable(){
+							public void run() {
+								if(ind<0)
+									mod.insertElementAt(p, 0);
+								else
+									mod.insertElementAt(p, ind+1);
+								updatePlot();								
+							}
+							
+						});
+
+					}
+					
+				})).start();
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -1011,7 +1023,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 					if(!f.getName().endsWith(".ggp"))
 						f = new File(f.getPath() + ".ggp");
 					if(f.exists()){
-						int o =JOptionPane.showConfirmDialog(null, "File exists: Overwrite" + f.getName() + "?");
+						int o =JOptionPane.showConfirmDialog(null, "File exists: Overwrite: " + f.getName() + "?");
 						if(o != JOptionPane.OK_OPTION)
 							return;
 					}

@@ -141,7 +141,8 @@ public class ParamRFunction extends Param{
 		Element e = super.toXML();
 		Document doc = e.getOwnerDocument();
 		if(value!=null){
-			e.setAttribute("selectedFunction", value.get(0).toString());
+			if(value.get(0)!=null)
+				e.setAttribute("selectedFunction", value.get(0).toString());
 			HashMap hm = (HashMap) value.get(1);
 			Element el = doc.createElement("valueMap");
 			for(int i=0;i<options.length;i++){
@@ -156,7 +157,8 @@ public class ParamRFunction extends Param{
 			e.appendChild(el);
 		}
 		if(defaultValue!=null){
-			e.setAttribute("defaultSelectedFunction", defaultValue.get(0).toString());
+			if(defaultValue.get(0)!=null)
+				e.setAttribute("defaultSelectedFunction", defaultValue.get(0).toString());
 			HashMap hm = (HashMap) defaultValue.get(1);
 			Element el = doc.createElement("defaultValueMap");
 			for(int i=0;i<options.length;i++){
@@ -185,14 +187,16 @@ public class ParamRFunction extends Param{
 		value = null;
 		defaultValue = null;
 		if(node.hasAttribute("selectedFunction")){
-			String selectedFunction = node.getAttribute("selectedFunction");
+			String selectedFunction = null;
+			if(node.hasAttribute("selectedFunction"))
+				selectedFunction = node.getAttribute("selectedFunction");
 			HashMap hm = new HashMap();
 			Element map = (Element) node.getElementsByTagName("valueMap").item(0);
-			NodeList pairs = map.getChildNodes();
+			NodeList pairs = map.getElementsByTagName("keyValuePair");
 			for(int i=0;i<pairs.getLength();i++){
 				Element pair = (Element) pairs.item(i);
 				String key = pair.getAttribute("key");
-				Element val = (Element) pair.getFirstChild();
+				Element val = (Element) pair.getElementsByTagName("*").item(0);
 				RFunction rf = new RFunction();
 				rf.setFromXML(val);
 				hm.put(key, rf);
@@ -203,7 +207,9 @@ public class ParamRFunction extends Param{
 			value = v;
 		}
 		if(node.hasAttribute("defaultSelectedFunction")){
-			String selectedFunction = node.getAttribute("defaultSelectedFunction");
+			String selectedFunction = null;
+			if(node.hasAttribute("selectedFunction"))
+				selectedFunction = node.getAttribute("defaultSelectedFunction");
 			HashMap hm = new HashMap();
 			Element map = (Element) node.getElementsByTagName("defaultValueMap").item(0);
 			NodeList pairs = map.getChildNodes();

@@ -213,107 +213,15 @@ public abstract class Param implements Cloneable{
 			upperBound = null;
 	}
 	
-	public static void main(String args[]) {
-		Element e;
-		/*ParamVector pn = new ParamVector("test");
-		pn.setTitle("Test");
-		pn.setOptions(new String[]{"a","sasass"});
-		pn.setValue(new String[] {"a","b","c"});
-		pn.setDefaultValue(new String[] {"d","e","f","w"});
-		e = pn.toXML();
-		
-		RFunction rf = Theme.makeThemeText();
-		e = rf.toXML();
-		
-		ParamRFunction pf = new ParamRFunction();
-		pf.setName("axis.line");
-		pf.setTitle("axis.line");
-		pf.addRFunction("theme_blank", Theme.makeThemeBlank());
-		pf.addRFunction("theme_segment", Theme.makeThemeSegment());
-		e = pf.toXML();
-		
-        ParamFacet pfa = new ParamFacet();
-        e = pfa.toXML();
-        
-        ParamScaleLegend psl = new ParamScaleLegend("yar");
-        psl.getView().updateModel();
-        e = psl.toXML();
-        
-        Coord c = Coord.makeMap();
-        e = c.toXML();
-		Stat s = Stat.makeSmooth();
-		e = s.toXML();
-		Layer l = Layer.makeStatLayer("summary");
-        e = l.toXML();*/
-		PlottingElement pe = PlottingElement.createElement("stat", "bin");
-        e = pe.toXML();
-        
-		Document doc = e.getOwnerDocument();
-        /////////////////
-        //Output the XML
-
-		try{
-        //set up a transformer
-        TransformerFactory transfac = TransformerFactory.newInstance();
-        Transformer trans;
-		trans = transfac.newTransformer();
-        trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        trans.setOutputProperty(OutputKeys.INDENT, "yes");
-
-        //create string from xml tree
-        StringWriter sw = new StringWriter();
-        StreamResult result = new StreamResult(sw);
-        DOMSource source = new DOMSource(doc);
-        trans.transform(source, result);
-        String xmlString = sw.toString();
-
-        //print xml
-        System.out.println("Here's the xml:\n\n" + xmlString);
-        
-        /*ParamVector pn1 = new ParamVector("");
-        pn1.setFromXML(e);
-        e = pn1.toXML();
-        doc = e.getOwnerDocument();
-        RFunction rf1 = new RFunction();
-        rf1.setFromXML(e);
-        e = rf1.toXML();
-        doc = e.getOwnerDocument();
-        ParamRFunction pf1 = new ParamRFunction();
-        pf1.setFromXML(e);
-        e = pf1.toXML();
-        ParamFacet pfa1 = new ParamFacet();
-        pfa1.setFromXML(e);
-        e = pfa.toXML();
-        ParamScaleLegend psl1 = new ParamScaleLegend();
-        psl1.setFromXML(e);
-        e = psl1.toXML();
-        Coord c1 = new Coord();
-        c1.setFromXML(e);
-        e = c1.toXML();
-        Stat s1 = new Stat();
-        s1.setFromXML(e);
-        e = s1.toXML();
-        Layer l1 = new Layer();
-        l1.setFromXML(e);
-        e = l1.toXML();*/
-        PlottingElement pe1 = new PlottingElement();
-        pe1.setFromXML(e);
-        e = pe1.toXML();
-        
-        
-        
-        doc = e.getOwnerDocument();
-        //create string from xml tree
-        sw = new StringWriter();
-        result = new StreamResult(sw);
-        source = new DOMSource(doc);
-        trans.transform(source, result);
-        xmlString = sw.toString();
-
-        //print xml
-        System.out.println("Here's the xml:\n\n" + xmlString);
-        
-		}catch(Exception ex){ex.printStackTrace();}
+	public static Param makeParam(String className){
+		Param p;
+		try {
+			p = (Param) Class.forName(className).newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} 
+		return p;
 	}
 	
 }

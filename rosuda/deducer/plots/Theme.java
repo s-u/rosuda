@@ -10,7 +10,6 @@ import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamCharacter;
 import org.rosuda.deducer.widgets.param.ParamColor;
-import org.rosuda.deducer.widgets.param.ParamFactory;
 import org.rosuda.deducer.widgets.param.ParamNumeric;
 import org.rosuda.deducer.widgets.param.ParamRFunction;
 import org.rosuda.deducer.widgets.param.ParamVector;
@@ -562,7 +561,7 @@ public class Theme implements ElementModel{
 		for(int i=0;i<nl.getLength();i++){
 			Element n = (Element) nl.item(i);
 			cn = n.getAttribute("className");
-			Param p = ParamFactory.getParam(cn);
+			Param p = Param.makeParam(cn);
 			p.setFromXML(n);
 			params.add(p);
 		}

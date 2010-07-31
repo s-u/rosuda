@@ -156,7 +156,7 @@ public class Aes {
 			a.lowerBound = new Double(0.0);
 			a.upperBound = new Double(1.0);
 			a.defaultUseVariable = false;
-			a.title = "Alpha level";
+			a.title = "Alpha";
 		}else if(type.equals("angle")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.defaultValue = new Double(0.0);
@@ -191,7 +191,7 @@ public class Aes {
 		}else if(type.equals("linetype")){
 			a.dataType = DATA_LINE;
 			a.defaultValue = new Integer(1);
-			a.title = "Line type";
+			a.title = "Line";
 		}else if(type.equals("size")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);

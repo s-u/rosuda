@@ -1,7 +1,6 @@
 package org.rosuda.deducer.plots;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
-import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -17,20 +16,13 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -54,6 +46,12 @@ import javax.swing.TransferHandler;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.plaf.ComboBoxUI;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 
 
 public class AesWidget extends javax.swing.JPanel implements ActionListener, MouseListener{
@@ -69,8 +67,11 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	private Double sliderValue;
 	private JComboBox options;
 	private JLabel nameLab;
-	
+	private ComboBoxUI defaultComboBoxUI;
+	private AesComboBoxEditor editor;
 	private VariableSelector variableSelector;
+	
+	private Color neededItemBackground = Color.decode("#fff3f6");
 	
 	private static String iconRoot = "";
 	
@@ -163,18 +164,22 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 				}
 				{
 					statVarModel = new DefaultComboBoxModel();
-					AesComboBoxEditor editor = new AesComboBoxEditor();
+					editor = new AesComboBoxEditor();
 					variable = new JComboBox();
-					this.add(variable, new AnchorConstraint(32, 860, 472, 56, 
-							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
+					this.add(variable, new AnchorConstraint(32, 50, 472, 56, 
+							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 					variable.setModel(statVarModel);
 					variable.setPreferredSize(new java.awt.Dimension(196, 22));
 					variable.setEditable(true);
 					variable.setEditor(editor);
+					Border b = new SoftBevelBorder(BevelBorder.LOWERED);
+					//Border b = new EtchedBorder(BevelBorder.LOWERED);
+					editor.setBorder(b);
 					variable.addMouseListener(this);
 					editor.addMouseListener(this);
 					variable.addActionListener(this);
+					defaultComboBoxUI = variable.getUI();
 					if(transferHandler == null)
 						transferHandler = new AesTransferHandler();
 					editor.setTransferHandler(transferHandler);
@@ -237,11 +242,11 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 				}
 			}
 			{
-				addRemoveButton = new IconButton("/icons/1rightarrow_32.png", "add", null, "add");
-				this.add(addRemoveButton, new AnchorConstraint(20, 128, 483, 0, 
+				addRemoveButton = new IconButton("/icons/1rightarrow_16.png", "add", null, "add");
+				this.add(addRemoveButton, new AnchorConstraint(32, 128, 483, 24, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
-				addRemoveButton.setPreferredSize(new java.awt.Dimension(36, 36));
+				addRemoveButton.setPreferredSize(new java.awt.Dimension(22, 22));
 				addRemoveButton.addActionListener(this);
 			}
 			if(variableSelector!=null)
@@ -319,9 +324,12 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	
 	public void setModel(Aes newModel){
 		Color c = new Color(90,90,90);
+		editor.setBackground(Color.white);
 		boolean set = newModel.defaultVariable!=null || newModel.variable!=null || newModel.value!=null;
-		if(newModel.required && !set)
+		if(newModel.required && !set){
 			c = new Color(150,0,0);
+			editor.setBackground(neededItemBackground);
+		}
 		if(newModel.required && set)
 			c = new Color(0,150,0);
 		
@@ -489,6 +497,23 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		for(int i=0;i<vars.size();i++){
 			statVarModel.addElement(".."+vars.get(i).toString()+"..");
 		}
+		if(statVarModel.getSize()<2){
+			variable.setUI(new BasicComboBoxUI() {
+			    protected JButton createArrowButton() {
+			        return new JButton() {
+			                public int getWidth() {
+			                        return 0;
+			                }
+			        };
+			    }
+			});
+			variable.validate();
+			variable.repaint();		
+		}else{
+			variable.setUI(defaultComboBoxUI);
+			variable.validate();
+			variable.repaint();
+		}
 		variable.setSelectedItem(var);
 	}
 
@@ -528,8 +553,11 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		Color c = new Color(90,90,90);
 		boolean set = model.defaultVariable!=null || 
 		model.variable!=null || model.value!=null;
-		if(model.required && !set)
+		if(model.required && !set){
 			c = new Color(150,0,0);
+			editor.setBackground(neededItemBackground);
+		}else
+			editor.setBackground(Color.white);
 		if(model.required && set)
 			c = new Color(0,150,0);
 		nameLab.setForeground(c);
@@ -544,13 +572,13 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			addRemoveButton.setToolTipText("add");
 			addRemoveButton.setActionCommand("add");
 			ImageIcon icon = 
-				new ImageIcon(getClass().getResource("/icons/1rightarrow_32.png"));
+				new ImageIcon(getClass().getResource("/icons/1rightarrow_16.png"));
 			addRemoveButton.setIcon(icon);
 		}else{
 			addRemoveButton.setToolTipText("remove");
 			addRemoveButton.setActionCommand("remove");
 			ImageIcon icon =
-				new ImageIcon(getClass().getResource("/icons/1leftarrow_32.png"));
+				new ImageIcon(getClass().getResource("/icons/1leftarrow_16.png"));
 			addRemoveButton.setIcon(icon);
 		}
 	}

@@ -721,7 +721,7 @@ public class Stat {
 		for(int i=0;i<nl.getLength();i++){
 			Element n = (Element) nl.item(i);
 			cn = n.getAttribute("className");
-			Param p = org.rosuda.deducer.widgets.param.ParamFactory.getParam(cn);
+			Param p = Param.makeParam(cn);
 			p.setFromXML(n);
 			params.add(p);
 		}
