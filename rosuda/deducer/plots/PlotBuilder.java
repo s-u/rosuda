@@ -41,6 +41,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
@@ -51,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -96,6 +98,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 	
 	private PlotBuilderModel model;
 	private PlotBuilderModel initialModel;
+	private JList templateList;
 	private static PlotBuilderModel lastModel;
 	
 	
@@ -130,6 +133,13 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		
 		DefaultListModel lm;
 		Object[] items;
+		
+		lm = new DefaultListModel();
+		items = PlotController.getTemplates().values().toArray();
+		for(int i=0;i<items.length;i++)
+			lm.addElement( items[i]);
+		addElementListModels.put(names[0], lm);
+		
 		lm = new DefaultListModel();
 		items = PlotController.getGeoms().values().toArray();
 		for(int i=0;i<items.length;i++)
@@ -229,28 +239,9 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 							
 						});
 						{
-							templateTabs = new JTabbedPane();
-							templateTabs.setTabPlacement(JTabbedPane.LEFT);
-							templateTabs.addMouseListener(ml);
-							addTabs.add("   Templates   ", templateTabs);
-							String[] titles = {"All","1-D","2-D","Other"};
-							for(int i=0;i<3;i++){
-								JList list = new JList();
-								DefaultListModel mod = new DefaultListModel();
-								if(i==0 |i==2)
-									mod.addElement(PlottingElement.createElement("template","Scatter"));
-								list.addMouseListener(ml);
-								list.setCellRenderer(new ElementListRenderer());
-								list.setVisibleRowCount(1);
-								list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-								list.setModel(mod);
-								list.setDragEnabled(true);
-								list.setTransferHandler(new AddElementTransferHandler());
-								list.addMouseListener(new AddMouseListener());								
-								templateTabs.add(titles[i], list);
-							}
+
 							
-							for(int i=1;i<addElementTabNames.size();i++){
+							for(int i=0;i<addElementTabNames.size();i++){
 								String name = addElementTabNames.get(i).toString();
 								DefaultListModel mod =(DefaultListModel) addElementListModels.get(name);
 								
@@ -276,7 +267,8 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 								list.addMouseListener(new AddMouseListener());
 								
 								scroller.setViewportView(list);
-								
+								if(name.equals("Templates"))
+									templateList = list;
 							}
 						}
 					}
@@ -406,9 +398,10 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 
 			}
 			
-			String[] Menu = { "+", "File", "@O New plot","new","@O Load plot","open", "@S Save plot","save",
-					"+","Tools",
-					"~Window","0" };
+			String[] Menu = { "+", "File", "@N New","new","@O Open","open", "@S Save","save","-",
+									"Import template","import",
+							"+","Tools","View call","call", "Make template","template",
+							"~Window","0" };
 			JMenuBar mb = EzMenuSwing.getEzMenu(this, menuListener, Menu);
 			
 			setContentPane(pane);
@@ -609,29 +602,43 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		}
 		
 		public boolean importData(JComponent comp, Transferable t) {
-			JList l = elementsList;
-			DefaultListModel mod = (DefaultListModel) l.getModel();
-			PlottingElement p;
+			final JList l = elementsList;
+			final DefaultListModel mod = (DefaultListModel) l.getModel();
+			final PlottingElement p;
 			try {
 				p = (PlottingElement) t.getTransferData(
 						new DataFlavor(PlottingElement.class,"Plotting element"));
-				if(p.getModel() instanceof Layer){
-					Layer layer = (Layer) p.getModel();
-					model.tryToFillRequiredAess(layer);
-					String s = layer.checkValid();
-					if(s!=null){
-						PlottingElementDialog d = 
-							new PlottingElementDialog(PlotBuilder.this,p);
-						d.setModal(true);
-						d.setLocationRelativeTo(PlotBuilder.this);
-						d.setVisible(true);
-						s = layer.checkValid();
-						if(s!=null)
-							return false;
+				(new Thread(new Runnable(){
+
+					public void run() {
+						ElementModel m = p.getModel();
+						if(p.getModel() instanceof Layer){
+							Layer layer = (Layer) m;
+							model.tryToFillRequiredAess(layer);
+						}					
+						String s = m.checkValid();
+						if(s!=null){
+							PlottingElementDialog d = 
+								new PlottingElementDialog(PlotBuilder.this,p);
+							d.setModal(true);
+							d.setLocationRelativeTo(PlotBuilder.this);
+							d.setVisible(true);
+							s = m.checkValid();
+							if(s!=null)
+								return;
+						}
+				
+						SwingUtilities.invokeLater(new Runnable(){
+							public void run() {
+								mod.addElement(p);
+								updatePlot();								
+							}
+							
+						});
+
 					}
-				}
-				mod.addElement(p);
-				updatePlot();
+					
+				})).start();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -661,20 +668,21 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				(new Thread(new Runnable(){
 
 					public void run() {
+						ElementModel m = p.getModel();
 						if(p.getModel() instanceof Layer){
-							Layer layer = (Layer) p.getModel();
+							Layer layer = (Layer) m;
 							model.tryToFillRequiredAess(layer);
-							String s = layer.checkValid();
-							if(s!=null){
-								PlottingElementDialog d = 
-									new PlottingElementDialog(PlotBuilder.this,p);
-								d.setModal(true);
-								d.setLocationRelativeTo(PlotBuilder.this);
-								d.setVisible(true);
-								s = layer.checkValid();
-								if(s!=null)
-									return;
-							}
+						}					
+						String s = m.checkValid();
+						if(s!=null){
+							PlottingElementDialog d = 
+								new PlottingElementDialog(PlotBuilder.this,p);
+							d.setModal(true);
+							d.setLocationRelativeTo(PlotBuilder.this);
+							d.setVisible(true);
+							s = m.checkValid();
+							if(s!=null)
+								return;
 						}
 				
 						final int ind = l.getSelectedIndex();
@@ -808,11 +816,48 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				menuItem.addActionListener(new ActionListener(){
 					
 					public void actionPerformed(ActionEvent e) {
-						JOptionPane.showMessageDialog(null, "Break out:" + element.getName());
+						//JOptionPane.showMessageDialog(null, "Break out:" + element.getName());
+						PlottingElement[] pes = ((CompoundElementModel)element.getModel()).getElements();
+						int ind = ((DefaultListModel)elList.getModel()).indexOf(element);
+						for(int i=0;i<pes.length;i++)
+							((DefaultListModel)elList.getModel()).add(ind++, pes[i]);
+						((DefaultListModel)elList.getModel()).removeElement(element);
+						plot.updatePlot();
 					}
 					
 				});
-				if(element.isCompound())
+				if(element.getModel() instanceof CompoundElementModel)
+					popup.add(menuItem);
+				
+				menuItem = new JMenuItem("Export template");
+				menuItem.addActionListener(new ActionListener(){
+					
+					public void actionPerformed(ActionEvent e) {
+						JFileChooser c = new JFileChooser("Save template");
+						int ret = c.showDialog(null, "Save");
+						if(ret == JFileChooser.APPROVE_OPTION){
+							File f = c.getSelectedFile();
+							if(!f.getName().endsWith(".ggtmpl"))
+								f = new File(f.getPath() + ".ggtmpl");
+							if(f.exists()){
+								int o =JOptionPane.showConfirmDialog(null, "File exists: Overwrite: " + f.getName() + "?");
+								if(o != JOptionPane.OK_OPTION)
+									return;
+							}
+							PlottingElement el = (PlottingElement) element.clone();
+							Template t = (Template) el.getModel();
+							for(int i=0;i<t.mAess.length;i++){
+								System.out.println("here");
+								t.mAess[i].aes.variable = null;
+							}
+							t.updateElementModels();
+							el.setModel(t);
+							el.saveToFile(f);
+						}
+					}
+					
+				});
+				if(element.getModel() instanceof Template)
 					popup.add(menuItem);
 			    
 			    menuItem = new JMenuItem("Remove");
@@ -859,21 +904,23 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				int i = list.locationToIndex(e.getPoint());
 				PlottingElement pe =(PlottingElement) list.getModel().getElementAt(i);
 				PlottingElement p = (PlottingElement) pe.clone();
+				ElementModel m = p.getModel();
 				if(p.getModel() instanceof Layer){
-					Layer layer = (Layer) p.getModel();
+					Layer layer = (Layer) m;
 					model.tryToFillRequiredAess(layer);
-					String s = layer.checkValid();
-					if(s!=null){
-						PlottingElementDialog d = 
-							new PlottingElementDialog(PlotBuilder.this,p);
-						d.setModal(true);
-						d.setLocationRelativeTo(PlotBuilder.this);
-						d.setVisible(true);
-						s = layer.checkValid();
-						if(s!=null)
-							return;
-					}
+				}					
+				String s = m.checkValid();
+				if(s!=null){
+					PlottingElementDialog d = 
+						new PlottingElementDialog(PlotBuilder.this,p);
+					d.setModal(true);
+					d.setLocationRelativeTo(PlotBuilder.this);
+					d.setVisible(true);
+					s = m.checkValid();
+					if(s!=null)
+						return;
 				}
+
 				model.getListModel().addElement(p.clone());
 				updatePlot();
 			}
@@ -894,20 +941,21 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 					
 					public void actionPerformed(ActionEvent e) {
 						PlottingElement p = (PlottingElement) element.clone();
+						ElementModel m = p.getModel();
 						if(p.getModel() instanceof Layer){
-							Layer layer = (Layer) p.getModel();
-							pBuilder.model.tryToFillRequiredAess(layer);
-							String s = layer.checkValid();
-							if(s!=null){
-								PlottingElementDialog d = 
-									new PlottingElementDialog(pBuilder,p);
-								d.setModal(true);
-								d.setLocationRelativeTo(pBuilder);
-								d.setVisible(true);
-								s = layer.checkValid();
-								if(s!=null)
-									return;
-							}
+							Layer layer = (Layer) m;
+							pBuilder.getModel().tryToFillRequiredAess(layer);
+						}					
+						String s = m.checkValid();
+						if(s!=null){
+							PlottingElementDialog d = 
+								new PlottingElementDialog(pBuilder,p);
+							d.setModal(true);
+							d.setLocationRelativeTo(pBuilder);
+							d.setVisible(true);
+							s = m.checkValid();
+							if(s!=null)
+								return;
 						}
 						pBuilder.model.getListModel().addElement(p);
 						pBuilder.updatePlot();
@@ -1050,11 +1098,49 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				PlotBuilder pb = new PlotBuilder(new PlotBuilderModel());
 				pb.setVisible(true);
 				WindowTracker.addWindow(pb);
+			}else if(cmd.equals("template")){
+				Template t = Template.makeTemplate(model);
+				String tName = JOptionPane.showInputDialog("template name (e.g. scatter)");
+				if(tName=="")
+					tName = "user";
+				if(tName==null)
+					return;
+				PlottingElement pe = PlottingElement.createElement("template", tName);
+				pe.setModel(t);
+				PlotBuilderModel newModel = new PlotBuilderModel();
+				newModel.getListModel().addElement(pe);
+				setModel(newModel);
+				updatePlot();
+				//PlotController.addFacet(pe);
+			}else if(cmd.equals("import")){
+				JFileChooser c = new JFileChooser("Import template");
+				int ret = c.showOpenDialog(null);
+				if(ret == JFileChooser.APPROVE_OPTION){
+					File f = c.getSelectedFile();
+					if(!f.getName().endsWith(".ggtmpl")){
+						JOptionPane.showMessageDialog(null, "This does not appear to be a"
+								+" ggplot2 template file (extension .ggtmpl)");
+						return;
+					}
+					if(f!=null && f.exists()){
+						PlottingElement el = new PlottingElement();
+						el.setFromFile(f);
+						PlotController.addTemplate(el);
+						((DefaultListModel)templateList.getModel()).addElement(el);
+					}
+				}
+			}else if(cmd.equals("call")){
+				JFrame f = new JFrame("Call");
+				f.setSize(700, 200);
+				f.setLayout(new BorderLayout());
+				JTextArea t = new JTextArea();
+				f.add(t);
+				t.setText(model.getCall()+"\n");
+				f.setLocationRelativeTo(PlotBuilder.this);
+				f.setVisible(true);
 			}
 		}
-		
 	}
-	
 }
 
 

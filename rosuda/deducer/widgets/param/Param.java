@@ -2,6 +2,7 @@ package org.rosuda.deducer.widgets.param;
 
 import java.awt.Color;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,6 +20,7 @@ import org.rosuda.deducer.plots.ParamScaleLegend;
 import org.rosuda.deducer.plots.PlottingElement;
 import org.rosuda.deducer.plots.Stat;
 import org.rosuda.deducer.plots.Theme;
+import org.rosuda.deducer.widgets.VariableSelectorWidget;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -28,16 +30,17 @@ public abstract class Param implements Cloneable{
 
 	
 	
-	final public static String VIEW_ENTER = "enter";
-	final public static String VIEW_ENTER_LONG = "enter long";
-	final public static String VIEW_COMBO = "combo";
-	final public static String VIEW_EDITABLE_COMBO = "edit combo";
-	final public static String VIEW_CHECK_BOX = "check";
-	final public static String VIEW_VECTOR_BUILDER = "vector";
-	final public static String VIEW_TWO_VALUE_ENTER = "two value";
-	final public static String VIEW_COLOR = "colour";
-	final public static String VIEW_RFUNCTION = "r function view";
-	
+	final public static String VIEW_ENTER = "org.rosuda.deducer.widgets.param.ParamTextFieldWidget";
+	final public static String VIEW_ENTER_LONG = "org.rosuda.deducer.widgets.param.ParamTextFieldLongWidget";
+	final public static String VIEW_COMBO = "org.rosuda.deducer.widgets.param.ParamComboBoxWidget";
+	final public static String VIEW_EDITABLE_COMBO = "org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget";
+	final public static String VIEW_CHECK_BOX = "org.rosuda.deducer.widgets.param.ParamCheckBoxWidget";
+	final public static String VIEW_VECTOR_BUILDER = "org.rosuda.deducer.widgets.param.ParamVectorBuilderWidget";
+	final public static String VIEW_TWO_VALUE_ENTER = "org.rosuda.deducer.widgets.param.ParamTwoValueWidget";
+	final public static String VIEW_COLOR = "org.rosuda.deducer.widgets.param.ParamColorWidget";
+	final public static String VIEW_RFUNCTION = "org.rosuda.deducer.widgets.param.ParamRFunctionWidget";
+	final public static String VIEW_SINGLE_VARIABLE = "org.rosuda.deducer.widgets.param.ParamVariableView";
+	final public static String VIEW_HIDDEN = "org.rosuda.deducer.widgets.param.ParamNullWidget";
 	
 	protected String name;					//name of parameter
 	protected String title;				//title to be displayed
@@ -50,6 +53,8 @@ public abstract class Param implements Cloneable{
 	protected Double lowerBound ;			//If bounded, the lower bound
 	protected Double upperBound ;			//if bounded, the upper bound
 	
+	protected boolean required = true;
+	
 	public Param(){}
 	
 	public Param(String nm){
@@ -57,7 +62,15 @@ public abstract class Param implements Cloneable{
 		setTitle(nm);
 	}
 	
-	public abstract ParamWidget getView();
+	public ParamWidget getView(){
+		try{
+			Class cl =Class.forName(view);
+			Constructor constructor = cl.getConstructor(new Class[]{Param.class});
+			ParamWidget pw = (ParamWidget) constructor.newInstance(new Param[]{this});
+			return pw;
+		}catch(Exception e){e.printStackTrace();return null;}
+		
+	}
 	
 	public abstract Object clone();
 	
@@ -135,6 +148,14 @@ public abstract class Param implements Cloneable{
 
 	public Double getUpperBound() {
 		return upperBound;
+	}
+	
+	public boolean requiresVariableSelector(){
+		return false;
+	}
+	
+	public ParamWidget getView(VariableSelectorWidget s){
+		return getView();
 	}
 	
 	public Element toXML(){
@@ -223,5 +244,16 @@ public abstract class Param implements Cloneable{
 		} 
 		return p;
 	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+
+	public boolean isRequired() {
+		return required;
+	}
 	
+	public boolean hasValidEntry(){
+		return true;
+	}
 }

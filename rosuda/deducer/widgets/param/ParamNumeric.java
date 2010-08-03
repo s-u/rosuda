@@ -13,7 +13,7 @@ public class ParamNumeric extends Param{
 		title = "";
 		value = null;
 		defaultValue = null;
-		view = VIEW_ENTER_LONG;
+		view = VIEW_ENTER;
 	}
 	
 	public ParamNumeric(String nm){
@@ -21,7 +21,15 @@ public class ParamNumeric extends Param{
 		title = nm;
 		value = null;
 		defaultValue = null;
-		view = VIEW_ENTER_LONG;
+		view = VIEW_ENTER;
+	}
+	
+	public ParamNumeric(String nm,double val){
+		name = nm;
+		title = nm;
+		value = new Double(val);
+		defaultValue = new Double(val);
+		view = VIEW_ENTER;
 	}
 	
 	public ParamNumeric(String theName, String theTitle, String theView,
@@ -31,15 +39,15 @@ public class ParamNumeric extends Param{
 		view = theView;
 		value = theValue;
 		defaultValue = theDefaultValue;
-		view = VIEW_ENTER_LONG;
+		view = VIEW_ENTER;
 	}
-	
+	/*
 	public ParamWidget getView(){
 		if(view.equals(ParamNumeric.VIEW_COMBO) || view.equals(ParamNumeric.VIEW_EDITABLE_COMBO))
 			return new ParamComboBoxWidget(this);
 		else
 			return new ParamTextFieldWidget(this);
-	}
+	}*/
 	
 	public Object clone(){
 		ParamNumeric p = new ParamNumeric();
@@ -149,4 +157,7 @@ public class ParamNumeric extends Param{
 			defaultValue = null;
 	}
 	
+	public boolean hasValidEntry(){
+		return value!=null || defaultValue!=null;
+	}
 }

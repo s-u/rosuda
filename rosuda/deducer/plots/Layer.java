@@ -97,7 +97,7 @@ public class Layer implements ElementModel{
 				paramCalls.add("stat = '"+stat.name+"'");
 		}else if(isStat){
 			func = "stat_"+stat.name;
-			if(stat.defaultGeom.equals(geom.name))
+			if(!stat.defaultGeom.equals(geom.name))
 				paramCalls.add("geom = '"+geom.name+"'");
 		}
 		if(!(pos.name.equals(geom.defaultPosition) && pos.height==null && pos.width==null)){

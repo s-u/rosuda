@@ -16,6 +16,14 @@ public class RFunction {
 	private String name;
 	private Vector params = new Vector();
 	
+	public RFunction(){}
+	
+	public RFunction(String name){
+		this.setName(name);
+	}
+	
+	
+	
 	public Vector getParams(){return params;}
 	public void setParams(Vector p){params = p;}
 	public String getName(){return name;}
@@ -32,6 +40,12 @@ public class RFunction {
 
 	
 	public String checkValid() {
+		for(int i=0;i<params.size();i++){
+			Param p = (Param) params.get(i);
+			if(p.isRequired() && !p.hasValidEntry()){
+				return "'" +p.getTitle() + "' is required. Please enter a value.";
+			}
+		}
 		return null;
 	}
 
@@ -44,13 +58,22 @@ public class RFunction {
 			for(int j=0;j<p.length;j++)
 				paramCalls.add(p[j]);				
 		}
+		
+		//remove duplicates
+		for(int i=paramCalls.size()-1;i>0;i--)
+			for(int j =i-1;j>=0;j--)
+				if(paramCalls.get(i).equals(paramCalls.get(j)))
+					paramCalls.remove(j);
+
 		String call = Deducer.makeRCollection(paramCalls, name, false);
 		return call;
 	}
 
 
 	public RFunctionView getView() {
-		return new DefaultRFunctionView(this);
+		try{
+			return new DefaultRFunctionView(this);
+		}catch(Exception e){e.printStackTrace();return null;}
 	}
 	
 	public void add(Param p){

@@ -29,13 +29,13 @@ public class ParamRFunction extends Param{
 		view = VIEW_RFUNCTION;
 	}
 	
-	public ParamWidget getView(){
+	/*public ParamWidget getView(){
 		if(getViewType().equals(Param.VIEW_RFUNCTION))
 			return new ParamRFunctionWidget(this);
 		System.out.println("invalid view");
 		(new Exception()).printStackTrace();
 		return null;
-	}
+	}*/
 	
 	public Object clone(){
 		ParamRFunction p = new ParamRFunction();
@@ -228,5 +228,7 @@ public class ParamRFunction extends Param{
 		}
 	}
 	
-	
+	public boolean hasValidEntry(){
+		return value!=null && value.get(0)!=null || defaultValue!=null;
+	}
 }

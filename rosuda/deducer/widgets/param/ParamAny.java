@@ -24,6 +24,14 @@ public class ParamAny extends Param{
 		view = VIEW_ENTER_LONG;
 	}
 	
+	public ParamAny(String nm,String value){
+		name = nm;
+		title = nm;
+		this.value = value;
+		defaultValue = value;
+		view = VIEW_ENTER_LONG;		
+	}
+	
 	public ParamAny(String theName, String theTitle, String theView,
 			String theValue,String theDefaultValue){
 		name = theName;
@@ -33,10 +41,10 @@ public class ParamAny extends Param{
 		defaultValue = theDefaultValue;
 		view = VIEW_ENTER_LONG;
 	}
-	
+	/*
 	public ParamWidget getView(){
 		return new ParamTextFieldWidget(this);
-	}
+	}*/
 	
 	public Object clone(){
 		ParamAny p = new ParamAny();
@@ -119,4 +127,7 @@ public class ParamAny extends Param{
 			defaultValue = null;
 	}
 	
+	public boolean hasValidEntry(){
+		return value!=null && value.length()>0 || defaultValue!=null;
+	}
 }

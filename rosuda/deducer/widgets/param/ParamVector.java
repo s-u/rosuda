@@ -27,6 +27,14 @@ public class ParamVector extends Param{
 		view = Param.VIEW_VECTOR_BUILDER;
 	}
 	
+	public ParamVector(String nm,String[] val){
+		name = nm;
+		title = nm;
+		value = val;
+		defaultValue = val;
+		view = Param.VIEW_VECTOR_BUILDER;
+	}
+	
 	public ParamVector(String theName, String theTitle, String theView,
 			String[] theValue,String[] theDefaultValue,boolean isNumeric){
 		name = theName;
@@ -186,5 +194,7 @@ public class ParamVector extends Param{
 		
 	}
 	
-
+	public boolean hasValidEntry(){
+		return value!=null && value.length>0 || (defaultValue!=null && defaultValue.length>0);
+	}
 }

@@ -24,7 +24,23 @@ public class ParamColor extends Param{
 		title = nm;
 		value = null;
 		defaultValue = null;
-		view = VIEW_ENTER_LONG;
+		view = VIEW_COLOR;
+	}
+	
+	public ParamColor(String nm, String val){
+		name = nm;
+		title = nm;
+		value = Color.decode(val);
+		defaultValue = Color.decode(val);
+		view = VIEW_COLOR;
+	}
+	
+	public ParamColor(String nm, Color val){
+		name = nm;
+		title = nm;
+		value = val;
+		defaultValue = val;
+		view = VIEW_COLOR;
 	}
 	
 	public ParamColor(String theName, String theTitle, String theView,
@@ -34,7 +50,6 @@ public class ParamColor extends Param{
 		view = theView;
 		value = Color.decode(theValue);
 		defaultValue = Color.decode(theDefaultValue);
-		view = VIEW_ENTER_LONG;
 	}
 	
 	public ParamColor(String theName, String theTitle, String theView,
@@ -44,16 +59,16 @@ public class ParamColor extends Param{
 		view = theView;
 		value = theValue;
 		defaultValue =theDefaultValue;
-		view = VIEW_ENTER_LONG;
+		view = VIEW_COLOR;
 	}
-	
+	/*
 	public ParamWidget getView(){
 		if(getViewType().equals(Param.VIEW_COLOR))
 			return new ParamColorWidget(this);
 		System.out.println("invalid view");
 		(new Exception()).printStackTrace();
 		return null;
-	}
+	}*/
 	
 	public Object clone(){
 		Param p = new ParamColor();
@@ -131,5 +146,9 @@ public class ParamColor extends Param{
 			value = Color.decode(node.getAttribute("value"));
 		if(node.hasAttribute("defaultValue"))
 			defaultValue = Color.decode(node.getAttribute("defaultValue"));
+	}
+	
+	public boolean hasValidEntry(){
+		return value!=null || defaultValue!=null;
 	}
 }

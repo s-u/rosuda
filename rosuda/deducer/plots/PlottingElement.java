@@ -6,7 +6,11 @@ import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.net.URL;
 
 import javax.swing.BoxLayout;
@@ -16,6 +20,11 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -311,6 +320,58 @@ public class PlottingElement implements Transferable{
 			mod.setFromXML(e);
 			model = mod;
 		} catch (Exception e1) {e1.printStackTrace();}
+	}
+	
+	public void saveToFile(File f){
+		
+		
+		Element e = this.toXML();
+		Document doc = e.getOwnerDocument();
+		try{
+			TransformerFactory transfac = TransformerFactory.newInstance();
+			Transformer trans;
+			trans = transfac.newTransformer();
+			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			trans.setOutputProperty(OutputKeys.INDENT, "yes");
+			StringWriter sw = new StringWriter();
+			StreamResult result = new StreamResult(sw);
+			DOMSource source = new DOMSource(doc);
+			trans.transform(source, result);
+			String xmlString = sw.toString();
+			//System.out.println(xmlString);
+			
+			FileOutputStream fos = new FileOutputStream(f);
+			OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
+			out.write(xmlString);
+			
+			out.close();
+			fos.close();
+			sw.close();
+			
+		}catch(Exception ex){ex.printStackTrace();}
+	}
+	
+	public void setFromFile(File f){
+		try{
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.parse(f);
+			Element e = (Element)doc.getChildNodes().item(0);
+			
+			TransformerFactory transfac = TransformerFactory.newInstance();
+			Transformer trans;
+			trans = transfac.newTransformer();
+			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			trans.setOutputProperty(OutputKeys.INDENT, "yes");
+			StringWriter sw = new StringWriter();
+			StreamResult result = new StreamResult(sw);
+			DOMSource source = new DOMSource(doc);
+			trans.transform(source, result);
+			String xmlString = sw.toString();
+			//System.out.println(xmlString);
+			
+			
+			this.setFromXML(e);
+		}catch(Exception ex){ex.printStackTrace();}
 	}
 }
 

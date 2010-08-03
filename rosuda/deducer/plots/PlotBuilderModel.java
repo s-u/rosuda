@@ -48,13 +48,14 @@ public class PlotBuilderModel {
 	public String getCall(){
 		String cmd ="";
 		cmd+="ggplot()";
-		boolean hasLayer = false;
+		boolean hasLayerOrTemplate = false;
 		for(int i=0;i<listModel.getSize();i++){
 			PlottingElement e = (PlottingElement) listModel.get(i);
-			if(e.getModel().getType().equals("layer"))
-				hasLayer=true;
+			if(e.getModel().getType().equals("layer") ||
+					e.getModel().getType().equals("template"))
+				hasLayerOrTemplate=true;
 		}
-		if(!hasLayer)
+		if(!hasLayerOrTemplate)
 			return null;
 		for(int i=0;i<listModel.getSize();i++){
 			PlottingElement e = (PlottingElement) listModel.get(i);
@@ -124,8 +125,10 @@ public class PlotBuilderModel {
 		}
 		try{
 			listModel = new DefaultListModel();
-			NodeList nl = node.getElementsByTagName("PlottingElement");
+			NodeList nl = node.getChildNodes();// .getElementsByTagName("PlottingElement");
 			for(int i=0;i<nl.getLength();i++){
+				if(!(nl.item(i) instanceof Element))
+					continue;
 				Element e = (Element) nl.item(i);
 				String className = e.getAttribute("className");
 				PlottingElement pe = (PlottingElement) Class.forName(className).newInstance();

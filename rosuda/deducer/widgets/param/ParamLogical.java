@@ -23,6 +23,14 @@ public class ParamLogical extends Param{
 		view = VIEW_CHECK_BOX;
 	}
 	
+	public ParamLogical(String nm,boolean val){
+		name = nm;
+		title = nm;
+		value = new Boolean(val);
+		defaultValue = new Boolean(val);
+		view = VIEW_CHECK_BOX;
+	}
+	
 	public ParamLogical(String theName, String theTitle, String theView,
 			Boolean theValue,Boolean theDefaultValue){
 		name = theName;
@@ -32,14 +40,14 @@ public class ParamLogical extends Param{
 		defaultValue = theDefaultValue;
 		view = VIEW_CHECK_BOX;
 	}
-	
+	/*
 	public ParamWidget getView(){
 		if(getViewType().equals(Param.VIEW_CHECK_BOX))
 			return new ParamCheckBoxWidget(this);
 		System.out.println("invalid view: " + getViewType());
 		(new Exception()).printStackTrace();
 		return null;
-	}
+	}*/
 	
 	public Object clone(){
 		ParamLogical p = new ParamLogical();
@@ -131,4 +139,7 @@ public class ParamLogical extends Param{
 			defaultValue = null;
 	}
 	
+	public boolean hasValidEntry(){
+		return value!=null || defaultValue!=null;
+	}
 }

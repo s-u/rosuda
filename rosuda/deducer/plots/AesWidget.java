@@ -71,6 +71,8 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	private AesComboBoxEditor editor;
 	private VariableSelector variableSelector;
 	
+	private boolean showToggle = true;
+	
 	private Color neededItemBackground = Color.decode("#fff3f6");
 	
 	private static String iconRoot = "";
@@ -100,8 +102,8 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	
 	public AesWidget(Aes aes,VariableSelector var){
 		this();
-		setModel(aes);
 		setVariableSelector(variableSelector);
+		setModel(aes);		
 	}
 	
 	private void initGUI() {
@@ -664,6 +666,17 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		}
 	}
 	
+	public void setShowToggle(boolean showToggle) {
+		this.showToggle = showToggle;
+		toggleVariable.setVisible(showToggle);
+		toggleValue.setVisible(showToggle);
+
+	}
+
+	public boolean isShowToggle() {
+		return showToggle;
+	}
+
 	class AesComboBoxEditor extends JLabel implements ComboBoxEditor {
 
 		public AesComboBoxEditor() {

@@ -107,6 +107,7 @@ public class ParamRFunctionWidget extends ParamWidget implements ActionListener{
 			HashMap hm = (HashMap) ((Vector)model.getValue()).get(1);
 			RFunction rf = (RFunction) hm.get(fun);
 			RFunctionDialog d = new RFunctionDialog(rf);
+			d.setRun(false);
 			d.setModal(true);
 			d.setLocationRelativeTo(options);
 			d.setSize(300, 300);

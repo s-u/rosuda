@@ -26,6 +26,14 @@ public class ParamCharacter extends Param{
 		view = VIEW_ENTER_LONG;
 	}
 	
+	public ParamCharacter(String nm,String val){
+		name = nm;
+		title = nm;
+		value = val;
+		defaultValue = val;
+		view = VIEW_ENTER_LONG;
+	}
+	
 	public ParamCharacter(String theName, String theTitle, String theView,
 			String theValue,String theDefaultValue){
 		name = theName;
@@ -35,7 +43,7 @@ public class ParamCharacter extends Param{
 		defaultValue = theDefaultValue;
 		view = VIEW_ENTER_LONG;
 	}
-	
+	/*
 	public ParamWidget getView(){
 		if(getViewType().equals(Param.VIEW_ENTER) || 
 				getViewType().equals(Param.VIEW_ENTER_LONG))
@@ -46,7 +54,7 @@ public class ParamCharacter extends Param{
 		System.out.println("invalid view");
 		(new Exception()).printStackTrace();
 		return null;
-	}
+	}*/
 	
 	public Object clone(){
 		Param p = new ParamCharacter();
@@ -127,4 +135,7 @@ public class ParamCharacter extends Param{
 			defaultValue = node.getAttribute("defaultValue");
 	}
 	
+	public boolean hasValidEntry(){
+		return value!=null && value.length()>0 || defaultValue!=null;
+	}
 }

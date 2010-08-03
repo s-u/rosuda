@@ -133,7 +133,7 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 		DefaultListModel mod = new DefaultListModel();
 		if(var!=null)
 			mod.addElement(var);
-		setModel(var);
+		setModel(mod);
 
 	}
 	

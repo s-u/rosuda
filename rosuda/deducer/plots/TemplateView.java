@@ -12,51 +12,78 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 
+import org.rosuda.JGR.layout.AnchorConstraint;
+import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.widgets.VariableSelectorWidget;
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamWidget;
 
-public class DefaultElementView extends ElementView{
+public class TemplateView extends ElementView{
 	protected JScrollPane scroller;
 	protected JPanel paramPanel;
-	protected ElementModel model;
+	protected Template model;
+	protected VariableSelectorWidget selector;
 	
 	protected Vector widgets = new Vector();
 	
-	public DefaultElementView(){
+	public TemplateView(){
 		initGui();
 	}
 	
-	public DefaultElementView(ElementModel el){
+	public TemplateView(Template el){
 		initGui();
 		setModel(el);
 	}
 	
 	
 	private void initGui(){
-		this.setLayout(new BorderLayout());
+		paramPanel = new JPanel();
 		scroller = new JScrollPane();
+		scroller.setViewportView(paramPanel);
 		scroller.setHorizontalScrollBarPolicy(
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
 		scroller.setBorder(border);
-		this.add(scroller);
-		{
-			paramPanel = new JPanel();
-			scroller.setViewportView(paramPanel);
+		if(selector == null){
+			selector = new VariableSelectorWidget();
+			selector.setPreferredSize(new Dimension(150,300));
 		}
+		this.removeAll();
+		AnchorLayout thisLayout = new AnchorLayout();
+		this.setLayout(thisLayout);
+		this.add(scroller, new AnchorConstraint(60, 1000, 1000, 160, 
+				AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL,
+				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS));
+		this.add(selector, new AnchorConstraint(20, 90, 1000, 10, 
+				AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE,
+				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS));	
 	}
 	
 	public void updatePanel(){
 		paramPanel.removeAll();
 		BoxLayout thisLayout = new BoxLayout(paramPanel, javax.swing.BoxLayout.Y_AXIS);
 		paramPanel.setLayout(thisLayout);	
-		//Vector paramNames = new Vector();
+
+		for(int i=0;i<model.getAess().size();i++){
+			Aes p = (Aes) model.getAess().get(i);
+			AesWidget a = new AesWidget();
+			a.setVariableSelector(selector);
+			a.setModel(p);
+			a.setShowToggle(false);
+			a.setAlignmentX(CENTER_ALIGNMENT);
+			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));		
+			widgets.add(a);
+			paramPanel.add(a);
+			paramPanel.add(Box.createRigidArea(new Dimension(0,10)));
+		}
+		
+		paramPanel.add(Box.createRigidArea(new Dimension(0,30)));
+
 		for(int i=0;i<model.getParams().size();i++){
 			Param p = (Param) model.getParams().get(i);
 			ParamWidget a = p.getView();
 			a.setAlignmentX(CENTER_ALIGNMENT);
-			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));
-			//paramNames.add(a.getModel().title);			
+			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));		
 			widgets.add(a);
 			paramPanel.add(a);
 			paramPanel.add(Box.createRigidArea(new Dimension(0,10)));
@@ -70,7 +97,7 @@ public class DefaultElementView extends ElementView{
 		return model;
 	}
 
-	public void setModel(ElementModel el) {
+	public void setModel(Template el) {
 		model = el;
 		updatePanel();
 	}
@@ -84,6 +111,10 @@ public class DefaultElementView extends ElementView{
 				((ParamWidget)o).updateModel();
 			}
 		}
+		model.updateElementModels();
 	}
 
+	public void setModel(ElementModel el) {
+		setModel((Template) el);
+	}
 }

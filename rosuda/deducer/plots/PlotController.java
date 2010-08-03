@@ -8,6 +8,7 @@ public class PlotController {
 	public static boolean initialized = false;
 	protected static String[] names = {"Templates","Geometric Elements",
 		"Statistics","Scales","Facets","Coordinates","Other"};
+	protected static Map templates;
 	protected static Map geoms;
 	protected static Map stats;
 	protected static Map scales;
@@ -15,6 +16,7 @@ public class PlotController {
 	protected static Map themes;
 	protected static Map coords;
 	protected static Map pos;
+	protected static String[] templateNames = new String[]{};
 	protected static String[] geomNames = {"abline","area","bar","bin2d","blank","boxplot","contour","crossbar","density","density2d",
 			"errorbar","errorbarh","freqpoly","hex","histogram","hline","jitter","line","linerange",
 			"path","point","pointrange","polygon","quantile","rect","ribbon","smooth","step","text",
@@ -34,6 +36,8 @@ public class PlotController {
 	
 	public static void init(){
 		if(initialized==false){
+			templates = new LinkedHashMap();
+			
 			geoms = new LinkedHashMap();
 			for(int j=0;j<geomNames.length;j++)
 				geoms.put(geomNames[j], PlottingElement.createElement("geom",geomNames[j]));
@@ -106,6 +110,25 @@ public class PlotController {
 	public static String[] getThemeNames(){
 		return themeNames;
 	}
+	
+	public static Map getTemplates(){
+		return templates;
+	}
+	public static String[] getTemplateNames(){
+		return templateNames;
+	}
+	
+	
+	public static void addTemplate(PlottingElement pe){
+		String[] nm = templateNames;
+		int l = nm.length;
+		String[] newNames = new String[l+1];
+		for(int i=0;i<l;i++)
+			newNames[i] = nm[i];
+		newNames[l] = pe.getName();
+		templates.put(pe.getName(), pe);
+	}
+	
 	
 	public static void addGeom(PlottingElement pe){
 		String[] nm = geomNames;

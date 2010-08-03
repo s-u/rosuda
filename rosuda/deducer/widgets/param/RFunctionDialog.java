@@ -2,6 +2,7 @@ package org.rosuda.deducer.widgets.param;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
@@ -18,21 +19,26 @@ import javax.swing.JPanel;
 
 public class RFunctionDialog extends javax.swing.JDialog implements ActionListener {
 	private JPanel panel;
-	private JPanel okayCancel;
+	private OkayCancelPanel okayCancel;
 	private HelpButton help;
 	private RFunctionView view;
 	private RFunction initialModel;
 	private RFunction model;
+	
+	private boolean isRun = true;
+	
 	public RFunctionDialog(JFrame frame,RFunction el) {
 		super(frame);
 		initGUI();
 		setModel(el);
+		setRun(true);
 	}
 	
 	public RFunctionDialog(RFunction el) {
 		super();
 		initGUI();
 		setModel(el);
+		setRun(true);
 	}
 	
 	private void initGUI() {
@@ -75,12 +81,11 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 		panel.add(view);
 		initialModel = (RFunction) el.clone();
 		model = el;
+		this.setTitle(el.getName());
 	}
 	public void setToInitialModel(){
 		RFunction newModel = (RFunction) initialModel.clone();
-		model.setName(newModel.getName());
-		model.setParams(newModel.getParams());
-		setModel(model);
+		setModel(newModel);
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {
@@ -91,16 +96,39 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 			if(s!=null){
 				JOptionPane.showMessageDialog(this, s);
 			}else{
+				initialModel = (RFunction) model.clone();
 				this.dispose();
 			}
 		}else if(cmd == "Cancel"){
 			setToInitialModel();
 			this.dispose();
+		}else if(cmd == "Run"){
+			view.updateModel();
+			String s = view.getModel().checkValid();
+			if(s!=null){
+				JOptionPane.showMessageDialog(this, s);
+			}else{
+				initialModel = (RFunction) model.clone();
+				this.dispose();
+				Deducer.execute(model.getCall());
+			}
 		}
 	}
 
 	private HelpButton getHelpButton() {
 		return help;
+	}
+
+	public void setRun(boolean isRun) {
+		if(isRun)
+			okayCancel.getApproveButton().setText("Run");
+		else
+			okayCancel.getApproveButton().setText("OK");
+		this.isRun = isRun;
+	}
+
+	public boolean isRun() {
+		return isRun;
 	}
 	
 }
