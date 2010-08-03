@@ -365,6 +365,10 @@ public class Coord implements ElementModel{
 			p.setFromXML(n);
 			params.add(p);
 		}
+	}
+
+	public String getData() {
+		return null;
 	}	
 	
 	

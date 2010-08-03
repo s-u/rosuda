@@ -1,6 +1,7 @@
 package org.rosuda.deducer.plots;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Toolkit;
@@ -19,6 +20,7 @@ import java.awt.event.WindowListener;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.REngine.REXP;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
@@ -39,6 +41,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -847,7 +850,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 							PlottingElement el = (PlottingElement) element.clone();
 							Template t = (Template) el.getModel();
 							for(int i=0;i<t.mAess.length;i++){
-								System.out.println("here");
+								//System.out.println("here");
 								t.mAess[i].aes.variable = null;
 							}
 							t.updateElementModels();
@@ -1064,10 +1067,17 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		public void actionPerformed(ActionEvent ae) {
 			String cmd = ae.getActionCommand();
 			if(cmd.equals("save")){
-				JFileChooser c = new JFileChooser("Save plot");
-				int ret = c.showDialog(null, "Save");
-				if(ret == JFileChooser.APPROVE_OPTION){
-					File f = c.getSelectedFile();
+				FileSelector fileDialog = new FileSelector(PlotBuilder.this, 
+						"Save plot", FileSelector.SAVE, null, true);
+				JPanel dataPanel = new JPanel();
+				dataPanel.setLayout(new FlowLayout());
+				JCheckBox saveData = new JCheckBox("Save with data");
+				saveData.setSelected(true);
+				dataPanel.add(saveData);
+				fileDialog.addFooterPanel(dataPanel);
+				fileDialog.setVisible(true);
+				if(fileDialog.getFile() !=null){
+					File f = fileDialog.getSelectedFile();
 					if(!f.getName().endsWith(".ggp"))
 						f = new File(f.getPath() + ".ggp");
 					if(f.exists()){
@@ -1075,13 +1085,14 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 						if(o != JOptionPane.OK_OPTION)
 							return;
 					}
-					model.saveToFile(f);
+					model.saveToFile(f,saveData.isSelected());
 				}
 			}else if(cmd.equals("open")){
-				JFileChooser c = new JFileChooser("Open plot");
-				int ret = c.showOpenDialog(null);
-				if(ret == JFileChooser.APPROVE_OPTION){
-					File f = c.getSelectedFile();
+				FileSelector fileDialog = new FileSelector(PlotBuilder.this, 
+						"Open plot", FileSelector.LOAD, null, true);
+				fileDialog.setVisible(true);
+				if(fileDialog.getFile() != null){
+					File f = fileDialog.getSelectedFile();
 					if(!f.getName().endsWith(".ggp")){
 						JOptionPane.showMessageDialog(null, "This does not appear to be a"
 								+" ggplot2 PlotBuilder file (extension .ggp)");
@@ -1099,6 +1110,13 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				pb.setVisible(true);
 				WindowTracker.addWindow(pb);
 			}else if(cmd.equals("template")){
+				DefaultListModel mod = model.getListModel();
+				for(int i=0;i<mod.size();i++)
+					if(((PlottingElement)mod.get(i)).getModel() instanceof CompoundElementModel){
+						JOptionPane.showMessageDialog(null, "Can not create a template from a plot containing a template.");
+						return;
+					}
+						
 				Template t = Template.makeTemplate(model);
 				String tName = JOptionPane.showInputDialog("template name (e.g. scatter)");
 				if(tName=="")
@@ -1111,7 +1129,6 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				newModel.getListModel().addElement(pe);
 				setModel(newModel);
 				updatePlot();
-				//PlotController.addFacet(pe);
 			}else if(cmd.equals("import")){
 				JFileChooser c = new JFileChooser("Import template");
 				int ret = c.showOpenDialog(null);

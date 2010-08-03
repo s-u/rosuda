@@ -132,4 +132,7 @@ public class Facet implements ElementModel{
 		Element el = (Element) node.getElementsByTagName("*").item(0);
 		param.setFromXML(el);
 	}	
+	public String getData() {
+		return data;
+	}	
 }

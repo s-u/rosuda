@@ -26,6 +26,8 @@ public class Template implements CompoundElementModel{
 
 	protected PlottingElement[] elements = new PlottingElement[]{};
 	
+	private String data;
+	
 	protected MaskingAes[] mAess = new MaskingAes[]{};
 	protected MaskingParam[] mParams = new MaskingParam[]{};
 	
@@ -84,6 +86,11 @@ public class Template implements CompoundElementModel{
 			(new Exception()).printStackTrace();
 		}
 		
+		if(node.hasAttribute("data"))
+			data = node.getAttribute("data");
+		else 
+			data = null;
+		
 		Element child;
 		NodeList nl;
 		
@@ -121,13 +128,14 @@ public class Template implements CompoundElementModel{
 
 	public Element toXML() {
 		try{
-			System.out.println("toXml: "+getCall());
+			//System.out.println("toXml: "+getCall());
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
 			Element node = doc.createElement("ElementModel");
 			node.setAttribute("className", "org.rosuda.deducer.plots.Template");
-			
+			if(data!=null)
+				node.setAttribute("data", data);
 			Element tmpNode = doc.createElement("elements");
 			for(int i=0;i<elements.length;i++){
 				Element pEl = elements[i].toXML();
@@ -169,7 +177,7 @@ public class Template implements CompoundElementModel{
 		t.mParams = new MaskingParam[mParams.length];
 		for(int i=0;i<mParams.length;i++)
 			t.mParams[i] = (MaskingParam) mParams[i].clone(t);
-		
+		t.data = this.data;
 		return t;
 	}
 	
@@ -234,11 +242,16 @@ public class Template implements CompoundElementModel{
 	}
 	
 	public void updateElementModels(){
+		for(int i=0;i<elements.length;i++){
+			ElementModel em =elements[i].getModel();
+			if(em instanceof Layer){
+				((Layer)em).data = data;
+			}
+		}		
 		for(int i=0;i<mAess.length;i++)
 			mAess[i].update();
 		for(int i=0;i<mParams.length;i++)
 			mParams[i].update();
-		System.out.println("updateElementModels "+getCall());
 	}
 	
 	public static Template makeTemplate(PlotBuilderModel pbm){
@@ -297,7 +310,7 @@ public class Template implements CompoundElementModel{
 		}
 		
 		public void update(){
-			System.out.println(name+ " : " + elementIndices.toString());
+			//System.out.println(name+ " : " + elementIndices.toString());
 			for(int i=0;i<elementIndices.size();i++){
 				Layer l =((Layer) getModels()[((Integer)elementIndices.get(i)).intValue()]);
 				Vector aess = l.aess;
@@ -310,7 +323,7 @@ public class Template implements CompoundElementModel{
 							layerAes.variable = aes.variable;
 						else
 							layerAes.value = aes.value;
-						System.out.println(isMap + " aess " +layerAes.name + layerAes.variable);
+						//System.out.println(isMap + " aess " +layerAes.name + layerAes.variable);
 					}
 				}
 				
@@ -323,7 +336,7 @@ public class Template implements CompoundElementModel{
 							layerAes.variable = aes.variable;
 						else
 							layerAes.value = aes.value;
-						System.out.println(l.getName() + " stat " + layerAes.name + layerAes.variable);
+						//System.out.println(l.getName() + " stat " + layerAes.name + layerAes.variable);
 					}
 				}
 				
@@ -337,7 +350,7 @@ public class Template implements CompoundElementModel{
 							layerAes.variable = aes.variable;
 						else
 							layerAes.value = aes.value;
-						System.out.println(l.getName() + " geom " + layerAes.name + layerAes.variable);
+						//System.out.println(l.getName() + " geom " + layerAes.name + layerAes.variable);
 					}
 				}
 			}
@@ -391,7 +404,7 @@ public class Template implements CompoundElementModel{
 			show = node.getAttribute("show").equals("true");
 			isMap = node.getAttribute("isMap").equals("true");
 			Element n = (Element) node.getElementsByTagName("Aes").item(0);
-			System.out.println(node.getElementsByTagName("Aes").toString());
+			//System.out.println(node.getElementsByTagName("Aes").toString());
 			Aes a = new Aes();
 			a.setFromXML(n);
 			aes = a;
@@ -519,6 +532,14 @@ public class Template implements CompoundElementModel{
 			
 			this.setFromXML(e);
 		}catch(Exception ex){ex.printStackTrace();}
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
+	public String getData() {
+		return data;
 	}
 	
 }

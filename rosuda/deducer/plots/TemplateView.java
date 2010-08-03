@@ -99,10 +99,13 @@ public class TemplateView extends ElementView{
 
 	public void setModel(Template el) {
 		model = el;
+		if(!selector.getSelectedData().equals(model.getData()) && model.getData()!=null)
+			selector.setSelectedData(model.getData());
 		updatePanel();
 	}
 
 	public void updateModel() {
+		model.setData(selector.getSelectedData());
 		for(int i=0;i<widgets.size();i++){
 			Object o = widgets.get(i);
 			if(o instanceof AesWidget){

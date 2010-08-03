@@ -236,6 +236,9 @@ public class Layer implements ElementModel{
 		return name;
 	}
 	
+	public String getData() {
+		return data;
+	}	
 	
 	public Element toXML(){
 		try{

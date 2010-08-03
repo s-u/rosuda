@@ -526,6 +526,10 @@ public class Theme implements ElementModel{
 		return name;
 	}
 	
+	public String getData() {
+		return null;
+	}	
+	
 	public Element toXML() {
 		try{
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();

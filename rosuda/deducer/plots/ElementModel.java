@@ -12,6 +12,7 @@ public interface ElementModel {
 	public abstract String getType();
 	public abstract ElementView getView();
 	public abstract Vector getParams();
+	public abstract String getData();
 	public abstract Object clone();
 	public abstract Element toXML();
 	public abstract void setFromXML(Element node);

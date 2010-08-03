@@ -884,6 +884,9 @@ public class Scale implements ElementModel{
 		return name;
 	}
 	
+	public String getData() {
+		return null;
+	}	
 	
 	public Element toXML() {
 		try{

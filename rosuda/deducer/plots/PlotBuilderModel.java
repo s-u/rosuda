@@ -1,10 +1,16 @@
 package org.rosuda.deducer.plots;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -16,6 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.rosuda.deducer.Deducer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -138,7 +145,7 @@ public class PlotBuilderModel {
 		} catch (Exception e1) {e1.printStackTrace();}
 	}
 	
-	public void saveToFile(File f){
+	public void saveToFile(File f,boolean withData){
 		Element e = this.toXML();
 		Document doc = e.getOwnerDocument();
 		try{
@@ -154,38 +161,142 @@ public class PlotBuilderModel {
 			String xmlString = sw.toString();
 			//System.out.println(xmlString);
 			
-			FileOutputStream fos = new FileOutputStream(f);
+			String dir = f.getParent();
+			//System.out.println("dir="+dir);
+			
+			File tmpDir = new File(dir , "tmp_plot_dir");
+			tmpDir.mkdir();
+			File plotFile = new File(tmpDir.getPath() , "plot.xml");
+			//plotFile.mkdirs();
+			//System.out.println(plotFile.getPath() + "  " + plotFile.exists());
+			
+			FileOutputStream fos = new FileOutputStream(plotFile);
 			OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
 			out.write(xmlString);
 			
 			out.close();
 			fos.close();
-			sw.close();
+			sw.close();			
+			
+			if(withData){
+				Vector dataFrames = new Vector();
+				for(int i=0;i<listModel.size();i++){
+					PlottingElement el = (PlottingElement) listModel.get(i);
+					ElementModel em = el.getModel();
+					if(em.getData()!=null && !dataFrames.contains(em.getData()))
+						dataFrames.add(em.getData());
+				}
+				if(dataFrames.size()>0){
+					String dat = Deducer.makeRCollection(dataFrames,"c",true);
+					String fileCall = tmpDir.getAbsolutePath() + "/" + "data.RData";
+					if(System.getProperties().getProperty( "file.separator" ).equals("\""))
+						fileCall.replace('\\','/');
+					String call = "save(list="+dat+",file=\""+Deducer.addSlashes(fileCall)+"\")";
+					//System.out.println(call);
+					Deducer.eval(call);
+				}
+			}
+			
+			byte[] buffer = new byte[18024];
+			ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(f));
+			File[] filesToZip = tmpDir.listFiles();
+			for(int i=0;i<filesToZip.length;i++){
+				FileInputStream in = new FileInputStream(filesToZip[i]);
+				zout.putNextEntry(new ZipEntry(filesToZip[i].getName()));
+				int len;
+		        while ((len = in.read(buffer)) > 0){
+		        	zout.write(buffer, 0, len);
+		        }
+		        zout.closeEntry();
+		        filesToZip[i].delete();
+		        in.close();
+			}
+			tmpDir.delete();
+			zout.close();
+			//FileOutputStream fos = new FileOutputStream(f);
+			//OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
+			//out.write(xmlString);
+			
+
 			
 		}catch(Exception ex){ex.printStackTrace();}
 	}
 	
 	public void setFromFile(File f){
 		try{
+			int BUFFER = 2048;
+			String dataName = "data.RData";
+			String plotName = "plot.xml";		
+			
+			String dir = f.getParent();
+			//System.out.println("dir="+dir);
+			
+			File tmpDir = new File(dir , "tmp_plot_dir");
+			tmpDir.mkdir();
+			
+			File plotFile = new File(tmpDir.getPath() , plotName);
+			
+			File dataFile = new File(tmpDir.getPath() , dataName);
+			
+			ZipFile zipFile = new ZipFile(f, ZipFile.OPEN_READ);
+			
+			ZipEntry entry = zipFile.getEntry(dataName);
+			
+			if(entry!=null){
+				BufferedInputStream is =
+					new BufferedInputStream(zipFile.getInputStream(entry));
+				int currentByte;
+				// establish buffer for writing file
+				byte data[] = new byte[BUFFER];
+				
+				// write the current file to disk
+				FileOutputStream fos = new FileOutputStream(dataFile);
+				BufferedOutputStream dest =new BufferedOutputStream(fos, BUFFER);
+				
+				// read and write until last byte is encountered
+				while ((currentByte = is.read(data, 0, BUFFER)) != -1){
+					dest.write(data, 0, currentByte);
+				}
+				dest.flush();
+				dest.close();
+				is.close();
+				String fileCall = dataFile.getAbsolutePath();
+				if(System.getProperties().getProperty( "file.separator" ).equals("\""))
+					fileCall.replace('\\','/');
+				String call = "load(\"" +Deducer.addSlashes(fileCall) + "\"" +")";
+				System.out.println("\nNote: loading data from " + f.getName() + "\n");
+				Deducer.eval(call);
+				dataFile.delete();
+			}
+			
+			entry = zipFile.getEntry(plotName);
+			
+			BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry));
+			// establish buffer for writing file
+			byte[] data = new byte[BUFFER];
+			int currentByte;
+			// write the current file to disk
+			FileOutputStream fos = new FileOutputStream(plotFile);
+			BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
+			
+			// read and write until last byte is encountered
+			while ((currentByte = is.read(data, 0, BUFFER)) != -1){
+				dest.write(data, 0, currentByte);
+			}
+			dest.flush();
+			dest.close();
+			is.close();
+			
+			
+			
 			listModel.removeAllElements();
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = builder.parse(f);
+			Document doc = builder.parse(plotFile);
 			Element e = (Element)doc.getChildNodes().item(0);
-			
-			TransformerFactory transfac = TransformerFactory.newInstance();
-			Transformer trans;
-			trans = transfac.newTransformer();
-			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			trans.setOutputProperty(OutputKeys.INDENT, "yes");
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			DOMSource source = new DOMSource(doc);
-			trans.transform(source, result);
-			String xmlString = sw.toString();
-			//System.out.println(xmlString);
-			
-			
 			this.setFromXML(e);
+			plotFile.delete();
+			tmpDir.delete();
+			
 		}catch(Exception ex){ex.printStackTrace();}
 	}
 	
