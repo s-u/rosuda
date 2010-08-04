@@ -3,6 +3,9 @@ package org.rosuda.deducer.plots;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
@@ -14,7 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 
-public class DefaultPlotPanel extends javax.swing.JPanel {
+public class DefaultPlotPanel extends javax.swing.JPanel implements ActionListener {
 	private JLabel label;
 	private JButton histogram;
 	private JPanel buttonPanel;
@@ -28,20 +31,11 @@ public class DefaultPlotPanel extends javax.swing.JPanel {
 	private JButton bar;
 	private JButton bubble;
 
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(new DefaultPlotPanel());
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
+	PlotBuilder builder;
 	
-	public DefaultPlotPanel() {
+	public DefaultPlotPanel(PlotBuilder builder) {
 		super();
+		this.builder = builder;
 		initGUI();
 	}
 	
@@ -99,36 +93,40 @@ public class DefaultPlotPanel extends javax.swing.JPanel {
 					histogram = new JButton();
 					buttonPanel.add(histogram);
 					histogram.setBounds(64, 125, 66, 80);
-					p = PlottingElement.createElement("template","Histogram").makeComponent();
+					p = PlottingElement.createElement("template","histogram").makeComponent();
 					p.setBorder(null);
 					histogram.add(p);
+					histogram.addActionListener(this);
 				}				
 				{
 					boxplot = new JButton();
 					buttonPanel.add(boxplot);
 					boxplot.setPreferredSize(new java.awt.Dimension(70, 80));
 					boxplot.setBounds(132, 126, 70, 80);
-					p = PlottingElement.createElement("template","Boxplot").makeComponent();
+					p = PlottingElement.createElement("template","boxplot").makeComponent();
 					p.setBorder(null);
 					boxplot.add(p);
+					boxplot.addActionListener(this);
 				}
 				{
 					pie = new JButton();
 					buttonPanel.add(pie);
 					pie.setPreferredSize(new java.awt.Dimension(70, 80));
 					pie.setBounds(202, 126, 70, 80);
-					p = PlottingElement.createElement("template","Pie").makeComponent();
+					p = PlottingElement.createElement("template","pie").makeComponent();
 					p.setBorder(null);
 					pie.add(p);
+					pie.addActionListener(this);
 				}
 				{
 					bar = new JButton();
 					buttonPanel.add(bar);
 					bar.setPreferredSize(new java.awt.Dimension(70, 80));
 					bar.setBounds(272, 126, 70, 80);
-					p = PlottingElement.createElement("template","Bar").makeComponent();
+					p = PlottingElement.createElement("template","bar").makeComponent();
 					p.setBorder(null);
 					bar.add(p);
+					bar.addActionListener(this);
 				}
 
 				{
@@ -136,41 +134,71 @@ public class DefaultPlotPanel extends javax.swing.JPanel {
 					buttonPanel.add(scatterPlot);
 					scatterPlot.setPreferredSize(new java.awt.Dimension(70, 80));
 					scatterPlot.setBounds(62, 206, 70, 80);
-					p = PlottingElement.createElement("template","Scatter").makeComponent();
+					p = PlottingElement.createElement("template","scatter").makeComponent();
 					p.setBorder(null);
 					scatterPlot.add(p);
+					scatterPlot.addActionListener(this);
 				}
 				{
 					line = new JButton();
 					buttonPanel.add(line);
 					line.setPreferredSize(new java.awt.Dimension(70, 80));
 					line.setBounds(132, 206, 70, 80);
-					p = PlottingElement.createElement("template","Line").makeComponent();
+					p = PlottingElement.createElement("template","line").makeComponent();
 					p.setBorder(null);
 					line.add(p);
+					line.addActionListener(this);
 				}
 				{
 					time = new JButton();
 					buttonPanel.add(time);
 					time.setPreferredSize(new java.awt.Dimension(70, 80));
 					time.setBounds(202, 206, 70, 80);
-					p = PlottingElement.createElement("template","Series").makeComponent();
+					p = PlottingElement.createElement("template","series").makeComponent();
 					p.setBorder(null);
 					time.add(p);
+					time.addActionListener(this);
 				}				
 				{
 					bubble = new JButton();
 					buttonPanel.add(bubble);
 					bubble.setPreferredSize(new java.awt.Dimension(70, 80));
 					bubble.setBounds(272, 206, 70, 80);
-					p = PlottingElement.createElement("template","Bubble").makeComponent();
+					p = PlottingElement.createElement("template","bubble").makeComponent();
 					p.setBorder(null);
 					bubble.add(p);
+					bubble.addActionListener(this);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void actionPerformed(ActionEvent ae) {
+		Object o = ae.getSource();
+		PlottingElement p;
+		if(o == histogram)
+			p = (PlottingElement) PlotController.getTemplates().get("histogram");
+		else if(o == boxplot)
+			p = (PlottingElement) PlotController.getTemplates().get("boxplot");
+		else if(o == pie)
+			p = (PlottingElement) PlotController.getTemplates().get("pie");
+		else if(o == bar)
+			p = (PlottingElement) PlotController.getTemplates().get("bar");
+		else if(o == time)
+			p = (PlottingElement) PlotController.getTemplates().get("series");
+		else if(o == scatterPlot)
+			p = (PlottingElement) PlotController.getTemplates().get("scatter");
+		else if(o == line)
+			p = (PlottingElement) PlotController.getTemplates().get("line");
+		else if(o == bubble)
+			p = (PlottingElement) PlotController.getTemplates().get("bubble");
+		else
+			return;
+		
+		builder.addElement((PlottingElement) p.clone());
+		
 	}
 
 }

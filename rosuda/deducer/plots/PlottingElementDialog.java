@@ -63,13 +63,19 @@ public class PlottingElementDialog extends javax.swing.JDialog implements Action
 	}
 	
 	public void setElement(PlottingElement el){
-		panel.removeAll();
-		view = (ElementView) el.getPanel();
-		panel.add(view);
+		setView((ElementView) el.getPanel());
 		initialModel = (ElementModel) el.getModel().clone();
 		help.setUrl(el.getUrl());
 		element = el;
 	}
+	
+	public void setView(ElementView v){
+		view = v;
+		panel.removeAll();
+		panel.add(view);
+		
+	}
+	
 	public void setToInitialModel(){
 		element.setModel(initialModel);
 	}

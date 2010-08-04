@@ -58,7 +58,9 @@ public class ParamFacetWidget extends ParamWidget implements ActionListener{
 		try {
 			BorderLayout thisLayout = new BorderLayout();
 			this.setLayout(thisLayout);
-			this.setPreferredSize(new java.awt.Dimension(264, 245));
+			this.setPreferredSize(new java.awt.Dimension(241, 350));
+			this.setMinimumSize(new java.awt.Dimension(241, 300));
+			this.setMaximumSize(new java.awt.Dimension(241, 350));
 			{
 				tabs = new JTabbedPane();
 				this.add(tabs, BorderLayout.CENTER);

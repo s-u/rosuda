@@ -186,12 +186,13 @@ public class ParamRFunction extends Param{
 		
 		value = null;
 		defaultValue = null;
-		if(node.hasAttribute("selectedFunction")){
+		NodeList nl = node.getElementsByTagName("valueMap");
+		if(node.hasAttribute("selectedFunction") || nl.getLength()>0){
 			String selectedFunction = null;
 			if(node.hasAttribute("selectedFunction"))
 				selectedFunction = node.getAttribute("selectedFunction");
 			HashMap hm = new HashMap();
-			Element map = (Element) node.getElementsByTagName("valueMap").item(0);
+			Element map = (Element) nl.item(0);
 			NodeList pairs = map.getElementsByTagName("keyValuePair");
 			for(int i=0;i<pairs.getLength();i++){
 				Element pair = (Element) pairs.item(i);
@@ -206,12 +207,13 @@ public class ParamRFunction extends Param{
 			v.add(hm);
 			value = v;
 		}
-		if(node.hasAttribute("defaultSelectedFunction")){
+		nl = node.getElementsByTagName("defaultValueMap");
+		if(node.hasAttribute("defaultSelectedFunction") || nl.getLength()>0){
 			String selectedFunction = null;
 			if(node.hasAttribute("selectedFunction"))
 				selectedFunction = node.getAttribute("defaultSelectedFunction");
 			HashMap hm = new HashMap();
-			Element map = (Element) node.getElementsByTagName("defaultValueMap").item(0);
+			Element map = (Element) nl.item(0);
 			NodeList pairs = map.getChildNodes();
 			for(int i=0;i<pairs.getLength();i++){
 				Element pair = (Element) pairs.item(i);

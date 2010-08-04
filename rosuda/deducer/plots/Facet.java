@@ -50,7 +50,9 @@ public class Facet implements ElementModel{
 
 	public String getCall() {
 		String[] p = param.getParamCalls();
-		String call = "facet_" + facetType + "(";
+		if(p.length==0)
+			return null;
+		String call = "facet_" + param.facetType + "(";
 		for(int i =0;i<p.length;i++)
 			call+=p[i];
 		call+=")";

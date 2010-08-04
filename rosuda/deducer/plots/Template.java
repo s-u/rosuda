@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -70,6 +71,16 @@ public class Template implements CompoundElementModel{
 				v.add(mAess[i].aes);
 		return v;
 	}
+	
+	public Vector getMAess(){
+		Vector v = new Vector();
+		for(int i=0;i<mAess.length;i++)
+			if(mAess[i].show)
+				v.add(mAess[i]);
+		return v;
+	}
+	
+	
 
 	public String getType() {
 		return "template";
@@ -178,6 +189,8 @@ public class Template implements CompoundElementModel{
 		for(int i=0;i<mParams.length;i++)
 			t.mParams[i] = (MaskingParam) mParams[i].clone(t);
 		t.data = this.data;
+		
+		
 		return t;
 	}
 	
@@ -213,7 +226,7 @@ public class Template implements CompoundElementModel{
 		p.show = show;
 		this.addMaskingParam(p);
 	}
-	public void addAes(Aes aes,int elementIndex,String title,boolean show){
+	public void addAes(Aes aes,Vector layGen,int elementIndex,String title,boolean show){
 		boolean exists = false;
 		for(int i =0;i<mAess.length;i++){
 			if(mAess[i].name.equals(aes.name) && aes.useVariable==mAess[i].isMap){
@@ -223,6 +236,8 @@ public class Template implements CompoundElementModel{
 						mAess[i].elementIndices.add(new Integer(elementIndex));
 					mAess[i].aes.name = title;
 					mAess[i].show = show;
+					for(int j=0;j<layGen.size();j++)
+						mAess[i].generated.add(layGen.get(j));
 					exists=true;
 					break;
 					
@@ -237,6 +252,8 @@ public class Template implements CompoundElementModel{
 			maes.elementIndices.add(new Integer(elementIndex));
 			maes.isMap = aes.useVariable;
 			maes.show = show;
+			for(int j=0;j<layGen.size();j++)
+				maes.generated.add(layGen.get(j));
 			addMaskingAes(maes);
 		}
 	}
@@ -260,6 +277,8 @@ public class Template implements CompoundElementModel{
 		for(int i=0;i<lm.size();i++){
 
 			ElementModel em = ((PlottingElement) lm.get(i)).getModel();
+			if(em.getData()!=null)
+				t.data = em.getData();
 			t.addElement(((PlottingElement) lm.get(i)),true);
 			if(em instanceof Layer){
 				Vector aess = ((Layer)em).aess;
@@ -267,7 +286,9 @@ public class Template implements CompoundElementModel{
 					Aes aes = (Aes) aess.get(j);
 					boolean show = aes.useVariable ? aes.getAesCalls().length>0
 													: aes.getParamCalls().length>0;
-					t.addAes((Aes)aes.clone(), i, aes.name,show);
+					
+					Vector gen = ((Layer)em).stat.generated;
+					t.addAes((Aes)aes.clone(),gen, i, aes.name,show);
 				}
 			}
 			Vector params = em.getParams();
@@ -298,6 +319,8 @@ public class Template implements CompoundElementModel{
 		boolean isMap=true;
 		boolean show = true;
 		
+		public Vector generated = new Vector();
+		
 		public Object clone(Template temp){
 			MaskingAes ma = temp.new MaskingAes();
 			ma.aes = (Aes) aes.clone();
@@ -306,6 +329,11 @@ public class Template implements CompoundElementModel{
 			ma.name = name;
 			ma.isMap = isMap;
 			ma.show = show;
+			
+			ma.generated = new Vector();
+			for(int i=0;i<generated.size();i++)
+				ma.generated.add(generated.get(i));
+			
 			return ma;
 		}
 		
@@ -372,6 +400,12 @@ public class Template implements CompoundElementModel{
 						varNode.setAttribute("element_"+i, elementIndices.get(i).toString());
 				node.appendChild(varNode);
 				
+				Element generatedNode = doc.createElement("generated");
+				if(generated!=null)
+					for(int i=0;i<generated.size();i++)
+						generatedNode.setAttribute("element_"+i, generated.get(i).toString());
+				node.appendChild(generatedNode);
+				
 				node.setAttribute("isMap", isMap ? "true" : "false");
 				node.setAttribute("show", show ? "true" : "false");
 				Element pEl = aes.toXML();
@@ -393,8 +427,16 @@ public class Template implements CompoundElementModel{
 			else 
 				name = null;
 			
+			Node generatedNode =node.getElementsByTagName("generated").item(0);
+			NamedNodeMap attr = generatedNode.getAttributes();
+			if(attr.getLength()>0){
+				generated = new Vector();
+				for(int i=0;i<attr.getLength();i++)
+					generated.add(i,attr.item(i).getNodeValue());
+			}
+			
 			Node varNode =node.getElementsByTagName("elementIndices").item(0);
-			NamedNodeMap attr = varNode.getAttributes();
+			attr = varNode.getAttributes();
 			if(attr.getLength()>0){
 				elementIndices = new Vector();
 				for(int i=0;i<attr.getLength();i++)
@@ -516,23 +558,10 @@ public class Template implements CompoundElementModel{
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(f);
 			Element e = (Element)doc.getChildNodes().item(0);
-			
-			TransformerFactory transfac = TransformerFactory.newInstance();
-			Transformer trans;
-			trans = transfac.newTransformer();
-			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			trans.setOutputProperty(OutputKeys.INDENT, "yes");
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			DOMSource source = new DOMSource(doc);
-			trans.transform(source, result);
-			String xmlString = sw.toString();
-			//System.out.println(xmlString);
-			
-			
 			this.setFromXML(e);
 		}catch(Exception ex){ex.printStackTrace();}
 	}
+	
 
 	public void setData(String data) {
 		this.data = data;

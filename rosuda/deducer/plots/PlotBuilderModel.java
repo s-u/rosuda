@@ -66,8 +66,11 @@ public class PlotBuilderModel {
 			return null;
 		for(int i=0;i<listModel.getSize();i++){
 			PlottingElement e = (PlottingElement) listModel.get(i);
-			if(e.isActive())
-				cmd += " +\n\t" + e.getModel().getCall();
+			if(e.isActive()){
+				String addition = e.getModel().getCall();
+				if(addition!=null && addition.length()>0 && !addition.equals("null"))
+					cmd += " +\n\t" + addition;
+			}
 		}
 		return cmd;
 	}

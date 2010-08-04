@@ -16,7 +16,8 @@ public class PlotController {
 	protected static Map themes;
 	protected static Map coords;
 	protected static Map pos;
-	protected static String[] templateNames = new String[]{};
+	protected static String[] templateNames = new String[]{"pie","histogram","bar","boxplot","scatter",
+			"line","series","bubble"};
 	protected static String[] geomNames = {"abline","area","bar","bin2d","blank","boxplot","contour","crossbar","density","density2d",
 			"errorbar","errorbarh","freqpoly","hex","histogram","hline","jitter","line","linerange",
 			"path","point","pointrange","polygon","quantile","rect","ribbon","smooth","step","text",
@@ -56,6 +57,8 @@ public class PlotController {
 			themes = new LinkedHashMap();
 			for(int j=0;j<themeNames.length;j++)
 				themes.put(themeNames[j], PlottingElement.createElement("theme",themeNames[j]));
+			for(int j=0;j<templateNames.length;j++)
+				templates.put(templateNames[j], PlottingElement.createElement("template",templateNames[j]));
 			pos = new LinkedHashMap();
 			pos.put("identity", new Position("identity",null,null));
 			pos.put("stack", new Position("stack",null,null));

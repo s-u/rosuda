@@ -126,6 +126,11 @@ public class PlottingElement implements Transferable{
 				icon = new ImageIcon(url);	
 			}
 		}else if(type.equals("template")){
+			URL templateURL = getClass().getResource("/templates/" + name+".ggtmpl");
+			
+			if(templateURL!=null){
+				this.setFromURL(templateURL);
+			}
 			if(url==null){
 				iconUrl = "/icons/ggplot_icons/template_default.png";
 				url = getClass().getResource(iconUrl);
@@ -133,6 +138,7 @@ public class PlottingElement implements Transferable{
 			if(url!=null){
 				icon = new ImageIcon(url);	
 			}
+			
 		}
 	}
 	
@@ -356,20 +362,15 @@ public class PlottingElement implements Transferable{
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(f);
 			Element e = (Element)doc.getChildNodes().item(0);
-			
-			TransformerFactory transfac = TransformerFactory.newInstance();
-			Transformer trans;
-			trans = transfac.newTransformer();
-			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			trans.setOutputProperty(OutputKeys.INDENT, "yes");
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			DOMSource source = new DOMSource(doc);
-			trans.transform(source, result);
-			String xmlString = sw.toString();
-			//System.out.println(xmlString);
-			
-			
+			this.setFromXML(e);
+		}catch(Exception ex){ex.printStackTrace();}
+	}
+	
+	public void setFromURL(URL url){
+		try{
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.parse(url.openStream());
+			Element e = (Element)doc.getChildNodes().item(0);
 			this.setFromXML(e);
 		}catch(Exception ex){ex.printStackTrace();}
 	}

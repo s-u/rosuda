@@ -179,13 +179,13 @@ public class ParamStatSummary extends Param{
 			node.setAttribute("data", vec.get(7).toString());
 			e.appendChild(node);
 		}
-		e.setAttribute("className", "org.rosuda.deducer.plots.ParamSummary");
+		e.setAttribute("className", "org.rosuda.deducer.plots.ParamStatSummary");
 		return e;
 	}
 	
 	public void setFromXML(Element node){
 		String cn = node.getAttribute("className");
-		if(!cn.equals("org.rosuda.deducer.plots.ParamSummary")){
+		if(!cn.equals("org.rosuda.deducer.plots.ParamStatSummary")){
 			System.out.println("Error ParamStatSummary: class mismatch: " + cn);
 			(new Exception()).printStackTrace();
 		}

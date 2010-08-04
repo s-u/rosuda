@@ -53,6 +53,10 @@ public class ParamFacet extends Param{
 		return new ParamFacetWidget(new VariableSelectorWidget(),this);
 	}
 	
+	public ParamWidget getView(VariableSelectorWidget s){
+		return new ParamFacetWidget(s,this);
+	}
+	
 	public Object clone(){
 		ParamFacet f = new ParamFacet();
 		String[] s = new String[yVarsGrid.length];
@@ -89,6 +93,8 @@ public class ParamFacet extends Param{
 		String[] calls = new String[]{};
 		Vector v = new Vector();
 		if(facetType.equals("grid")){
+			if(yVarsGrid.length==0 && xVarsGrid.length==0)
+				return new String[]{};
 			String rhs = "";
 			if(yVarsGrid.length==0)
 				rhs = ".";
@@ -118,6 +124,8 @@ public class ParamFacet extends Param{
 			if(!asTableGrid.booleanValue())
 				v.add(", as.table = FALSE");
 		}else{
+			if(varsWrap.length==0)
+				return new String[]{};
 			String rhs = "";
 			for(int i=0;i<varsWrap.length;i++){
 				if(i!=0)
@@ -276,8 +284,21 @@ public class ParamFacet extends Param{
 	}
 
 	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		Vector v = new Vector();
+		v.add(yVarsGrid);
+		v.add(xVarsGrid);
+		v.add(varsWrap);
+		v.add(facetType);
+		v.add(scaleGrid);
+		v.add(margins);
+		v.add(spaceFixed);
+		v.add(asTableGrid);
+		v.add(nrow);
+		v.add(ncol);
+		v.add(scaleWrap);
+		v.add(asTableWrap);
+		v.add(drop);
+		return v;
 	}
 
 	public void setDefaultValue(Object defaultValue) {
@@ -286,8 +307,22 @@ public class ParamFacet extends Param{
 	}
 
 	public void setValue(Object value) {
-		// TODO Auto-generated method stub
-		
+		if(value==null)
+			return;
+		Vector v = (Vector) value;
+		yVarsGrid= (String[]) v.get(0);
+		xVarsGrid= (String[]) v.get(1);
+		varsWrap= (String[]) v.get(2);
+		facetType= (String) v.get(3);
+		scaleGrid= (String) v.get(4);
+		margins= (Boolean) v.get(5);
+		spaceFixed= (Boolean) v.get(6);
+		asTableGrid= (Boolean) v.get(7);
+		nrow= (Integer) v.get(8);
+		ncol= (Integer) v.get(9);
+		scaleWrap= (String) v.get(10);
+		asTableWrap= (Boolean) v.get(11);
+		drop= (Boolean) v.get(12);
 	}
 	
 	

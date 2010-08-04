@@ -47,6 +47,7 @@ public class TemplateView extends ElementView{
 		if(selector == null){
 			selector = new VariableSelectorWidget();
 			selector.setPreferredSize(new Dimension(150,300));
+			selector.setCopyMode(true);
 		}
 		this.removeAll();
 		AnchorLayout thisLayout = new AnchorLayout();
@@ -71,19 +72,23 @@ public class TemplateView extends ElementView{
 			a.setModel(p);
 			a.setShowToggle(false);
 			a.setAlignmentX(CENTER_ALIGNMENT);
-			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));		
+			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));	
+			a.setCalculatedVariables(((Template.MaskingAes)model.getMAess().get(i)).generated);
 			widgets.add(a);
 			paramPanel.add(a);
 			paramPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		}
 		
-		paramPanel.add(Box.createRigidArea(new Dimension(0,30)));
 
 		for(int i=0;i<model.getParams().size();i++){
 			Param p = (Param) model.getParams().get(i);
-			ParamWidget a = p.getView();
+			ParamWidget a;
+			if(p.requiresVariableSelector())
+				a = p.getView(selector);
+			else
+				a = p.getView();
 			a.setAlignmentX(CENTER_ALIGNMENT);
-			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));		
+			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));	
 			widgets.add(a);
 			paramPanel.add(a);
 			paramPanel.add(Box.createRigidArea(new Dimension(0,10)));
@@ -99,7 +104,8 @@ public class TemplateView extends ElementView{
 
 	public void setModel(Template el) {
 		model = el;
-		if(!selector.getSelectedData().equals(model.getData()) && model.getData()!=null)
+		if(selector.getSelectedData()==null || 
+				!selector.getSelectedData().equals(model.getData()) && model.getData()!=null)
 			selector.setSelectedData(model.getData());
 		updatePanel();
 	}

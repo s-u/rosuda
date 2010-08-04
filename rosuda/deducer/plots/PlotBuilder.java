@@ -281,7 +281,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				plotHolder = new JPanel();
 				plotHolder.setLayout(new BorderLayout());
 				plotHolder.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-				defaultPlotPanel = new DefaultPlotPanel();
+				defaultPlotPanel = new DefaultPlotPanel(this);
 				plotHolder.add(defaultPlotPanel);
 				pane.add(plotHolder, new AnchorConstraint(137, 158, 52, 22, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
@@ -361,7 +361,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 										if(i<0)
 											return;
 										ElementPopupMenu.element = (PlottingElement) 
-																	elementsList.getModel().getElementAt(i);
+																	model.getListModel().getElementAt(i);
 										ElementPopupMenu.elList=elementsList;
 										ElementPopupMenu.plot=PlotBuilder.this;
 										ElementPopupMenu.getPopup().show(e.getComponent(),
@@ -512,6 +512,35 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		if( c!=null && c!="ggplot()")
 			plot(c);
 	}
+	
+	public void addElement(PlottingElement pe){
+		final DefaultListModel mod = model.getListModel();
+		final PlottingElement p = pe;
+		ElementModel m = p.getModel();
+		if(p.getModel() instanceof Layer){
+			Layer layer = (Layer) m;
+			model.tryToFillRequiredAess(layer);
+		}					
+		String s = m.checkValid();
+		if(s!=null){
+			PlottingElementDialog d = 
+				new PlottingElementDialog(PlotBuilder.this,p);
+			d.setModal(true);
+			d.setLocationRelativeTo(PlotBuilder.this);
+			d.setVisible(true);
+			s = m.checkValid();
+			if(s!=null)
+				return;
+		}
+
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run() {
+				mod.addElement(p);
+				updatePlot();								
+			}
+			
+		});
+	}
 
 
 	
@@ -584,7 +613,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 	            JList list = (JList)c;
 	            PlottingElement value = (PlottingElement) list.getSelectedValue();
 	            if(value==null)
-	            	System.out.println("failed");
+	            	return null;
 				retractTopPanel(); //probably not the best place for this
 	            return (PlottingElement)value.clone();
 			}catch(Exception e){
@@ -791,91 +820,104 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		private static PlotBuilder plot;
 		
 		private static JPopupMenu getPopup(){
-			if(popup==null){
-				popup = new JPopupMenu();
-				elementPopupMenuItems=new Vector();
-				JMenuItem menuItem = new JMenuItem("Edit");
-				menuItem.addActionListener(new ActionListener(){
-					
-					public void actionPerformed(ActionEvent e) {
-						plot.openLayerSheet(element);
-					}
-					
-				});
-				popup.add(menuItem);
-				menuItem = new JMenuItem("Toggle active");
-				menuItem.addActionListener(new ActionListener(){
-					
-					public void actionPerformed(ActionEvent e) {
-						element.setActive(!element.isActive());
-						elList.validate();
-						elList.repaint();
-						plot.updatePlot();
-					}
-					
-				});
-				popup.add(menuItem);
-				menuItem = new JMenuItem("Break out");
-				menuItem.addActionListener(new ActionListener(){
-					
-					public void actionPerformed(ActionEvent e) {
-						//JOptionPane.showMessageDialog(null, "Break out:" + element.getName());
-						PlottingElement[] pes = ((CompoundElementModel)element.getModel()).getElements();
-						int ind = ((DefaultListModel)elList.getModel()).indexOf(element);
-						for(int i=0;i<pes.length;i++)
-							((DefaultListModel)elList.getModel()).add(ind++, pes[i]);
-						((DefaultListModel)elList.getModel()).removeElement(element);
-						plot.updatePlot();
-					}
-					
-				});
-				if(element.getModel() instanceof CompoundElementModel)
-					popup.add(menuItem);
+			popup = new JPopupMenu();
+			elementPopupMenuItems=new Vector();
+			JMenuItem menuItem = new JMenuItem("Edit");
+			menuItem.addActionListener(new ActionListener(){
 				
-				menuItem = new JMenuItem("Export template");
-				menuItem.addActionListener(new ActionListener(){
-					
-					public void actionPerformed(ActionEvent e) {
-						JFileChooser c = new JFileChooser("Save template");
-						int ret = c.showDialog(null, "Save");
-						if(ret == JFileChooser.APPROVE_OPTION){
-							File f = c.getSelectedFile();
-							if(!f.getName().endsWith(".ggtmpl"))
-								f = new File(f.getPath() + ".ggtmpl");
-							if(f.exists()){
-								int o =JOptionPane.showConfirmDialog(null, "File exists: Overwrite: " + f.getName() + "?");
-								if(o != JOptionPane.OK_OPTION)
-									return;
-							}
-							PlottingElement el = (PlottingElement) element.clone();
-							Template t = (Template) el.getModel();
-							for(int i=0;i<t.mAess.length;i++){
-								//System.out.println("here");
-								t.mAess[i].aes.variable = null;
-							}
-							t.updateElementModels();
-							el.setModel(t);
-							el.saveToFile(f);
+				public void actionPerformed(ActionEvent e) {
+					plot.openLayerSheet(element);
+				}
+				
+			});
+			popup.add(menuItem);
+			menuItem = new JMenuItem("Toggle active");
+			menuItem.addActionListener(new ActionListener(){
+				
+				public void actionPerformed(ActionEvent e) {
+					element.setActive(!element.isActive());
+					elList.validate();
+					elList.repaint();
+					plot.updatePlot();
+				}
+				
+			});
+			popup.add(menuItem);
+			menuItem = new JMenuItem("Break out");
+			menuItem.addActionListener(new ActionListener(){
+				
+				public void actionPerformed(ActionEvent e) {
+					//JOptionPane.showMessageDialog(null, "Break out:" + element.getName());
+					PlottingElement[] pes = ((CompoundElementModel)element.getModel()).getElements();
+					int ind = ((DefaultListModel)elList.getModel()).indexOf(element);
+					for(int i=0;i<pes.length;i++)
+						((DefaultListModel)elList.getModel()).add(ind++, pes[i]);
+					((DefaultListModel)elList.getModel()).removeElement(element);
+					plot.updatePlot();
+				}
+				
+			});
+			if(element.getModel() instanceof CompoundElementModel)
+				popup.add(menuItem);
+			
+			menuItem = new JMenuItem("Edit dialog");
+			menuItem.addActionListener(new ActionListener(){
+				
+				public void actionPerformed(ActionEvent e) {
+					Template t = (Template) element.getModel();
+					TemplateEditView tev = new TemplateEditView(t);
+					PlottingElementDialog d = new PlottingElementDialog(null,element);
+					d.setView(tev);
+					d.setModal(true);
+					d.setVisible(true);
+				}
+				
+			});
+			if(element.getModel() instanceof Template)
+				popup.add(menuItem);
+			
+			menuItem = new JMenuItem("Export template");
+			menuItem.addActionListener(new ActionListener(){
+				
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser c = new JFileChooser("Save template");
+					int ret = c.showDialog(null, "Save");
+					if(ret == JFileChooser.APPROVE_OPTION){
+						File f = c.getSelectedFile();
+						if(!f.getName().endsWith(".ggtmpl"))
+							f = new File(f.getPath() + ".ggtmpl");
+						if(f.exists()){
+							int o =JOptionPane.showConfirmDialog(null, "File exists: Overwrite: " + f.getName() + "?");
+							if(o != JOptionPane.OK_OPTION)
+								return;
 						}
+						PlottingElement el = (PlottingElement) element.clone();
+						Template t = (Template) el.getModel();
+						for(int i=0;i<t.mAess.length;i++){
+							//System.out.println("here");
+							t.mAess[i].aes.variable = null;
+						}
+						t.updateElementModels();
+						el.setModel(t);
+						el.saveToFile(f);
 					}
-					
-				});
-				if(element.getModel() instanceof Template)
-					popup.add(menuItem);
-			    
-			    menuItem = new JMenuItem("Remove");
-			    menuItem.addActionListener(new ActionListener(){
+				}
+				
+			});
+			if(element.getModel() instanceof Template)
+				popup.add(menuItem);
+		    
+		    menuItem = new JMenuItem("Remove");
+		    menuItem.addActionListener(new ActionListener(){
 
-					public void actionPerformed(ActionEvent e) {
-						((DefaultListModel)elList.getModel()).removeElement(element);
-						plot.updatePlot();
-					}
-			    	
-			    });
-			    popup.add(menuItem);
+				public void actionPerformed(ActionEvent e) {
+					((DefaultListModel)elList.getModel()).removeElement(element);
+					plot.updatePlot();
+				}
+		    	
+		    });
+		    popup.add(menuItem);
 			    
-			    
-			}
 			return popup;
 		}
 	}

@@ -561,8 +561,10 @@ public class Theme implements ElementModel{
 		else 
 			name = null;
 		params = new Vector();
-		NodeList nl = node.getElementsByTagName("Param");
+		NodeList nl = node.getChildNodes();
 		for(int i=0;i<nl.getLength();i++){
+			if(!(nl.item(i) instanceof Element))
+				continue;
 			Element n = (Element) nl.item(i);
 			cn = n.getAttribute("className");
 			Param p = Param.makeParam(cn);
