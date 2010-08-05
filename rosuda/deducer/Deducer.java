@@ -28,6 +28,7 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.robjects.RObject;
+import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.util.ErrorMsg;
 
@@ -415,15 +416,16 @@ public class Deducer {
 			d.setVisible(true);
 			WindowTracker.addWindow(d);
 		}else if(cmd.equals("plotbuilder")){
+			needsRLocked=true;
 			PlotBuilder d = new PlotBuilder();
 			d.setLocationRelativeTo(null);
 			d.setVisible(true);
 			WindowTracker.addWindow(d);			
 		}else if(cmd.equals("openplot")){
-			JFileChooser c = new JFileChooser("Open plot");
-			int ret = c.showOpenDialog(null);
-			if(ret == JFileChooser.APPROVE_OPTION){
-				File f = c.getSelectedFile();
+			needsRLocked=true;
+			FileSelector c = new FileSelector(null, "Open plot", FileSelector.LOAD, null, true);
+			File f = c.getSelectedFile();
+			if(f!=null){
 				if(!f.getName().endsWith(".ggp")){
 					JOptionPane.showMessageDialog(null, "This does not appear to be a"
 							+" ggplot2 PlotBuilder file (extension .ggp)");

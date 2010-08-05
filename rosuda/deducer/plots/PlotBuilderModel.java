@@ -201,7 +201,8 @@ public class PlotBuilderModel {
 			}
 			
 			byte[] buffer = new byte[18024];
-			ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(f));
+			FileOutputStream fos1 = new FileOutputStream(f);
+			ZipOutputStream zout = new ZipOutputStream(fos1);
 			File[] filesToZip = tmpDir.listFiles();
 			for(int i=0;i<filesToZip.length;i++){
 				FileInputStream in = new FileInputStream(filesToZip[i]);
@@ -211,11 +212,14 @@ public class PlotBuilderModel {
 		        	zout.write(buffer, 0, len);
 		        }
 		        zout.closeEntry();
+		        in.close();		        
 		        filesToZip[i].delete();
-		        in.close();
 			}
-			tmpDir.delete();
+			fos1.close();
 			zout.close();
+			
+			tmpDir.delete();
+
 			//FileOutputStream fos = new FileOutputStream(f);
 			//OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
 			//out.write(xmlString);
@@ -263,6 +267,7 @@ public class PlotBuilderModel {
 				dest.flush();
 				dest.close();
 				is.close();
+				fos.close();
 				String fileCall = dataFile.getAbsolutePath();
 				if(System.getProperties().getProperty( "file.separator" ).equals("\""))
 					fileCall.replace('\\','/');
@@ -289,7 +294,7 @@ public class PlotBuilderModel {
 			dest.flush();
 			dest.close();
 			is.close();
-			
+			fos.close();
 			
 			
 			listModel.removeAllElements();
