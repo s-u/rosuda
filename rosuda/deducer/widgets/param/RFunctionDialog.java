@@ -21,7 +21,7 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 	private JPanel panel;
 	private OkayCancelPanel okayCancel;
 	private HelpButton help;
-	private RFunctionView view;
+	private ParamWidget view;
 	private RFunction initialModel;
 	private RFunction model;
 	
@@ -92,7 +92,7 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 		String cmd = arg0.getActionCommand();
 		if(cmd == "OK"){
 			view.updateModel();
-			String s = view.getModel().checkValid();
+			String s = ((RFunction)view.getModel()).checkValid();
 			if(s!=null){
 				JOptionPane.showMessageDialog(this, s);
 			}else{
@@ -104,7 +104,7 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 			this.dispose();
 		}else if(cmd == "Run"){
 			view.updateModel();
-			String s = view.getModel().checkValid();
+			String s = ((RFunction)view.getModel()).checkValid();
 			if(s!=null){
 				JOptionPane.showMessageDialog(this, s);
 			}else{

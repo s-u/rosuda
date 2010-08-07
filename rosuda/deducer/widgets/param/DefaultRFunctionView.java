@@ -100,7 +100,7 @@ public class DefaultRFunctionView extends RFunctionView{
 		paramPanel.repaint();
 	}
 	
-	public RFunction getModel() {
+	public Param getModel() {
 		updateModel();
 		return model;
 	}
@@ -115,6 +115,10 @@ public class DefaultRFunctionView extends RFunctionView{
 			Object o = widgets.get(i);
 			((ParamWidget)o).updateModel();
 		}
+	}
+
+	public void setModel(Param p) {
+		setModel((RFunction) p);
 	}
 
 }

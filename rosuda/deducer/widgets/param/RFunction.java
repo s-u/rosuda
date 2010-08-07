@@ -2,24 +2,30 @@ package org.rosuda.deducer.widgets.param;
 
 import java.util.Vector;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.toolkit.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-public class RFunction {
+public class RFunction extends Param{
 
-	private String name;
 	private Vector params = new Vector();
+
+	private String paramName = ""; 
 	
-	public RFunction(){}
+	public static String VIEW_RFUNCTION = "org.rosuda.deducer.widgets.param.DefaultRFunctionView";
+	
+	public RFunction(){
+		super();
+		view = VIEW_RFUNCTION ;
+	}
 	
 	public RFunction(String name){
+		super();
 		this.setName(name);
+		view = VIEW_RFUNCTION ;
 	}
 	
 	
@@ -53,7 +59,7 @@ public class RFunction {
 		Vector paramCalls = new Vector();
 		for(int i=0;i<params.size();i++){
 			Param prm = (Param) params.get(i);
-
+			System.out.println(prm);
 			String[] p = prm.getParamCalls();
 			for(int j=0;j<p.length;j++)
 				paramCalls.add(p[j]);				
@@ -70,7 +76,7 @@ public class RFunction {
 	}
 
 
-	public RFunctionView getView() {
+	public ParamWidget getView() {
 		try{
 			return new DefaultRFunctionView(this);
 		}catch(Exception e){e.printStackTrace();return null;}
@@ -88,39 +94,65 @@ public class RFunction {
 	
 	public Element toXML(){
 		try{
-		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-		Document doc = docBuilder.newDocument();
+		Element node = super.toXML();
+		Document doc = node.getOwnerDocument();
 		
-		Element node = doc.createElement("RFunction");
-		if(name!=null)
-			node.setAttribute("name", name);
+		if(paramName!=null)
+			node.setAttribute("paramName", paramName);
 		for(int i=0;i<params.size();i++){
 			Param p = (Param) params.get(i);
 			Element el = p.toXML();
 			Node n = doc.importNode(el, true);
 			node.appendChild(n);
 		}
-		doc.appendChild(node);
+		
+		node.setAttribute("className", "org.rosuda.deducer.widgets.param.RFunction");
+		
 		return node;
 		
 		}catch(Exception e){e.printStackTrace();return null;}
 	}
 	
 	public void setFromXML(Element node){
-		if(node.hasAttribute("name"))
-			name = node.getAttribute("name");
+		super.setFromXML(node);
+		String cn = node.getAttribute("className");
+		if(!cn.equals("org.rosuda.deducer.widgets.param.RFunction")){
+			System.out.println("Error RFunction: class mismatch: " + cn);
+			(new Exception()).printStackTrace();
+		}
+		
+		if(node.hasAttribute("paramName"))
+			paramName = node.getAttribute("paramName");
 		else
-			name = null;
+			paramName = null;
 		params = new Vector();
-		NodeList nl = node.getElementsByTagName("Param");
-		for(int i=0;i<nl.getLength();i++){
-			Element n = (Element) nl.item(i);
-			String cn = n.getAttribute("className");
+
+		Vector children = XMLHelper.getChildrenElementsByTag(node, "Param");
+		for(int i=0;i<children.size();i++){
+			Element n= (Element) children.get(i);
+			cn = n.getAttribute("className");
 			Param p = Param.makeParam(cn);
 			p.setFromXML(n);
 			params.add(p);
 		}
+	}
+
+	public Object getDefaultValue() {
+		return null;
+	}
+
+	public String[] getParamCalls() {
+		return new String[] { getCall()};
+	}
+
+	public Object getValue() {
+		return params;
+	}
+
+	public void setDefaultValue(Object defaultValue) {}
+
+	public void setValue(Object value) {
+		params = (Vector) value;
 	}
 	
 }

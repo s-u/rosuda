@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public abstract class Param implements Cloneable{
 
@@ -38,7 +39,8 @@ public abstract class Param implements Cloneable{
 	final public static String VIEW_VECTOR_BUILDER = "org.rosuda.deducer.widgets.param.ParamVectorBuilderWidget";
 	final public static String VIEW_TWO_VALUE_ENTER = "org.rosuda.deducer.widgets.param.ParamTwoValueWidget";
 	final public static String VIEW_COLOR = "org.rosuda.deducer.widgets.param.ParamColorWidget";
-	final public static String VIEW_RFUNCTION = "org.rosuda.deducer.widgets.param.ParamRFunctionWidget";
+	final public static String VIEW_RFUNCTION_CHOOSER = "org.rosuda.deducer.widgets.param.RFunctionListChooserWidget";
+	final public static String VIEW_RFUNCTION_PANEL = "org.rosuda.deducer.widgets.param.RFunctionListPanelWidget";
 	final public static String VIEW_SINGLE_VARIABLE = "org.rosuda.deducer.widgets.param.ParamVariableView";
 	final public static String VIEW_HIDDEN = "org.rosuda.deducer.widgets.param.ParamNullWidget";
 	
@@ -54,6 +56,8 @@ public abstract class Param implements Cloneable{
 	protected Double upperBound ;			//if bounded, the upper bound
 	
 	protected boolean required = true;
+	
+	protected boolean requiresVariableSelector = false;
 	
 	public Param(){}
 	
@@ -151,7 +155,11 @@ public abstract class Param implements Cloneable{
 	}
 	
 	public boolean requiresVariableSelector(){
-		return false;
+		return requiresVariableSelector;
+	}
+	
+	public void setRequiresVariableSelector(boolean needed){
+		requiresVariableSelector = needed;
 	}
 	
 	public ParamWidget getView(VariableSelectorWidget s){
@@ -171,7 +179,8 @@ public abstract class Param implements Cloneable{
 				node.setAttribute("title", title);
 			if(view!=null)
 				node.setAttribute("viewType", getViewType());
-			
+			node.setAttribute("required", required ? "true" : "false");
+			node.setAttribute("requiresVariableSelector", requiresVariableSelector ? "true" : "false");
 			Element optionNode = doc.createElement("options");
 			if(options!=null)
 				for(int i=0;i<options.length;i++)
@@ -209,20 +218,41 @@ public abstract class Param implements Cloneable{
 		else
 			view = VIEW_ENTER_LONG;
 		
-		Node optionNode =node.getElementsByTagName("options").item(0);
-		NamedNodeMap attr = optionNode.getAttributes();
-		if(attr.getLength()>0){
-			options = new String[attr.getLength()];
-			for(int i=0;i<attr.getLength();i++)
-				options[i] = attr.item(i).getNodeValue();
-		}
+		if(node.hasAttribute("required"))
+			required = node.getAttribute("required").equals("true");
+		else
+			required = false;
 		
-		Node labelsNode =node.getElementsByTagName("labels").item(0);
-		attr = labelsNode.getAttributes();
-		if(attr.getLength()>0){
-			labels = new String[attr.getLength()];
-			for(int i=0;i<attr.getLength();i++)
-				labels[i] = attr.item(i).getNodeValue();
+		if(node.hasAttribute("requiresVariableSelector"))
+			requiresVariableSelector = node.getAttribute("requiresVariableSelector").equals("true");
+		else
+			requiresVariableSelector = false;
+		Node optionNode = null;
+		NodeList nl = node.getChildNodes();
+		for(int i=0;i<nl.getLength();i++)
+			if(nl.item(i) instanceof Element && ((Element)nl.item(i)).getTagName().equals("options"))
+				optionNode = nl.item(i);
+		if(optionNode!=null){
+			//Node optionNode =node.getElementsByTagName("options").item(0);
+			NamedNodeMap attr = optionNode.getAttributes();
+			if(attr.getLength()>0){
+				options = new String[attr.getLength()];
+				for(int i=0;i<attr.getLength();i++)
+					options[i] = attr.item(i).getNodeValue();
+			}
+		}
+		Node labelsNode  =null;
+		for(int i=0;i<nl.getLength();i++)
+			if(nl.item(i) instanceof Element && ((Element)nl.item(i)).getTagName().equals("labels"))
+				labelsNode = nl.item(i);
+		//Node labelsNode =node.getElementsByTagName("labels").item(0);
+		if(labelsNode!=null){
+			NamedNodeMap attr = labelsNode.getAttributes();
+			if(attr.getLength()>0){
+				labels = new String[attr.getLength()];
+				for(int i=0;i<attr.getLength();i++)
+					labels[i] = attr.item(i).getNodeValue();
+			}
 		}
 		if(node.hasAttribute("lowerBound"))
 			lowerBound = new Double(Double.parseDouble(node.getAttribute("lowerBound")));

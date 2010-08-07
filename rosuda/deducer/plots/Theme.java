@@ -11,7 +11,7 @@ import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamCharacter;
 import org.rosuda.deducer.widgets.param.ParamColor;
 import org.rosuda.deducer.widgets.param.ParamNumeric;
-import org.rosuda.deducer.widgets.param.ParamRFunction;
+import org.rosuda.deducer.widgets.param.RFunctionList;
 import org.rosuda.deducer.widgets.param.ParamVector;
 import org.rosuda.deducer.widgets.param.RFunction;
 import org.w3c.dom.Document;
@@ -65,7 +65,7 @@ public class Theme implements ElementModel{
 		Theme t = new Theme();
 		t.setName("opts");
 		Param p;
-		ParamRFunction pf;
+		RFunctionList pf;
 		
 		p = new ParamCharacter();
 		p.setName("title");
@@ -75,88 +75,88 @@ public class Theme implements ElementModel{
 		p.setDefaultValue(null);
 		t.params.add(p);		
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("axis.line");
 		pf.setTitle("axis.line");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_segment", makeThemeSegment());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("axis.text.x");
 		pf.setTitle("axis.text.x");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_text", makeThemeText());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("axis.text.y");
 		pf.setTitle("axis.text.y");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_text", makeThemeText());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("axis.ticks");
 		pf.setTitle("axis.ticks");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_segment", makeThemeSegment());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("axis.title.x");
 		pf.setTitle("axis.title.x");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_text", makeThemeText());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("axis.title.y");
 		pf.setTitle("axis.title.y");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_text", makeThemeText());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("axis.ticks.length");
 		pf.setTitle("axis.ticks.length");
 		pf.addRFunction("unit", makeUnit());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("axis.ticks.margin");
 		pf.setTitle("axis.ticks.margin");
 		pf.addRFunction("unit", makeUnit());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("legend.background");
 		pf.setTitle("legend.background");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_rect", makeThemeRect());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("legend.key");
 		pf.setTitle("legend.key");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_rect", makeThemeRect());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("legend.key.size");
 		pf.setTitle("legend.key.size");
 		pf.addRFunction("unit", makeUnit());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("legend.text");
 		pf.setTitle("legend.text");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_text", makeThemeText());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("legend.title");
 		pf.setTitle("legend.title");
 		pf.addRFunction("theme_blank", makeThemeBlank());
@@ -174,76 +174,76 @@ public class Theme implements ElementModel{
 		p.setUpperBound(new Double(1));
 		t.params.add(p);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("panel.background");
 		pf.setTitle("panel.background");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_rect", makeThemeRect());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("panel.border");
 		pf.setTitle("panel.border");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_segment", makeThemeSegment());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("panel.grid.major");
 		pf.setTitle("panel.grid.major");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_line", makeThemeLine());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("panel.grid.minor");
 		pf.setTitle("panel.grid.minor");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_line", makeThemeLine());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("panel.margin");
 		pf.setTitle("panel.margin");
 		pf.addRFunction("unit", makeUnit());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("strip.background");
 		pf.setTitle("strip.background");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_rect", makeThemeRect());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("strip.text.x");
 		pf.setTitle("strip.text.x");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_text", makeThemeText());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("strip.text.y");
 		pf.setTitle("strip.text.y");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_text", makeThemeText());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("plot.background");
 		pf.setTitle("plot.background");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_rect", makeThemeRect());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("plot.title");
 		pf.setTitle("plot.title");
 		pf.addRFunction("theme_blank", makeThemeBlank());
 		pf.addRFunction("theme_text", makeThemeText());
 		t.params.add(pf);
 		
-		pf = new ParamRFunction();
+		pf = new RFunctionList();
 		pf.setName("plot.margin");
 		pf.setTitle("plot.margin");
 		pf.addRFunction("unit", makeUnit());

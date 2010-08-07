@@ -215,9 +215,8 @@ public class PlotBuilderModel {
 		        in.close();		        
 		        filesToZip[i].delete();
 			}
-			fos1.close();
-			zout.close();
-			
+			zout.close();				
+			fos1.close();	
 			tmpDir.delete();
 
 			//FileOutputStream fos = new FileOutputStream(f);

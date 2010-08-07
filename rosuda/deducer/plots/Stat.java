@@ -8,7 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamNumeric;
-import org.rosuda.deducer.widgets.param.ParamRFunction;
+import org.rosuda.deducer.widgets.param.RFunctionList;
 import org.rosuda.deducer.widgets.param.ParamVector;
 import org.rosuda.deducer.widgets.param.RFunction;
 import org.w3c.dom.Document;
@@ -134,9 +134,9 @@ public class Stat {
 		pv.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(pv);
 		
-		ParamRFunction prf;
+		RFunctionList prf;
 		RFunction rf;
-		prf = new ParamRFunction("breaks");
+		prf = new RFunctionList("breaks");
 		rf = new RFunction();
 		rf.setName("list");
 		rf.add(new ParamVector("x"));
