@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.ComponentEvent;
@@ -39,7 +41,7 @@ import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.util.RecentList;
 
-public class Editor extends TJFrame implements ActionListener {
+public class Editor extends TJFrame implements ActionListener, FocusListener {
 
 	/**
 	 * 
@@ -168,6 +170,8 @@ public class Editor extends TJFrame implements ActionListener {
 		this.toFront();
 		this.requestFocus();
 		textArea.requestFocus();
+		
+		this.addFocusListener(this);
 	}
 	
 	public void dispose()
@@ -289,7 +293,8 @@ public class Editor extends TJFrame implements ActionListener {
 		Editor e = new Editor();
 		e.setVisible(true);
 	}
-
+	
+	
 	public void setTitle(String title) {
 		int length, cc = 1;
 		if (System.getProperty("os.name").startsWith("Win")) {
@@ -499,5 +504,14 @@ if (e.getActionCommand() == "runall")
 				}
 			});
 		}
+	}
+
+	public void focusGained(FocusEvent e) {
+		textArea.requestFocus();
+	}
+
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

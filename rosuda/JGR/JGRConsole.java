@@ -247,6 +247,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		this
 				.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		// progress.setVisible(false);
+		this.addFocusListener(this);
 		input.mComplete.setVisible(false);
 		new Thread(new Refresher()).start();
 	}
@@ -1010,6 +1011,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			toolBar.pasteButton.setEnabled(true);
 			EzMenuSwing.getItem(this, "paste").setEnabled(true);
 		}
+		input.requestFocus();
 	}
 
 	/**
