@@ -619,7 +619,8 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			return;
 		}
 		if(ev.getSource()==colour){
-			Color c =JColorChooser.showDialog(this, "Choose Colour", colour.getForeground());
+			Color c =JColorChooser.showDialog(this, "Choose Colour", 
+					colourValue!=null ? colourValue : Color.white);
 			if(c!=null){
 				colour.setForeground(c);
 				colourValue = c;

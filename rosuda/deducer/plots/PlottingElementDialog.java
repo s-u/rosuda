@@ -66,6 +66,7 @@ public class PlottingElementDialog extends javax.swing.JDialog implements Action
 		setView((ElementView) el.getPanel());
 		initialModel = (ElementModel) el.getModel().clone();
 		help.setUrl(el.getUrl());
+		help.setToolTipText("Open online help from: " +el.getUrl());
 		element = el;
 	}
 	

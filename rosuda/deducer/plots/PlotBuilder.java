@@ -428,7 +428,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		closeLayerSheet();
 		if(layerSheet == null){
 			layerSheet = new PlotBuilderSubFrame(this);
-			layerSheet.setSize(500, layerSheet.getHeight());
+			layerSheet.setSize(400, layerSheet.getHeight());
 		}
 		layerSheet.setElement(element);
 		layerSheet.setVisible(true);

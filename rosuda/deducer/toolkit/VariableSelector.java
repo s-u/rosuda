@@ -20,6 +20,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.SoftBevelBorder;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -102,8 +104,10 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			variableList = new VarDJList();
 			variableList.setModel(variableListModel);
 			JScrollPane listScroller = new JScrollPane(variableList,
-                    ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			Border b = new SoftBevelBorder(BevelBorder.LOWERED);
+			this.setBorder(b);
 			this.add(listScroller, new AnchorConstraint(50, 999, 1001, 3, 
 					AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));

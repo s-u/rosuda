@@ -49,7 +49,7 @@ public class PlotBuilderSubFrame extends SideWindow implements ActionListener{
 				getContentPane().add(okayCancel, new AnchorConstraint(929, 17, 6, 504, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE));
-				okayCancel.setPreferredSize(new java.awt.Dimension(300, 38));
+				okayCancel.setPreferredSize(new java.awt.Dimension(240, 38));
 				okayCancel.getCancelButton().setText("Apply");
 				okayCancel.getResetButton().setText("Cancel");
 				
@@ -79,6 +79,7 @@ public class PlotBuilderSubFrame extends SideWindow implements ActionListener{
 				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 				AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL));
 		help.setUrl(element.getUrl());
+		help.setToolTipText("Open online help from: " +element.getUrl());
 	}
 	
 	public void setToInitialModel(){
