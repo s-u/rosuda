@@ -261,6 +261,7 @@ public class Stat {
 		s.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
+		aes.preferCategorical=true;
 		s.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -306,6 +307,7 @@ public class Stat {
 		aes = Aes.makeAes("colour");
 		aes.defaultValue = Color.decode("#3366FF");
 		aes.value = aes.defaultValue;
+		aes.preferCategorical=true;
 		s.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -362,6 +364,7 @@ public class Stat {
 		aes = Aes.makeAes("fill");
 		aes.defaultVariable = "..count..";
 		aes.variable = aes.defaultVariable;
+		aes.preferCategorical=true;
 		s.aess.add(aes);
 		
 		aes = Aes.makeAes("group");

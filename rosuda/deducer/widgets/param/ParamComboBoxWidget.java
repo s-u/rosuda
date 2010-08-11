@@ -12,7 +12,7 @@ import org.rosuda.JGR.layout.AnchorLayout;
 
 public class ParamComboBoxWidget extends ParamWidget{
 
-	private JComboBox comboBox;
+	protected JComboBox comboBox;
 	public ParamComboBoxWidget(){
 		super();
 	}
@@ -52,7 +52,7 @@ public class ParamComboBoxWidget extends ParamWidget{
 		return model;
 	}
 	
-	private void initAsComboBox(boolean editable){
+	protected void initAsComboBox(boolean editable){
 		this.removeAll();
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);

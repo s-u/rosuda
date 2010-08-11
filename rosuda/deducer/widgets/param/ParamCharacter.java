@@ -75,6 +75,7 @@ public class ParamCharacter extends Param{
 			p.setLabels(v);
 		}
 		p.setViewType(this.getViewType());
+		p.required = required;
 		return p;
 	}
 	
@@ -85,7 +86,7 @@ public class ParamCharacter extends Param{
 			if(getValue().toString().length()>0)
 				val = "'" + Deducer.addSlashes(getValue().toString()) + "'";
 			if(val.length()>0)
-				calls = new String[]{name + " = "+val};
+				calls = new String[]{(name!=null ? (name + " = ") : "")+val};
 			else
 				calls = new String[]{};
 		}else

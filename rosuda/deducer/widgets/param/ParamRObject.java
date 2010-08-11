@@ -3,43 +3,44 @@ package org.rosuda.deducer.widgets.param;
 import org.rosuda.deducer.Deducer;
 import org.w3c.dom.Element;
 
-public class ParamAny extends Param{
-	
+public class ParamRObject extends Param{
 	protected String value;
 	protected String defaultValue;			//default	
+	protected String rObjectClass = null;
+	protected boolean isQuoted = false;
 	
-	public ParamAny(){
+	public ParamRObject(){
 		name = "";
 		title = "";
 		value = "";
 		defaultValue = "";
-		view = VIEW_ENTER_LONG;
+		view = VIEW_ROBJECT_COMBO;
 	}
 	
-	public ParamAny(String nm){
+	public ParamRObject(String nm){
 		name = nm;
 		title = nm;
 		value = "";
 		defaultValue = "";
-		view = VIEW_ENTER_LONG;
+		view = VIEW_ROBJECT_COMBO;
 	}
 	
-	public ParamAny(String nm,String value){
+	public ParamRObject(String nm,String value){
 		name = nm;
 		title = nm;
 		this.value = value;
 		defaultValue = value;
-		view = VIEW_ENTER_LONG;		
+		view = VIEW_ROBJECT_COMBO;		
 	}
 	
-	public ParamAny(String theName, String theTitle, String theView,
+	public ParamRObject(String theName, String theTitle, String theView,
 			String theValue,String theDefaultValue){
 		name = theName;
 		title = theTitle;
 		view = theView;
 		value = theValue;
 		defaultValue = theDefaultValue;
-		view = VIEW_ENTER_LONG;
+		view = VIEW_ROBJECT_COMBO;
 	}
 	/*
 	public ParamWidget getView(){
@@ -47,13 +48,15 @@ public class ParamAny extends Param{
 	}*/
 	
 	public Object clone(){
-		ParamAny p = new ParamAny();
+		ParamRObject p = new ParamRObject();
 		p.setName(this.name);
 		p.setTitle(this.title);
 		p.setValue(this.value);
 		p.setDefaultValue(this.defaultValue);
 		p.setViewType(this.getViewType());
 		p.required = required;
+		p.rObjectClass = this.rObjectClass;
+		p.isQuoted = this.isQuoted;
 		return p;
 	}
 	
@@ -73,7 +76,11 @@ public class ParamAny extends Param{
 				}
 			}
 			if(val.length()>0)
-				calls = new String[]{ (name!=null ? (name + " = ") : "")+val};
+				calls = new String[]{ 
+					(name!=null ? (name + " = ") : "")+
+					(isQuoted ? "'" : "")+
+					val+
+					(isQuoted ? "'":"")};
 			else
 				calls = new String[]{};
 			
@@ -95,7 +102,7 @@ public class ParamAny extends Param{
 		if(value instanceof String || value==null)
 			this.value = (String) value;
 		else
-			System.out.println("ParamAny: invalid setValue");
+			System.out.println("ParamRObject: invalid setValue");
 	}
 	public Object getValue() {
 		return value;
@@ -105,8 +112,11 @@ public class ParamAny extends Param{
 		Element e = super.toXML();
 		if(value!=null)
 			e.setAttribute("value", value);
+		e.setAttribute("isQuoted", isQuoted ? "true":"false");
 		if(defaultValue!=null)
 			e.setAttribute("defaultValue", defaultValue);
+		if(rObjectClass!=null)
+			e.setAttribute("rObjectClass", defaultValue);
 		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamAny");
 		return e;
 	}
@@ -126,9 +136,33 @@ public class ParamAny extends Param{
 			defaultValue = node.getAttribute("defaultValue");
 		else
 			defaultValue = null;
+		if(node.hasAttribute("rObjectClass"))
+			rObjectClass = node.getAttribute("rObjectClass");
+		else
+			rObjectClass = null;
+		if(node.hasAttribute("isQuoted"))
+			isQuoted = node.getAttribute("isQuoted").equals("true");
+		else
+			isQuoted = false;
 	}
 	
 	public boolean hasValidEntry(){
 		return value!=null && value.length()>0 || defaultValue!=null;
+	}
+
+	public void setRObjectClass(String rObjectClass) {
+		this.rObjectClass = rObjectClass;
+	}
+
+	public String getRObjectClass() {
+		return rObjectClass;
+	}
+
+	public void setQuoted(boolean isQuoted) {
+		this.isQuoted = isQuoted;
+	}
+
+	public boolean isQuoted() {
+		return isQuoted;
 	}
 }

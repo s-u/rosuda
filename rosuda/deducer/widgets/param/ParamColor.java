@@ -83,6 +83,7 @@ public class ParamColor extends Param{
 			p.setDefaultValue(new Color(c.getRGB()));
 		}
 		p.setViewType(this.getViewType());
+		p.required = required;
 		return p;
 	}
 	
@@ -93,7 +94,7 @@ public class ParamColor extends Param{
 			if(getValue().toString().length()>0)
 				val = "'#"+ Integer.toHexString(((Color)getValue()).getRGB()).substring(2)+"'";
 			if(val.length()>0)
-				calls = new String[]{name + " = "+val};
+				calls = new String[]{(name!=null ? (name + " = ") : "")+val};
 			else
 				calls = new String[]{};
 		}else

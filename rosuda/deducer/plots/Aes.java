@@ -21,6 +21,8 @@ public class Aes {
 	final public static String DATA_SHAPE= "shape";
 	final public static String DATA_NUMERIC_BOUNDED = "bounded";
 	
+	public boolean preferNumeric = false;
+	public boolean preferCategorical = false;
 	
 	public String name;					//name of aes
 	public String title;				//title for aes
@@ -51,6 +53,8 @@ public class Aes {
 		a.defaultUseVariable = this.defaultUseVariable;
 		a.useVariable = this.useVariable;
 		a.dataType = this.dataType;
+		a.preferCategorical = this.preferCategorical;
+		a.preferNumeric = this.preferNumeric;
 		if(this.lowerBound!=null)
 			a.lowerBound = new Double(this.lowerBound.doubleValue());
 		if(this.upperBound!=null)
@@ -155,6 +159,7 @@ public class Aes {
 			a.upperBound = new Double(1.0);
 			a.defaultUseVariable = false;
 			a.title = "Alpha";
+			a.preferNumeric=true;
 		}else if(type.equals("angle")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.defaultValue = new Double(0.0);
@@ -190,6 +195,7 @@ public class Aes {
 			a.dataType = DATA_LINE;
 			a.defaultValue = new Integer(1);
 			a.title = "Line";
+			a.preferCategorical=true;
 		}else if(type.equals("size")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);
@@ -234,6 +240,7 @@ public class Aes {
 		}else if(type.equals("shape")){
 			a.dataType = DATA_SHAPE;
 			a.defaultValue = new Integer(16);
+			a.preferCategorical=true;
 		}else if(type.equals("xend")){
 			a.dataType = DATA_ANY;
 		}else if(type.equals("yend")){
@@ -268,6 +275,8 @@ public class Aes {
 			node.setAttribute("useVariable", useVariable ? "true" : "false");
 			node.setAttribute("defaultUseVariable", defaultUseVariable ? "true" : "false");
 			node.setAttribute("required", required ? "true" : "false");
+			node.setAttribute("preferNumeric", required ? "true" : "false");
+			node.setAttribute("preferCategorical", required ? "true" : "false");
 			if(variable!=null)
 				node.setAttribute("variable", variable);
 			if(defaultVariable!=null)
@@ -324,6 +333,16 @@ public class Aes {
 			useVariable = node.getAttribute("useVariable").equals("true");
 		else
 			useVariable=false;
+		
+		if(node.hasAttribute("preferNumeric"))
+			preferNumeric = node.getAttribute("preferNumeric").equals("true");
+		else
+			preferNumeric=false;
+		
+		if(node.hasAttribute("preferCategorical"))
+			preferCategorical = node.getAttribute("preferCategorical").equals("true");
+		else
+			preferCategorical=false;
 		
 		if(node.hasAttribute("defaultUseVariable"))
 			defaultUseVariable = node.getAttribute("defaultUseVariable").equals("true");

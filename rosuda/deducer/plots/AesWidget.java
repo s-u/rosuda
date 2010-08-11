@@ -1,6 +1,7 @@
 package org.rosuda.deducer.plots;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -73,6 +74,8 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	
 	private boolean showToggle = true;
 	
+
+	
 	private Color neededItemBackground = Color.decode("#fff3f6");
 	
 	private static String iconRoot = "";
@@ -89,7 +92,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	
 	private FocusListener valueValidator = new ValueValidator();
 
-	private static AesTransferHandler transferHandler;
+	private AesTransferHandler transferHandler;
 	
 	public AesWidget() {
 		super();
@@ -584,6 +587,24 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			addRemoveButton.setIcon(icon);
 		}
 	}
+	
+	public void setVariable(String var){
+		String data = variableSelector.getSelectedData();
+		if(model.preferNumeric){
+			REXP exp = Deducer.eval("is.discrete(" + data + "$" + var+")");
+			if(exp!=null && exp.isLogical()){
+				if(((REXPLogical)exp).isTRUE()[0])
+					var = "as.numeric("+var + ")";
+			}
+		}else if(model.preferCategorical){
+			REXP exp = Deducer.eval("is.discrete(" + data + "$" + var+")");
+			if(exp!=null && exp.isLogical()){
+				if(((REXPLogical)exp).isFALSE()[0])
+					var = "as.factor("+var + ")";
+			}
+		}
+		variable.setSelectedItem(var);
+	}
 
 	public void actionPerformed(ActionEvent ev) {
 		boolean switchToVariable = false;
@@ -613,7 +634,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 				if(cmd == "add"){
 					ArrayList l = variableSelector.getSelectedVariables();
 					if(l.size()>0)
-						variable.setSelectedItem(l.get(0));
+						setVariable((String)l.get(0));
 				}else if(cmd == "remove"){
 					variable.setSelectedItem(null);
 				}
@@ -775,8 +796,8 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 					if(al.size()>1)
 						return false;
 					String val = al.get(0).toString();
-					AesComboBoxEditor editor = (AesComboBoxEditor) c;
-					editor.setItem(val);
+					//AesComboBoxEditor editor = (AesComboBoxEditor) c;
+					setVariable(val);
 					return true;
 				}
 			}catch(Exception e){

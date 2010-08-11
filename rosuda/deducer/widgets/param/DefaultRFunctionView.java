@@ -26,15 +26,23 @@ public class DefaultRFunctionView extends RFunctionView{
 	
 	protected Vector widgets = new Vector();
 	
+	protected boolean outsideSelector = false;
+	
 	public DefaultRFunctionView(){
 		initGui();
 	}
 	
-	public DefaultRFunctionView(RFunction el){
+	public DefaultRFunctionView(Param el){
 		initGui();
 		setModel(el);
 	}
 	
+	public DefaultRFunctionView(Param el,VariableSelectorWidget sel){
+		selector = sel;
+		outsideSelector = true;
+		initGui();
+		setModel(el);
+	}
 	
 	private void initGui(){
 		this.setLayout(new BorderLayout());
@@ -48,6 +56,8 @@ public class DefaultRFunctionView extends RFunctionView{
 			paramPanel = new JPanel();
 			scroller.setViewportView(paramPanel);
 		}
+		this.setMaximumSize(new Dimension(365,365));
+		this.setPreferredSize(new Dimension(365,365));
 	}
 	
 	public void updateGui(){
@@ -59,6 +69,7 @@ public class DefaultRFunctionView extends RFunctionView{
 				break;
 			}
 		}
+		showSelector = showSelector && !outsideSelector;
 		
 		if(showSelector){
 			if(selector == null){
@@ -83,19 +94,27 @@ public class DefaultRFunctionView extends RFunctionView{
 		paramPanel.removeAll();
 		BoxLayout thisLayout = new BoxLayout(paramPanel, javax.swing.BoxLayout.Y_AXIS);
 		paramPanel.setLayout(thisLayout);	
+		int maxHt = 30;
+		int prefHt = 30;
 		for(int i=0;i<model.getParams().size();i++){
 			Param p = (Param) model.getParams().get(i);
 			ParamWidget a ;
 			if(!p.requiresVariableSelector())
 				a = p.getView();
-			else
+			else{
 				a = p.getView(selector);
+			}
 			a.setAlignmentX(CENTER_ALIGNMENT);
 			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));	
+			maxHt += a.getMaximumSize().height;
+			prefHt += a.getPreferredSize().height;
 			widgets.add(a);
 			paramPanel.add(a);
 			paramPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		}
+		this.setMaximumSize(new Dimension(365,maxHt));
+		this.setPreferredSize(new Dimension(365,prefHt));
+		
 		paramPanel.validate();
 		paramPanel.repaint();
 	}

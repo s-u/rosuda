@@ -619,6 +619,13 @@ public class Deducer {
 		return makeRCollection(a,func,quotes);
 	}
 	
+	public static String makeRCollection(String[] lis,String func, boolean quotes) {
+		ArrayList a = new ArrayList();
+		for(int i=0;i<lis.length;i++)
+			a.add(lis[i]);
+		return makeRCollection(a,func,quotes);
+	}
+	
 	/**
 	 * Gets a unique name based on a starting string
 	 * 

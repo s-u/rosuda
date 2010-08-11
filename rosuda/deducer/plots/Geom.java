@@ -97,11 +97,13 @@ public class Geom {
 		
 		aes = Aes.makeAes("colour");
 		aes.required = false;
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
 		aes.defaultValue = new Color(51,51,51);
 		aes.value = new Color(51,51,51);
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
@@ -139,16 +141,19 @@ public class Geom {
 		
 		aes = Aes.makeAes("colour");
 		aes.required = false;
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
 		aes.value = new Color(51,51,51);
 		aes.defaultValue = new Color(51,51,51);
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
 		aes.required = false;
 		aes.defaultValue = new Double(.5);
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("linetype");
@@ -157,6 +162,7 @@ public class Geom {
 		
 		aes = Aes.makeAes("weight");
 		aes.required = false;
+		aes.preferNumeric=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
@@ -196,11 +202,13 @@ public class Geom {
 		
 		aes = Aes.makeAes("colour");
 		aes.required = false;
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
 		aes.value = new Color(153,153,153);
 		aes.defaultValue = new Color(153,153,153);
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
@@ -247,6 +255,7 @@ public class Geom {
 		
 		aes = Aes.makeAes("x");
 		aes.required = true;
+		aes.preferCategorical=true;
 		g.aess.add(aes);	
 		
 		aes = Aes.makeAes("lower");
@@ -271,16 +280,19 @@ public class Geom {
 		
 		aes = Aes.makeAes("colour");
 		aes.required = false;
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
 		aes.value = Color.white;
 		aes.defaultValue = Color.white;
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
 		aes.required = false;
 		aes.defaultValue = new Double(.5);
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("weight");
@@ -429,18 +441,22 @@ public class Geom {
 		aes = Aes.makeAes("colour");
 		aes.value = Color.black;
 		aes.defaultValue = Color.black;
+		aes.preferCategorical=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
+		aes.preferCategorical=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("weight");
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferCategorical=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
+		aes.preferCategorical=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("linetype");
@@ -467,27 +483,32 @@ public class Geom {
 		
 		Aes aes = Aes.makeAes("x");
 		aes.required = true;
+		aes.preferNumeric=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("y");
 		aes.required = true;
+		aes.preferNumeric=true;
 		point.aess.add(aes);		
 		
 		aes = Aes.makeAes("colour");
 		aes.value = Color.decode("#3366FF");
 		aes.defaultValue = Color.decode("#3366FF");
+		aes.preferCategorical=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("weight");
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
+		aes.preferCategorical=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("linetype");
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferCategorical=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -603,6 +624,7 @@ public class Geom {
 		Aes aes = Aes.makeAes("colour");
 		aes.value = Color.black;
 		aes.defaultValue = Color.black;
+		aes.preferCategorical=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
@@ -632,23 +654,29 @@ public class Geom {
 			
 		
 		Aes aes = Aes.makeAes("x");
+		aes.preferNumeric=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("y");
+		aes.preferNumeric=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("colour");
 		aes.defaultValue = new Color(127,127,127);
 		aes.value = aes.defaultValue;
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -673,14 +701,17 @@ public class Geom {
 		
 		
 		aes = Aes.makeAes("colour");
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
 		aes.defaultValue = new Color(51,51,51);
 		aes.value = aes.defaultValue;
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("linetype");
@@ -690,6 +721,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -762,6 +794,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferNumeric=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -801,6 +834,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferNumeric=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -843,6 +877,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferNumeric=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -877,6 +912,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferNumeric=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -916,6 +952,7 @@ public class Geom {
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferNumeric=true;
 		point.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -965,6 +1002,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
+		aes.preferNumeric=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("group");
@@ -1212,12 +1250,15 @@ public class Geom {
 		
 		
 		aes = Aes.makeAes("colour",Color.decode("#3366FF"),null);
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill",new Color(153,153,153),null);
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("linetype");
@@ -1227,6 +1268,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha",new Double(0.4),null);
+		aes.preferCategorical=true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("group");

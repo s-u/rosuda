@@ -41,6 +41,9 @@ public class RFunction extends Param{
 		for(int i=0;i<params.size();i++)
 			s.params.add(((Param)params.get(i)).clone());
 		s.name = name;
+		s.view = view;
+		s.requiresVariableSelector = this.requiresVariableSelector;
+		s.required = required;
 		return s;
 	}
 
@@ -48,7 +51,11 @@ public class RFunction extends Param{
 	public String checkValid() {
 		for(int i=0;i<params.size();i++){
 			Param p = (Param) params.get(i);
-			if(p.isRequired() && !p.hasValidEntry()){
+			if(p instanceof RFunction){
+				String s = ((RFunction)p).checkValid();
+				if(s!=null)
+					return s;
+			}else if(p.isRequired() && !p.hasValidEntry()){
 				return "'" +p.getTitle() + "' is required. Please enter a value.";
 			}
 		}
@@ -59,7 +66,6 @@ public class RFunction extends Param{
 		Vector paramCalls = new Vector();
 		for(int i=0;i<params.size();i++){
 			Param prm = (Param) params.get(i);
-			System.out.println(prm);
 			String[] p = prm.getParamCalls();
 			for(int j=0;j<p.length;j++)
 				paramCalls.add(p[j]);				
@@ -75,12 +81,6 @@ public class RFunction extends Param{
 		return call;
 	}
 
-
-	public ParamWidget getView() {
-		try{
-			return new DefaultRFunctionView(this);
-		}catch(Exception e){e.printStackTrace();return null;}
-	}
 	
 	public void add(Param p){
 		params.add(p);
@@ -105,7 +105,7 @@ public class RFunction extends Param{
 			Node n = doc.importNode(el, true);
 			node.appendChild(n);
 		}
-		
+		node.setAttribute("view", view);
 		node.setAttribute("className", "org.rosuda.deducer.widgets.param.RFunction");
 		
 		return node;
@@ -120,6 +120,11 @@ public class RFunction extends Param{
 			System.out.println("Error RFunction: class mismatch: " + cn);
 			(new Exception()).printStackTrace();
 		}
+		
+		if(node.hasAttribute("view"))
+			view = node.getAttribute("view");
+		else
+			view = VIEW_RFUNCTION;
 		
 		if(node.hasAttribute("paramName"))
 			paramName = node.getAttribute("paramName");
@@ -142,7 +147,7 @@ public class RFunction extends Param{
 	}
 
 	public String[] getParamCalls() {
-		return new String[] { getCall()};
+		return new String[] {getCall()};
 	}
 
 	public Object getValue() {

@@ -1,72 +1,89 @@
 package org.rosuda.deducer.widgets.param;
 
+import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.toolkit.XMLHelper;
 import org.rosuda.deducer.widgets.VariableSelectorWidget;
 import org.w3c.dom.Element;
 
-public class ParamVariable extends Param{
-
+public class ParamMultipleVariables extends Param{
 	protected String data;
-	protected String variable;
+	protected String[] variables = new String[]{};
 	protected String defaultData;
-	protected String defaultVariable;
+	protected String[] defaultVariables = new String[]{};
 	
-	protected String format = FORMAT_VECTOR;
+	protected String format = FORMAT_DATA;
 	
 	protected String dataParamName = "data";
 	
-	public static String FORMAT_VECTOR = "data$variable";
 	public static String FORMAT_DATA = "data[,'variable']";
-	public static String FORMAT_VARIABLE = "=variable,data=data";
-	public static String FORMAT_VARIABLE_CHARACTER = "='variable',data=data";
+	public static String FORMAT_VARIABLE = "=d(variable),data=data";
+	public static String FORMAT_VARIABLE_CHARACTER = "=c('variable'),data=data";
 	
-	public ParamVariable(){
-		view = Param.VIEW_SINGLE_VARIABLE;
+	public ParamMultipleVariables(){
+		view = Param.VIEW_MULTI_VARIABLE;
+		this.requiresVariableSelector=true;
+		view = Param.VIEW_MULTI_VARIABLE;
 	}
 	
-	public ParamVariable(String name){
+	public ParamMultipleVariables(String name){
 		this.name = name;
 		this.title = name;
-		view = Param.VIEW_SINGLE_VARIABLE;
+		this.requiresVariableSelector=true;
+		view = Param.VIEW_MULTI_VARIABLE;
 	}
 	
-	public ParamVariable(String name, String data, String variable){
+	public ParamMultipleVariables(String name, String data, String[] variables){
 		this(name);
 		this.data = data;
-		this.variable = variable;
+		this.variables = variables;
 		this.defaultData = null;
-		this.defaultVariable = null;
-		view = Param.VIEW_SINGLE_VARIABLE;
+		this.defaultVariables = new String[]{};
+		this.requiresVariableSelector=true;
+		view = Param.VIEW_MULTI_VARIABLE;
 	}
 	
 	public Object clone() {
-		ParamVariable p = new ParamVariable();
+		ParamMultipleVariables p = new ParamMultipleVariables();
 		p.setName(this.getName());
 		p.setTitle(this.getTitle());
 		p.setViewType(this.getViewType());
 		p.data = this.data;
-		p.variable = this.variable;
+		
+		String[] ar = new String[variables.length];
+		for(int i=0;i<variables.length;i++)
+			ar[i] = variables[i];
+		p.variables = ar;
+		
 		p.defaultData = this.defaultData;
-		p.defaultVariable = this.defaultVariable;
-		p.view = this.view;
+		
+		ar = new String[defaultVariables.length];
+		for(int i=0;i<defaultVariables.length;i++)
+			ar[i] = defaultVariables[i];
+		p.defaultVariables = ar;
+		p.requiresVariableSelector = this.requiresVariableSelector;
 		p.required = required;
 		return p;
 	}
 	public Object getDefaultValue() {
-		return defaultVariable;
+		return defaultVariables;
 	}
 	public String[] getParamCalls() {
 		String[] calls = new String[]{};
 		if(getValue()!=null && !getValue().equals(getDefaultValue())){
 			String val = "";
-			if(getDefaultValue()==null || (getValue()!=null && !getDefaultValue().toString().equals(getValue().toString()))){
-				if(getFormat().equals(FORMAT_VECTOR)){
-					calls = new String[] {(name!=null ? (name + " = ") : "") + data +"$"+variable};
-				}else if(getFormat().equals(FORMAT_DATA)){
-					calls = new String[] {(name!=null ? (name + " = ") : "") + data +"[,'"+variable+"']"};
+			if(getDefaultValue()==null || 
+					(getValue()!=null && !getDefaultValue().toString().equals(getValue().toString()))){
+				if(getFormat().equals(FORMAT_DATA)){
+					calls = new String[] {(name!=null ? (name + " = ") : "") + 
+							data +"[,"+Deducer.makeRCollection(variables,"c",true)+"]"};
 				}else if(getFormat().equals(FORMAT_VARIABLE)){
-					calls = new String[] {(name!=null ? (name + " = ") : "") +variable ,dataParamName + " = "+ data};
+					calls = new String[] {(name!=null ? (name + " = ") : "") +
+							Deducer.makeRCollection(variables,"d",false) ,  
+							dataParamName + " = "+ data};
 				}else if(getFormat().equals(FORMAT_VARIABLE_CHARACTER)){
-					calls = new String[] {(name!=null ? (name + " = ") : "") + "'" +variable+"'" , dataParamName + " = "+ data};
+					calls = new String[] {(name!=null ? (name + " = ") : "") +
+							Deducer.makeRCollection(variables,"c",true) 
+							, dataParamName + " = "+ data};
 				}
 			}else
 				val ="";
@@ -75,25 +92,25 @@ public class ParamVariable extends Param{
 	return calls;
 	}
 	public Object getValue() {
-		return variable;
+		return variables;
 	}
 	public ParamWidget getView() {
 		return null;
 	}
 	
 	public ParamWidget getView(VariableSelectorWidget s) {
-		return new ParamVariableWidget(this,s);
+		return new ParamMultipleVariablesWidget(this,s);
 	}
 	
 	public boolean requiresVariableSelector(){
 		return true;
 	}
 	
-	public void setDefaultValue(Object defaultValue) {
-		defaultVariable = (String)defaultValue;
+	public void setDefaultValue(Object defaultValues) {
+		defaultVariables = (String[])defaultValues;
 	}
-	public void setValue(Object value) {
-		variable = (String)value;
+	public void setValue(Object values) {
+		variables = (String[])values;
 	}
 	public void setData(String data) {
 		this.data = data;
@@ -101,11 +118,14 @@ public class ParamVariable extends Param{
 	public String getData() {
 		return data;
 	}
-	public void setVariable(String variable) {
-		this.variable = variable;
+	public void setVariables(String[] variables) {
+		this.variables = variables;
 	}
-	public String getVariable() {
-		return variable;
+	public void setVariables(String variable) {
+		this.variables = new String[]{variable};
+	}
+	public String[] getVariables() {
+		return variables;
 	}
 	public void setDefaultData(String defaultData) {
 		this.defaultData = defaultData;
@@ -113,19 +133,18 @@ public class ParamVariable extends Param{
 	public String getDefaultData() {
 		return defaultData;
 	}
-	public void setDefaultVariable(String defaultVariable) {
-		this.defaultVariable = defaultVariable;
+	public void setDefaultVariable(String[] defaultVariables) {
+		this.defaultVariables = defaultVariables;
 	}
-	public String getDefaultVariable() {
-		return defaultVariable;
+	public void setDefaultVariable(String defaultVariable) {
+		this.defaultVariables = new String[]{defaultVariable};
+	}
+	public String[] getDefaultVariable() {
+		return defaultVariables;
 	}
 	
 	public Element toXML(){
 		Element e = super.toXML();
-		if(variable!=null)
-			e.setAttribute("variable", variable);
-		if(defaultVariable!=null)
-			e.setAttribute("defaultVariable", defaultVariable);
 		if(data!=null)
 			e.setAttribute("data", data);
 		if(defaultData!=null)
@@ -135,6 +154,8 @@ public class ParamVariable extends Param{
 		if(dataParamName!=null)
 			e.setAttribute("dataParamName", dataParamName);		
 		e.setAttribute("className", "org.rosuda.deducer.widgets.param.ParamVariable");
+		XMLHelper.appendCollection(e, variables, "variables");
+		XMLHelper.appendCollection(e, defaultVariables, "defaultVariables");
 		return e;
 	}
 	
@@ -145,15 +166,9 @@ public class ParamVariable extends Param{
 			(new Exception()).printStackTrace();
 		}
 		super.setFromXML(node);
-		if(node.hasAttribute("variable"))
-			variable = node.getAttribute("variable");
-		else
-			variable = null;
-
-		if(node.hasAttribute("defaultVariable"))
-			defaultVariable = node.getAttribute("defaultVariable");
-		else
-			defaultVariable = null;
+		
+		variables = XMLHelper.getChildCollection(node, "variables");
+		defaultVariables = XMLHelper.getChildCollection(node, "defaultVariables");
 		
 		if(node.hasAttribute("data"))
 			data = node.getAttribute("data");
@@ -184,7 +199,8 @@ public class ParamVariable extends Param{
 		return dataParamName;
 	}
 	public boolean hasValidEntry(){
-		return variable !=null && variable.length()>0 || defaultVariable!=null;
+		return (variables !=null && variables.length>0) || 
+		(defaultVariables!=null && defaultVariables.length>0);
 	}
 
 	public void setFormat(String format) {

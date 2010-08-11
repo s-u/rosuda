@@ -43,6 +43,9 @@ public abstract class Param implements Cloneable{
 	final public static String VIEW_RFUNCTION_PANEL = "org.rosuda.deducer.widgets.param.RFunctionListPanelWidget";
 	final public static String VIEW_SINGLE_VARIABLE = "org.rosuda.deducer.widgets.param.ParamVariableView";
 	final public static String VIEW_HIDDEN = "org.rosuda.deducer.widgets.param.ParamNullWidget";
+	final public static String VIEW_MULTI_VARIABLE = "org.rosuda.deducer.widgets.param.ParamMultipleVariablesWidget";
+	final public static String VIEW_ROBJECT_COMBO = "org.rosuda.deducer.widgets.param.ParamRObjectComboBoxWidget";
+
 	
 	protected String name;					//name of parameter
 	protected String title;				//title to be displayed
@@ -73,6 +76,17 @@ public abstract class Param implements Cloneable{
 			ParamWidget pw = (ParamWidget) constructor.newInstance(new Param[]{this});
 			return pw;
 		}catch(Exception e){e.printStackTrace();return null;}
+		
+	}
+	
+	public ParamWidget getView(VariableSelectorWidget sel){
+		try{
+			Class cl =Class.forName(view);
+			Constructor constructor = cl.getConstructor(new Class[]{
+					Param.class,VariableSelectorWidget.class});
+			ParamWidget pw = (ParamWidget) constructor.newInstance(new Object[]{this,sel});
+			return pw;
+		}catch(Exception e){return getView();}
 		
 	}
 	
@@ -160,10 +174,6 @@ public abstract class Param implements Cloneable{
 	
 	public void setRequiresVariableSelector(boolean needed){
 		requiresVariableSelector = needed;
-	}
-	
-	public ParamWidget getView(VariableSelectorWidget s){
-		return getView();
 	}
 	
 	public Element toXML(){

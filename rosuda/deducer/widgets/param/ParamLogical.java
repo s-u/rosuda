@@ -58,6 +58,7 @@ public class ParamLogical extends Param{
 			p.setValue(new Boolean(value.booleanValue()));
 		if(defaultValue!=null)
 			p.setDefaultValue(new Boolean(defaultValue.booleanValue()));
+		p.required = required;
 		return p;
 	}
 	
@@ -70,7 +71,7 @@ public class ParamLogical extends Param{
 			else
 				val ="";
 			if(val.length()>0)
-				calls = new String[]{getName() + " = "+val};
+				calls = new String[]{(name!=null ? (name + " = ") : "")+val};
 			else
 				calls = new String[]{};
 			

@@ -80,6 +80,7 @@ public class ParamVector extends Param{
 			p.setDefaultValue(v);			
 		}
 		p.setNumeric(isNumeric());
+		p.required = required;
 		return p;
 	}
 	
@@ -105,7 +106,7 @@ public class ParamVector extends Param{
 			}else
 				val="";
 			if(val.length()>0)
-				calls = new String[]{getName() + " = "+val};
+				calls = new String[]{(name!=null ? (name + " = ") : "")+val};
 			else
 				calls = new String[]{};
 		}else

@@ -74,6 +74,7 @@ public class ParamNumeric extends Param{
 				v[i] = this.getLabels()[i];
 			p.setLabels(v);
 		}
+		p.required = required;
 		return p;
 	}
 	
@@ -86,7 +87,7 @@ public class ParamNumeric extends Param{
 			else
 				val ="";
 			if(val.length()>0)
-				calls = new String[]{getName() + " = "+val};
+				calls = new String[]{(name!=null ? (name + " = ") : "")+val};
 			else
 				calls = new String[]{};
 			

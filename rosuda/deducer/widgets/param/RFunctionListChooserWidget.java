@@ -3,7 +3,6 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.toolkit.IconButton;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,23 +15,21 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-import javax.swing.WindowConstants;
-import javax.swing.JFrame;
 
 
 
-public class ParamRFunctionWidget extends ParamWidget implements ActionListener{
+public class RFunctionListChooserWidget extends ParamWidget implements ActionListener{
 	private JLabel label;
-	private Param model;
+	private RFunctionList model;
 	private JComboBox comboBox;
 	private JButton options;
 	
 	
-	public ParamRFunctionWidget() {
+	public RFunctionListChooserWidget() {
 		super();
 		initGUI();
 	}
-	public ParamRFunctionWidget(Param p) {
+	public RFunctionListChooserWidget(Param p) {
 		super();
 		initGUI();
 		setModel(p);
@@ -85,26 +82,31 @@ public class ParamRFunctionWidget extends ParamWidget implements ActionListener{
 	}
 
 	public void setModel(Param p) {
-		model = p;
+		model = (RFunctionList) p;
 		initGUI();
 		label.setText(p.getTitle());
 		if(p.getValue() !=null){
-			String val = (String) ((Vector)model.getValue()).get(0);
-			comboBox.setSelectedItem(val);
+			if(model.getActiveFunctions().size()>0){
+				String val = (String) model.getActiveFunctions().get(0);
+				comboBox.setSelectedItem(val);
+			}
 		}
 
 	}
 
 	public void updateModel() {
-		Vector v = (Vector) model.getValue();
-		v.set(0, comboBox.getSelectedItem());
+		Vector v = new Vector();
+		if(comboBox.getSelectedItem()!=null)
+			v.add(comboBox.getSelectedItem());
+		model.setActiveFunctions(v);
+		
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		Object f = comboBox.getSelectedItem();
 		if(f!=null && f.toString().length()>0){
 			String fun = f.toString();
-			HashMap hm = (HashMap) ((Vector)model.getValue()).get(1);
+			HashMap hm = model.getFunctionMap();
 			RFunction rf = (RFunction) hm.get(fun);
 			RFunctionDialog d = new RFunctionDialog(rf);
 			d.setRun(false);
