@@ -3,7 +3,6 @@ package org.rosuda.deducer.models;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
@@ -16,11 +15,11 @@ import org.rosuda.deducer.data.ExDefaultTableModel;
 
 public class LinearModel extends GLMModel {
 	
-	public boolean hccm = true;
+	public boolean hccm = false;
 	
 	LinearModel(){
 		super();
-		plots.confInt=false;
+		plots.confInt=true;
 	}
 	
 	
