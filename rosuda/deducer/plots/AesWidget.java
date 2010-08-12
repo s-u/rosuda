@@ -49,7 +49,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.basic.BasicComboBoxUI;
@@ -342,7 +341,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 				nameLab.getFontMetrics(nameLab.getFont()),
 				newModel.title);
 		nameLab.setText(newModel.title);
-		nameLab.setPreferredSize(new Dimension(nameWidth,13));
+		nameLab.setPreferredSize(new Dimension(nameWidth,22));
 		nameLab.setForeground(c);
 		int leftPos = Math.max(10+nameWidth, 56);
 		this.remove(value);
