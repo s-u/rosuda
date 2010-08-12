@@ -164,8 +164,10 @@ public class Deducer {
 
 		    
 		    insertMenu(JGR.MAINRCONSOLE,"Plots",menuIndex);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open plot", "openplot", cListener);
+		    insertJMenuItem(JGR.MAINRCONSOLE, "File", "Open plot", "openplot", cListener, 3);
+		    //EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open plot", "openplot", cListener);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot builder", "plotbuilder", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Import template", "Import template", cListener);		    
 		    menuIndex++;
 			
 	    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
@@ -438,6 +440,24 @@ public class Deducer {
 					d.setLocationRelativeTo(null);
 					d.setVisible(true);
 					WindowTracker.addWindow(d);	
+				}
+			}
+		}else if(cmd.equals("Import template")){
+			FileSelector fileDialog = new FileSelector(null, 
+					"Import template", FileSelector.LOAD, null, true);
+			fileDialog.setVisible(true);
+			
+			if(fileDialog.getFile() !=null){
+				File f = fileDialog.getSelectedFile();
+				if(!f.getName().endsWith(".ggtmpl")){
+					JOptionPane.showMessageDialog(null, "This does not appear to be a"
+							+" ggplot2 template file (extension .ggtmpl)");
+					return;
+				}
+				if(f!=null && f.exists()){
+					PlottingElement el = new PlottingElement();
+					el.setFromFile(f);
+					PlotController.addTemplate(el);
 				}
 			}
 		}

@@ -880,10 +880,11 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 			menuItem.addActionListener(new ActionListener(){
 				
 				public void actionPerformed(ActionEvent e) {
-					JFileChooser c = new JFileChooser("Save template");
-					int ret = c.showDialog(null, "Save");
-					if(ret == JFileChooser.APPROVE_OPTION){
-						File f = c.getSelectedFile();
+					FileSelector fileDialog = new FileSelector(null, 
+							"Save template", FileSelector.SAVE, null, true);
+					fileDialog.setVisible(true);
+					if(fileDialog.getFile()!=null){
+						File f = fileDialog.getSelectedFile();
 						if(!f.getName().endsWith(".ggtmpl"))
 							f = new File(f.getPath() + ".ggtmpl");
 						if(f.exists()){
@@ -1172,10 +1173,12 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				setModel(newModel);
 				updatePlot();
 			}else if(cmd.equals("import")){
-				JFileChooser c = new JFileChooser("Import template");
-				int ret = c.showOpenDialog(null);
-				if(ret == JFileChooser.APPROVE_OPTION){
-					File f = c.getSelectedFile();
+				FileSelector fileDialog = new FileSelector(PlotBuilder.this, 
+						"Import template", FileSelector.LOAD, null, true);
+				fileDialog.setVisible(true);
+				
+				if(fileDialog.getFile() !=null){
+					File f = fileDialog.getSelectedFile();
 					if(!f.getName().endsWith(".ggtmpl")){
 						JOptionPane.showMessageDialog(null, "This does not appear to be a"
 								+" ggplot2 template file (extension .ggtmpl)");

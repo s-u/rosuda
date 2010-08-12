@@ -275,8 +275,8 @@ public class Aes {
 			node.setAttribute("useVariable", useVariable ? "true" : "false");
 			node.setAttribute("defaultUseVariable", defaultUseVariable ? "true" : "false");
 			node.setAttribute("required", required ? "true" : "false");
-			node.setAttribute("preferNumeric", required ? "true" : "false");
-			node.setAttribute("preferCategorical", required ? "true" : "false");
+			node.setAttribute("preferNumeric", preferNumeric ? "true" : "false");
+			node.setAttribute("preferCategorical", preferCategorical ? "true" : "false");
 			if(variable!=null)
 				node.setAttribute("variable", variable);
 			if(defaultVariable!=null)

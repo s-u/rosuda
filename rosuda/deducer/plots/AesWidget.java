@@ -598,6 +598,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			}
 		}else if(model.preferCategorical){
 			REXP exp = Deducer.eval("is.discrete(" + data + "$" + var+")");
+			//System.out.println(exp.toDebugString());
 			if(exp!=null && exp.isLogical()){
 				if(((REXPLogical)exp).isFALSE()[0])
 					var = "as.factor("+var + ")";

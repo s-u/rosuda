@@ -3,6 +3,7 @@ package org.rosuda.deducer.widgets.param;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.WindowTracker;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
@@ -129,6 +130,18 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 
 	public boolean isRun() {
 		return isRun;
+	}
+	
+	public void run(){
+		try{
+			if(initialModel!=null)
+				this.setToInitialModel();
+			this.setVisible(true);
+			if(!Deducer.isJGR()){
+				WindowTracker.addWindow(this);
+				WindowTracker.waitForAllClosed();
+			}
+		}catch(Exception ex){ex.printStackTrace();}
 	}
 	
 }

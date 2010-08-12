@@ -1,8 +1,8 @@
-<PlottingElement active="true" className="org.rosuda.deducer.plots.PlottingElement" compound="false" helpUrl="" iconUrl="/icons/ggplot_icons/template_default.png" name="pie" type="template">
-<ElementModel className="org.rosuda.deducer.plots.Template" data="diamonds">
+<PlottingElement active="true" className="org.rosuda.deducer.plots.PlottingElement" compound="false" helpUrl="" iconUrl="/icons/ggplot_icons/template_pie.png" name="pie" type="template">
+<ElementModel className="org.rosuda.deducer.plots.Template" data="CST">
 <elements>
 <PlottingElement active="true" className="org.rosuda.deducer.plots.PlottingElement" compound="false" helpUrl="http://had.co.nz/ggplot2/geom_bar.html" iconUrl="/icons/ggplot_icons/geom_bar.png" name="bar" type="geom">
-<ElementModel className="org.rosuda.deducer.plots.Layer" data="diamonds" isGeom="true" isStat="false">
+<ElementModel className="org.rosuda.deducer.plots.Layer" data="CST" isGeom="true" isStat="false">
 <Stat className="org.rosuda.deducer.plots.Stat" defaultGeom="bar" name="bin">
 <params>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="binwidth" required="true" requiresVariableSelector="false" title="binwidth" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -29,22 +29,22 @@
 </Param>
 </params>
 <aess>
-<Aes className="Aes" dataType="any" defaultUseVariable="true" name="x" required="true" title="X" useVariable="true"/>
-<Aes className="Aes" dataType="any" defaultUseVariable="true" defaultVariable="..count.." name="y" required="true" title="Y" useVariable="true" variable="..count.."/>
+<Aes className="Aes" dataType="any" defaultUseVariable="true" name="x" preferCategorical="false" preferNumeric="false" required="true" title="X" useVariable="true" value="1" variable="&quot;&quot;"/>
+<Aes className="Aes" dataType="any" defaultUseVariable="true" defaultVariable="..count.." name="y" preferCategorical="false" preferNumeric="false" required="true" title="Y" useVariable="true" variable="..count.."/>
 </aess>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
 </Stat>
 <Geom className="org.rosuda.deducer.plots.Geom" defaultPosition="stack" defaultStat="bin" name="bar">
 <params/>
 <aess>
-<Aes className="Aes" dataType="any" defaultUseVariable="true" name="x" required="true" title="X" useVariable="true" variable="&quot;&quot;"/>
-<Aes className="Aes" dataType="col" defaultUseVariable="false" name="colour" required="false" title="Colour" useVariable="false"/>
-<Aes className="Aes" dataType="col" defaultUseVariable="false" defaultValue="#333333" name="fill" required="false" title="Fill" useVariable="true" value="#333333"/>
-<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="0.5" lowerBound="0.0" name="size" required="false" title="Size" useVariable="false" value="0.5"/>
-<Aes className="Aes" dataType="ln" defaultUseVariable="false" defaultValue="1" name="linetype" required="false" title="Line" useVariable="false" value="1"/>
-<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="1.0" lowerBound="0.0" name="weight" required="false" title="Weight" useVariable="false" value="1.0"/>
-<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="1.0" lowerBound="0.0" name="alpha" required="false" title="Alpha" upperBound="1.0" useVariable="false" value="1.0"/>
-<Aes className="Aes" dataType="none" defaultUseVariable="false" name="group" required="false" title="Group" useVariable="false"/>
+<Aes className="Aes" dataType="any" defaultUseVariable="true" name="x" preferCategorical="false" preferNumeric="false" required="true" title="X" useVariable="true" variable="&quot;&quot;"/>
+<Aes className="Aes" dataType="col" defaultUseVariable="false" name="colour" preferCategorical="true" preferNumeric="false" required="false" title="Colour" useVariable="false"/>
+<Aes className="Aes" dataType="col" defaultUseVariable="false" defaultValue="#333333" name="fill" preferCategorical="true" preferNumeric="false" required="false" title="Fill" useVariable="true" value="#333333"/>
+<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="0.5" lowerBound="0.0" name="size" preferCategorical="true" preferNumeric="false" required="false" title="Size" useVariable="false" value="0.5"/>
+<Aes className="Aes" dataType="ln" defaultUseVariable="false" defaultValue="1" name="linetype" preferCategorical="true" preferNumeric="false" required="false" title="Line" useVariable="false" value="1"/>
+<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="1.0" lowerBound="0.0" name="weight" preferCategorical="false" preferNumeric="true" required="false" title="Weight" useVariable="false" value="1.0"/>
+<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="1.0" lowerBound="0.0" name="alpha" preferCategorical="false" preferNumeric="true" required="false" title="Alpha" upperBound="1.0" useVariable="false" value="1.0"/>
+<Aes className="Aes" dataType="none" defaultUseVariable="false" name="group" preferCategorical="false" preferNumeric="false" required="false" title="Group" useVariable="false"/>
 </aess>
 </Geom>
 <Position className="org.rosuda.deducer.plots.Position" name="stack"/>
@@ -70,73 +70,9 @@
 </Param>
 </ElementModel>
 </PlottingElement>
-<PlottingElement active="true" className="org.rosuda.deducer.plots.PlottingElement" compound="false" helpUrl="http://had.co.nz/ggplot2/scale_continuous.html" iconUrl="/icons/ggplot_icons/scale_default.png" name="y_continuous" type="scale">
-<ElementModel aesName="y" className="org.rosuda.deducer.plots.Scale" name="scale_y_continuous">
-<Param className="org.rosuda.deducer.plots.ParamScaleLegend" name="ticks" required="true" requiresVariableSelector="false" title="Ticks" viewType="scale">
-<options/>
-<labels/>
-<value legendTitle=" " nrow="1" show="true">
-<column_0 element_0=""/>
-<column_1 element_0=""/>
-</value>
-</Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamVector" name="limits" numeric="true" required="true" requiresVariableSelector="false" title="Data range" viewType="org.rosuda.deducer.widgets.param.ParamTwoValueWidget">
-<options/>
-<labels/>
-<value/>
-<defaultValue/>
-</Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamVector" name="expand" numeric="true" required="true" requiresVariableSelector="false" title="Expansion factors (*,+)" viewType="org.rosuda.deducer.widgets.param.ParamTwoValueWidget">
-<options/>
-<labels/>
-<value element_0="0.05" element_1="0.55"/>
-<defaultValue element_0="0.05" element_1="0.55"/>
-</Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="identity" name="trans" required="true" requiresVariableSelector="false" title="Transformation" value="identity" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
-<options element_0="asn" element_1="exp" element_2="identity" element_3="log" element_4="log10" element_5="probit" element_6="recip" element_7="reverse" element_8="sqrt"/>
-<labels/>
-</Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="scientific" name="formatter" required="true" requiresVariableSelector="false" title="Format" value="scientific" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
-<options element_0="identity" element_1="comma" element_2="dollar" element_3="percent" element_4="scientific" element_5="precision"/>
-<labels/>
-</Param>
-</ElementModel>
-</PlottingElement>
-<PlottingElement active="true" className="org.rosuda.deducer.plots.PlottingElement" compound="false" helpUrl="http://had.co.nz/ggplot2/scale_discrete.html" iconUrl="/icons/ggplot_icons/scale_default.png" name="x_discrete" type="scale">
-<ElementModel aesName="x" className="org.rosuda.deducer.plots.Scale" name="scale_x_discrete">
-<Param className="org.rosuda.deducer.plots.ParamScaleLegend" name="ticks" required="true" requiresVariableSelector="false" title="ticks" viewType="scale">
-<options/>
-<labels/>
-<value legendTitle=" " nrow="1" show="true">
-<column_0 element_0=""/>
-<column_1 element_0=""/>
-</value>
-</Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamVector" name="expand" numeric="true" required="true" requiresVariableSelector="false" title="expand" viewType="org.rosuda.deducer.widgets.param.ParamVectorBuilderWidget">
-<options/>
-<labels/>
-<value element_0="0.05" element_1="0.55"/>
-<defaultValue element_0="0.05" element_1="0.55"/>
-</Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamVector" name="limits" numeric="true" required="true" requiresVariableSelector="false" title="Included levels" viewType="org.rosuda.deducer.widgets.param.ParamVectorBuilderWidget">
-<options/>
-<labels/>
-<value/>
-<defaultValue/>
-</Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamLogical" defaultValue="false" name="drop" required="true" requiresVariableSelector="false" title="Drop unused levels" value="false" viewType="org.rosuda.deducer.widgets.param.ParamCheckBoxWidget">
-<options/>
-<labels/>
-</Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="identity" name="formatter" required="true" requiresVariableSelector="false" title="Format" value="identity" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
-<options element_0="identity" element_1="comma" element_2="dollar" element_3="percent" element_4="scientific" element_5="precision"/>
-<labels/>
-</Param>
-</ElementModel>
-</PlottingElement>
 <PlottingElement active="true" className="org.rosuda.deducer.plots.PlottingElement" compound="false" helpUrl="" iconUrl="/icons/ggplot_icons/theme_opts.png" name="opts" type="theme">
 <ElementModel className="org.rosuda.deducer.plots.Theme" name="opts">
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" name="title" required="true" requiresVariableSelector="false" title="title" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldLongWidget">
+<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="title" required="true" requiresVariableSelector="false" title="title" value="" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldLongWidget">
 <options/>
 <labels/>
 </Param>
@@ -145,15 +81,19 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_segment">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -177,19 +117,23 @@
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -229,19 +173,23 @@
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -281,15 +229,19 @@
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_segment">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -311,21 +263,25 @@
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.title.x" required="true" requiresVariableSelector="false" title="axis.title.x" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
-<active/>
-<defaultActive/>
+<active element_0="theme_blank"/>
+<defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -363,21 +319,25 @@
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.title.y" required="true" requiresVariableSelector="false" title="axis.title.y" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
-<active/>
-<defaultActive/>
+<active element_0="theme_blank"/>
+<defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -417,9 +377,13 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -427,7 +391,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -439,9 +403,13 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -449,7 +417,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -461,15 +429,19 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -497,15 +469,19 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -533,9 +509,13 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -543,7 +523,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -555,19 +535,23 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -578,7 +562,7 @@
 <options/>
 <labels/>
 </Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="10.0" lowerBound="0.0" name="size" required="true" requiresVariableSelector="false" title="size" value="20.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
+<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="10.0" lowerBound="0.0" name="size" required="true" requiresVariableSelector="false" title="size" value="10.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
 <options/>
 <labels/>
 </Param>
@@ -605,21 +589,25 @@
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="legend.title" required="true" requiresVariableSelector="false" title="legend.title" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
-<active element_0="theme_text"/>
-<defaultActive element_0="theme_text"/>
+<active/>
+<defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -630,7 +618,7 @@
 <options/>
 <labels/>
 </Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="10.0" lowerBound="0.0" name="size" required="true" requiresVariableSelector="false" title="size" value="18.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
+<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="10.0" lowerBound="0.0" name="size" required="true" requiresVariableSelector="false" title="size" value="10.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
 <options/>
 <labels/>
 </Param>
@@ -638,7 +626,7 @@
 <options/>
 <labels/>
 </Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="0.5" lowerBound="0.0" name="hjust" required="true" requiresVariableSelector="false" title="hjust" upperBound="1.0" value="0.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
+<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="0.5" lowerBound="0.0" name="hjust" required="true" requiresVariableSelector="false" title="hjust" upperBound="1.0" value="0.5" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
 <options/>
 <labels/>
 </Param>
@@ -654,7 +642,7 @@
 </keyValuePair>
 </valueMap>
 </Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="legend.position" required="true" requiresVariableSelector="false" title="legend.position" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
+<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="legend.position" required="true" requiresVariableSelector="false" title="legend.position" value="" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
 <options element_0="right" element_1="left"/>
 <labels/>
 </Param>
@@ -669,15 +657,19 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -705,15 +697,19 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_segment">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -737,15 +733,19 @@
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_line">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_line" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_line" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -769,15 +769,19 @@
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_line">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_line" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_line" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -801,9 +805,13 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -811,7 +819,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -823,15 +831,19 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -859,19 +871,23 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -911,19 +927,23 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -963,15 +983,19 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -999,19 +1023,23 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -1051,9 +1079,13 @@
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -1061,7 +1093,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -1075,47 +1107,47 @@
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="true" name="y" show="false">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="any" defaultUseVariable="true" defaultVariable="..count.." name="y" required="true" title="Y" useVariable="true"/>
+<Aes className="Aes" dataType="any" defaultUseVariable="true" defaultVariable="..count.." name="y" preferCategorical="false" preferNumeric="false" required="true" title="Y" useVariable="true"/>
 </MaskingAes>
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="true" name="x" show="false">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="any" defaultUseVariable="true" name="x" required="true" title="X" useVariable="true"/>
+<Aes className="Aes" dataType="any" defaultUseVariable="true" name="x" preferCategorical="false" preferNumeric="false" required="true" title="X" useVariable="true" value="1"/>
 </MaskingAes>
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="false" name="colour" show="false">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="col" defaultUseVariable="false" name="colour" required="false" title="Colour" useVariable="false"/>
+<Aes className="Aes" dataType="col" defaultUseVariable="false" name="colour" preferCategorical="true" preferNumeric="false" required="false" title="Colour" useVariable="false"/>
 </MaskingAes>
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="true" name="fill" show="true">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="col" defaultUseVariable="false" defaultValue="#333333" name="fill" required="false" title="Factor" useVariable="true" value="#333333"/>
+<Aes className="Aes" dataType="col" defaultUseVariable="false" defaultValue="#333333" name="fill" preferCategorical="true" preferNumeric="false" required="false" title="Variable" useVariable="true" value="#333333"/>
 </MaskingAes>
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="false" name="size" show="false">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="0.5" lowerBound="0.0" name="size" required="false" title="Size" useVariable="false" value="0.5"/>
+<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="0.5" lowerBound="0.0" name="size" preferCategorical="true" preferNumeric="false" required="false" title="Size" useVariable="false" value="0.5"/>
 </MaskingAes>
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="false" name="linetype" show="false">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="ln" defaultUseVariable="false" defaultValue="1" name="linetype" required="false" title="Line" useVariable="false" value="1"/>
+<Aes className="Aes" dataType="ln" defaultUseVariable="false" defaultValue="1" name="linetype" preferCategorical="true" preferNumeric="false" required="false" title="Line" useVariable="false" value="1"/>
 </MaskingAes>
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="false" name="weight" show="false">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="1.0" lowerBound="0.0" name="weight" required="false" title="Weight" useVariable="false" value="1.0"/>
+<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="1.0" lowerBound="0.0" name="weight" preferCategorical="false" preferNumeric="true" required="false" title="Weight" useVariable="false" value="1.0"/>
 </MaskingAes>
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="false" name="alpha" show="false">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="1.0" lowerBound="0.0" name="alpha" required="false" title="Alpha" upperBound="1.0" useVariable="false" value="1.0"/>
+<Aes className="Aes" dataType="bounded" defaultUseVariable="false" defaultValue="1.0" lowerBound="0.0" name="alpha" preferCategorical="false" preferNumeric="true" required="false" title="Alpha" upperBound="1.0" useVariable="false" value="1.0"/>
 </MaskingAes>
 <MaskingAes className="org.rosuda.deducer.plots.Template.MaskingAes" isMap="false" name="group" show="false">
 <elementIndices element_0="0"/>
 <generated element_0="count" element_1="density" element_2="ncount" element_3="ndensity"/>
-<Aes className="Aes" dataType="none" defaultUseVariable="false" name="group" required="false" title="Group" useVariable="false"/>
+<Aes className="Aes" dataType="none" defaultUseVariable="false" name="group" preferCategorical="false" preferNumeric="false" required="false" title="Group" useVariable="false"/>
 </MaskingAes>
 </mAess>
 <mParams>
@@ -1175,103 +1207,31 @@
 <labels/>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="ticks" show="false">
-<Param className="org.rosuda.deducer.plots.ParamScaleLegend" name="ticks" required="true" requiresVariableSelector="false" title="Ticks" viewType="scale">
-<options/>
-<labels/>
-<value legendTitle=" " nrow="1" show="true">
-<column_0 element_0=""/>
-<column_1 element_0=""/>
-</value>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="limits" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamVector" name="limits" numeric="true" required="true" requiresVariableSelector="false" title="Data range" viewType="org.rosuda.deducer.widgets.param.ParamTwoValueWidget">
-<options/>
-<labels/>
-<value/>
-<defaultValue/>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="expand" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamVector" name="expand" numeric="true" required="true" requiresVariableSelector="false" title="Expansion factors (*,+)" viewType="org.rosuda.deducer.widgets.param.ParamTwoValueWidget">
-<options/>
-<labels/>
-<value element_0="0.05" element_1="0.55"/>
-<defaultValue element_0="0.05" element_1="0.55"/>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="trans" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="identity" name="trans" required="true" requiresVariableSelector="false" title="Transformation" value="identity" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
-<options element_0="asn" element_1="exp" element_2="identity" element_3="log" element_4="log10" element_5="probit" element_6="recip" element_7="reverse" element_8="sqrt"/>
-<labels/>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="formatter" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="scientific" name="formatter" required="true" requiresVariableSelector="false" title="Format" value="scientific" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
-<options element_0="identity" element_1="comma" element_2="dollar" element_3="percent" element_4="scientific" element_5="precision"/>
-<labels/>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="3" paramName="ticks" show="false">
-<Param className="org.rosuda.deducer.plots.ParamScaleLegend" name="ticks" required="true" requiresVariableSelector="false" title="ticks" viewType="scale">
-<options/>
-<labels/>
-<value legendTitle=" " nrow="1" show="true">
-<column_0 element_0=""/>
-<column_1 element_0=""/>
-</value>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="3" paramName="expand" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamVector" name="expand" numeric="true" required="true" requiresVariableSelector="false" title="expand" viewType="org.rosuda.deducer.widgets.param.ParamVectorBuilderWidget">
-<options/>
-<labels/>
-<value element_0="0.05" element_1="0.55"/>
-<defaultValue element_0="0.05" element_1="0.55"/>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="3" paramName="limits" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamVector" name="limits" numeric="true" required="true" requiresVariableSelector="false" title="Included levels" viewType="org.rosuda.deducer.widgets.param.ParamVectorBuilderWidget">
-<options/>
-<labels/>
-<value/>
-<defaultValue/>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="3" paramName="drop" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamLogical" defaultValue="false" name="drop" required="true" requiresVariableSelector="false" title="Drop unused levels" value="false" viewType="org.rosuda.deducer.widgets.param.ParamCheckBoxWidget">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="title" show="false">
+<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="title" required="true" requiresVariableSelector="false" title="title" value="" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldLongWidget">
 <options/>
 <labels/>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="3" paramName="formatter" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="identity" name="formatter" required="true" requiresVariableSelector="false" title="Format" value="identity" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
-<options element_0="identity" element_1="comma" element_2="dollar" element_3="percent" element_4="scientific" element_5="precision"/>
-<labels/>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="title" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" name="title" required="true" requiresVariableSelector="false" title="title" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldLongWidget">
-<options/>
-<labels/>
-</Param>
-</MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="axis.line" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="axis.line" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.line" required="true" requiresVariableSelector="false" title="axis.line" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_segment"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_segment">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -1291,25 +1251,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="axis.text.x" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="axis.text.x" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.text.x" required="true" requiresVariableSelector="false" title="axis.text.x" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -1345,25 +1309,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="axis.text.y" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="axis.text.y" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.text.y" required="true" requiresVariableSelector="false" title="axis.text.y" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -1399,21 +1367,25 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="axis.ticks" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="axis.ticks" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.ticks" required="true" requiresVariableSelector="false" title="axis.ticks" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_segment"/>
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_segment">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -1433,25 +1405,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="axis.title.x" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="axis.title.x" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.title.x" required="true" requiresVariableSelector="false" title="axis.title.x" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
-<active/>
-<defaultActive/>
+<active element_0="theme_blank"/>
+<defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -1487,25 +1463,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="axis.title.y" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="axis.title.y" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.title.y" required="true" requiresVariableSelector="false" title="axis.title.y" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
-<active/>
-<defaultActive/>
+<active element_0="theme_blank"/>
+<defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -1541,15 +1521,19 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="axis.ticks.length" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="axis.ticks.length" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.ticks.length" required="true" requiresVariableSelector="false" title="axis.ticks.length" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="unit"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -1557,7 +1541,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -1565,15 +1549,19 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="axis.ticks.margin" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="axis.ticks.margin" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="axis.ticks.margin" required="true" requiresVariableSelector="false" title="axis.ticks.margin" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="unit"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -1581,7 +1569,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -1589,21 +1577,25 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="legend.background" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="legend.background" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="legend.background" required="true" requiresVariableSelector="false" title="legend.background" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_rect"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -1627,21 +1619,25 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="legend.key" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="legend.key" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="legend.key" required="true" requiresVariableSelector="false" title="legend.key" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_rect"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -1665,15 +1661,19 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="legend.key.size" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="legend.key.size" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="legend.key.size" required="true" requiresVariableSelector="false" title="legend.key.size" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="unit"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -1681,7 +1681,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -1689,25 +1689,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="legend.text" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="legend.text" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="legend.text" required="true" requiresVariableSelector="false" title="legend.text" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -1718,7 +1722,7 @@
 <options/>
 <labels/>
 </Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="10.0" lowerBound="0.0" name="size" required="true" requiresVariableSelector="false" title="size" value="20.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
+<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="10.0" lowerBound="0.0" name="size" required="true" requiresVariableSelector="false" title="size" value="10.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
 <options/>
 <labels/>
 </Param>
@@ -1743,25 +1747,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="legend.title" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="legend.title" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="legend.title" required="true" requiresVariableSelector="false" title="legend.title" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
-<active element_0="theme_text"/>
-<defaultActive element_0="theme_text"/>
+<active/>
+<defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -1772,7 +1780,7 @@
 <options/>
 <labels/>
 </Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="10.0" lowerBound="0.0" name="size" required="true" requiresVariableSelector="false" title="size" value="18.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
+<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="10.0" lowerBound="0.0" name="size" required="true" requiresVariableSelector="false" title="size" value="10.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
 <options/>
 <labels/>
 </Param>
@@ -1780,7 +1788,7 @@
 <options/>
 <labels/>
 </Param>
-<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="0.5" lowerBound="0.0" name="hjust" required="true" requiresVariableSelector="false" title="hjust" upperBound="1.0" value="0.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
+<Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="0.5" lowerBound="0.0" name="hjust" required="true" requiresVariableSelector="false" title="hjust" upperBound="1.0" value="0.5" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
 <options/>
 <labels/>
 </Param>
@@ -1797,13 +1805,13 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="legend.position" show="false">
-<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="legend.position" required="true" requiresVariableSelector="false" title="legend.position" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="legend.position" show="false">
+<Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="legend.position" required="true" requiresVariableSelector="false" title="legend.position" value="" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
 <options element_0="right" element_1="left"/>
 <labels/>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="legend.position" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="legend.position" show="false">
 <Param className="org.rosuda.deducer.widgets.param.ParamVector" lowerBound="0.0" name="legend.position" numeric="true" required="true" requiresVariableSelector="false" title="legend.position" upperBound="1.0" viewType="org.rosuda.deducer.widgets.param.ParamTwoValueWidget">
 <options/>
 <labels/>
@@ -1811,21 +1819,25 @@
 <defaultValue/>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="panel.background" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="panel.background" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="panel.background" required="true" requiresVariableSelector="false" title="panel.background" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_rect"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -1849,21 +1861,25 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="panel.border" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="panel.border" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="panel.border" required="true" requiresVariableSelector="false" title="panel.border" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_segment"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_segment">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_segment" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -1883,21 +1899,25 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="panel.grid.major" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="panel.grid.major" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="panel.grid.major" required="true" requiresVariableSelector="false" title="panel.grid.major" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_line"/>
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_line">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_line" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_line" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -1917,21 +1937,25 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="panel.grid.minor" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="panel.grid.minor" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="panel.grid.minor" required="true" requiresVariableSelector="false" title="panel.grid.minor" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_line"/>
 <labels/>
 <active element_0="theme_blank"/>
 <defaultActive element_0="theme_blank"/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_line">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_line" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_line" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" defaultValue="#000000" name="colour" required="true" requiresVariableSelector="false" title="colour" value="#000000" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -1951,15 +1975,19 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="panel.margin" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="panel.margin" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="panel.margin" required="true" requiresVariableSelector="false" title="panel.margin" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="unit"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -1967,7 +1995,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
@@ -1975,21 +2003,25 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="strip.background" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="strip.background" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="strip.background" required="true" requiresVariableSelector="false" title="strip.background" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_rect"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -2013,25 +2045,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="strip.text.x" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="strip.text.x" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="strip.text.x" required="true" requiresVariableSelector="false" title="strip.text.x" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -2067,25 +2103,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="strip.text.y" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="strip.text.y" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="strip.text.y" required="true" requiresVariableSelector="false" title="strip.text.y" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -2121,21 +2161,25 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="plot.background" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="plot.background" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="plot.background" required="true" requiresVariableSelector="false" title="plot.background" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_rect"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_rect">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_rect" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamColor" name="fill" required="true" requiresVariableSelector="false" title="fill" viewType="org.rosuda.deducer.widgets.param.ParamColorWidget">
@@ -2159,25 +2203,29 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="plot.title" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="plot.title" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="plot.title" required="true" requiresVariableSelector="false" title="plot.title" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="theme_blank" element_1="theme_text"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false" element_1="false"/>
+<print element_0="true" element_1="true"/>
+<keep element_0="false" element_1="false"/>
+<assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="theme_blank">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_blank" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 </Param>
 </keyValuePair>
 <keyValuePair key="theme_text">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="family" required="true" requiresVariableSelector="false" title="font family" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="AvantGarde" element_1="Bookman" element_10="NimbusMon" element_11="NimbusSan" element_12="NimbusSanCond" element_13="CenturySch" element_14="URWPalladio" element_15="NimbusRom" element_2="Courier" element_3="Helvetica" element_4="Helvetica-Narrow" element_5="NewCenturySchoolbook" element_6="Palatino" element_7="Times" element_8="URWGothic" element_9="URWBookman"/>
+<options element_0="AvantGarde" element_1="Bookman" element_10="Helvetica-Narrow" element_11="NewCenturySchoolbook" element_12="Palatino" element_13="Times" element_14="URWGothic" element_15="URWBookman" element_2="NimbusMon" element_3="NimbusSan" element_4="NimbusSanCond" element_5="CenturySch" element_6="URWPalladio" element_7="NimbusRom" element_8="Courier" element_9="Helvetica"/>
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="plain" name="face" required="true" requiresVariableSelector="false" title="face" value="plain" viewType="org.rosuda.deducer.widgets.param.ParamComboBoxWidget">
@@ -2213,15 +2261,19 @@
 </valueMap>
 </Param>
 </MaskingParam>
-<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="4" paramName="plot.margin" show="false">
+<MaskingParam className="org.rosuda.deducer.plots.Template.MaskingParam" elementIndex="2" paramName="plot.margin" show="false">
 <Param className="org.rosuda.deducer.widgets.param.RFunctionList" name="plot.margin" required="true" requiresVariableSelector="false" title="plot.margin" viewType="org.rosuda.deducer.widgets.param.RFunctionListChooserWidget">
 <options element_0="unit"/>
 <labels/>
 <active/>
 <defaultActive/>
+<required element_0="false"/>
+<print element_0="true"/>
+<keep element_0="false"/>
+<assignTo element_0="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="unit">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="theme_text" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" lowerBound="0.0" name="x" required="true" requiresVariableSelector="false" title="x" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -2229,7 +2281,7 @@
 <labels/>
 </Param>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="" name="units" required="true" requiresVariableSelector="false" title="units" value="" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
-<options element_0="npc" element_1="cm" element_10="lines" element_11="char" element_12="native" element_13="snpc" element_14="strwidth" element_15="strheight" element_16="grobwidth" element_17="grobheight" element_2="inches" element_3="mm" element_4="points" element_5="picas" element_6="bigpts" element_7="dida" element_8="cicero" element_9="scaledpts"/>
+<options element_0="npc" element_1="cm" element_10="inches" element_11="mm" element_12="points" element_13="picas" element_14="bigpts" element_15="dida" element_16="cicero" element_17="scaledpts" element_2="lines" element_3="char" element_4="native" element_5="snpc" element_6="strwidth" element_7="strheight" element_8="grobwidth" element_9="grobheight"/>
 <labels/>
 </Param>
 </Param>
