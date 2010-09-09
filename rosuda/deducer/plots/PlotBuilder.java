@@ -1035,6 +1035,11 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 			}
 			lastModel = (PlotBuilderModel) model.clone();
 			this.dispose();			
+			if(device!=null){
+				device.devOff();
+				plotHolder.remove(device);
+				device=null;
+			}
 			Deducer.execute("dev.new()\n"+call);
 		}else if(cmd == "Reset"){
 			this.setModel(new PlotBuilderModel());

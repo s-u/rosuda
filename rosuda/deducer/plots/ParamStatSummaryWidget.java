@@ -61,6 +61,7 @@ public class ParamStatSummaryWidget extends ParamWidget implements ActionListene
 	private void initGUI() {
 		try {
 			this.setPreferredSize(new java.awt.Dimension(199, 536));
+			this.setMinimumSize(new java.awt.Dimension(140, 536));
 			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
 			{

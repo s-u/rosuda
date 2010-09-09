@@ -61,7 +61,7 @@ public class Deducer {
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	static int menuIndex=3;
 	static String recentActiveData = "";
-	static final String Version= "0.4-0";
+	static final String Version= "0.4-1";
 	public static String guiEnv = "gui.working.env";
 	public static boolean insideJGR;
 	public static boolean started;
