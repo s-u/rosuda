@@ -79,7 +79,7 @@ public class PrefPanel extends PrefDialog.PJPanel implements ActionListener{
 				{
 					macChooser = new JCheckBox();
 					macPanel.add(macChooser);
-					macChooser.setText("Native looking file chooser (quaqua)");
+					macChooser.setText("Native Look and Feel (quaqua)");
 					macChooser.setBounds(17, 32, 283, 19);
 				}
 			}

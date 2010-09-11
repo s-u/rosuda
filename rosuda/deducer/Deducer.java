@@ -164,14 +164,11 @@ public class Deducer {
 
 		    
 		    insertMenu(JGR.MAINRCONSOLE,"Plots",menuIndex);
-		    insertJMenuItem(JGR.MAINRCONSOLE, "File", "Open Plot", "Open Plot", cListener, 3);
+		    insertJMenuItem(JGR.MAINRCONSOLE, "File", "Open Plot", "Open plot", cListener, 3);
 		    //EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open plot", "openplot", cListener);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Import Template", "Import template", cListener);		    
 		    menuIndex++;
-			
-	    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
-				Deducer.eval(".jChooserMacLAF()");
 	    	
 			//Replace DataTable with Data Viewer
 			JGR.MAINRCONSOLE.getJMenuBar().getMenu(menuIndex).remove(1);
@@ -423,7 +420,7 @@ public class Deducer {
 			d.setLocationRelativeTo(null);
 			d.setVisible(true);
 			WindowTracker.addWindow(d);			
-		}else if(cmd.equals("Open Plot")){
+		}else if(cmd.equals("Open plot")){
 			needsRLocked=true;
 			FileSelector c = new FileSelector(null, "Open plot", FileSelector.LOAD, null, true);
 			c.setVisible(true);

@@ -528,7 +528,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 			d.setModal(true);
 			d.setLocationRelativeTo(PlotBuilder.this);
 			d.setVisible(true);
-			s = m.checkValid();
+			s = p.getModel().checkValid();
 			if(s!=null)
 				return;
 		}
@@ -655,7 +655,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 							d.setModal(true);
 							d.setLocationRelativeTo(PlotBuilder.this);
 							d.setVisible(true);
-							s = m.checkValid();
+							s = p.getModel().checkValid();
 							if(s!=null)
 								return;
 						}
@@ -712,7 +712,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 							d.setModal(true);
 							d.setLocationRelativeTo(PlotBuilder.this);
 							d.setVisible(true);
-							s = m.checkValid();
+							s = p.getModel().checkValid();
 							if(s!=null)
 								return;
 						}
@@ -962,7 +962,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 					d.setModal(true);
 					d.setLocationRelativeTo(PlotBuilder.this);
 					d.setVisible(true);
-					s = m.checkValid();
+					s = p.getModel().checkValid();
 					if(s!=null)
 						return;
 				}
@@ -999,7 +999,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 							d.setModal(true);
 							d.setLocationRelativeTo(pBuilder);
 							d.setVisible(true);
-							s = m.checkValid();
+							s = p.getModel().checkValid();
 							if(s!=null)
 								return;
 						}
@@ -1034,13 +1034,14 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				return;
 			}
 			lastModel = (PlotBuilderModel) model.clone();
-			this.dispose();			
+	
 			if(device!=null){
 				device.devOff();
 				plotHolder.remove(device);
 				device=null;
-			}
+			}			
 			Deducer.execute("dev.new()\n"+call);
+			this.dispose();					
 		}else if(cmd == "Reset"){
 			this.setModel(new PlotBuilderModel());
 		}else if(cmd == "Cancel"){
