@@ -5,6 +5,9 @@ package org.rosuda.JGR;
 // --- for licensing information see LICENSE file in the original JGR
 // distribution ---
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,7 +17,12 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -301,6 +309,7 @@ public class JGR {
 			return "c\n";
 	}
 
+	
 	/**
 	 * Add new Menu at runtime to Console.
 	 * 
@@ -313,6 +322,58 @@ public class JGR {
 		EzMenuSwing.addMenu(MAINRCONSOLE, name);
 	}
 
+	
+	/**
+	 * Insert new Menu at runtime to Console.
+	 * 
+	 * @param name
+	 *            MenuName
+	 * @param pos
+	 *            position at which to insert
+	 */
+	public static void insertMenu(String name,int pos) {
+		if (MAINRCONSOLE == null)
+			return;
+		insertMenu(MAINRCONSOLE, name,pos);
+	}
+	
+	//temporary should be in EzMenuSwing
+	private static void insertMenu(JFrame f, String name,int index) {
+		JMenuBar mb = f.getJMenuBar();
+		JMenu m = EzMenuSwing.getMenu(f,name);
+		if (m == null && index<mb.getMenuCount()){
+			JMenuBar mb2 = new JMenuBar(); 
+			int cnt = mb.getMenuCount();
+			for(int i=0;i<cnt;i++){
+				if(i==index)
+					mb2.add(new JMenu(name));
+				mb2.add(mb.getMenu(0));
+			}
+			f.setJMenuBar(mb2);			
+		}else if(m==null && index==mb.getMenuCount())
+			EzMenuSwing.addMenu(f,name);
+	}
+	
+	/**
+	 * Add MenuItem at runtime to ConsoleMenu.
+	 * 
+	 * @param menu
+	 *            MenuName
+	 * @param name
+	 *            ItemName
+	 * @param cmd
+	 *            Command
+	 * @param silent
+	 *            Don't display command
+	 */
+	public static void addMenuItem(String menu, String name, String cmd,boolean silent) {
+		if (MAINRCONSOLE == null)
+			return;
+		
+		ActionListener listener = new JGRListener(silent);
+		EzMenuSwing.addJMenuItem(MAINRCONSOLE, menu, name, cmd, listener);
+	}
+	
 	/**
 	 * Add MenuItem at runtime to ConsoleMenu.
 	 * 
@@ -324,13 +385,9 @@ public class JGR {
 	 *            Command
 	 */
 	public static void addMenuItem(String menu, String name, String cmd) {
-		if (MAINRCONSOLE == null)
-			return;
-		if (jgrlistener == null)
-			jgrlistener = new JGRListener();
-		EzMenuSwing.addJMenuItem(MAINRCONSOLE, menu, name, cmd, jgrlistener);
+		addMenuItem(menu,name,cmd,true);
 	}
-
+	
 	/**
 	 * Add MenuSeparator at runtime.
 	 * 
@@ -342,6 +399,179 @@ public class JGR {
 			return;
 		EzMenuSwing.addMenuSeparator(MAINRCONSOLE, menu);
 	}
+	
+	/**
+	 * insert MenuSeparator at runtime.
+	 * 
+	 * @param menu
+	 *            MenuName
+	 * @param pos
+	 * 			  index
+	 */
+	public static void insertMenuSeparator(String menu,int pos) {
+		if (MAINRCONSOLE == null)
+			return;
+		JMenu m = EzMenuSwing.getMenu(MAINRCONSOLE, menu);
+		m.insertSeparator(pos);
+	}
+	
+	
+	
+	/**
+	 * Insert a MenuItem at runtime to ConsoleMenu.
+	 * 
+	 * @param menu
+	 *            MenuName
+	 * @param name
+	 *            ItemName
+	 * @param cmd
+	 *            Command
+	 * @param silent
+	 *            Don't display command
+	 * @param pos
+	 *            position
+	 */
+	public static void insertMenuItem(String menu, String name, String cmd,boolean silent,int pos) {
+		if (MAINRCONSOLE == null)
+			return;
+		
+		ActionListener listener = new JGRListener(silent);
+		insertJMenuItem(MAINRCONSOLE, menu, name, cmd, listener,pos);
+	}
+	
+	//temporary should be in EzMenuSwing
+	private static void insertJMenuItem(JFrame f, String menu, String name,String command, ActionListener al,int index) {
+		JMenu m = EzMenuSwing.getMenu(f, menu);
+		JMenuItem mi = new JMenuItem(name);
+		mi.addActionListener(al);
+		mi.setActionCommand(command);
+		m.insert(mi,index);
+	}
+	
+	/**
+	 * Add MenuItem at runtime to ConsoleMenu.
+	 * 
+	 * @param menu
+	 *            MenuName
+	 * @param name
+	 *            ItemName
+	 * @param cmd
+	 *            Command
+	 */
+	public static void insertMenuItem(String menu, String name, String cmd,int pos) {
+		insertMenuItem(menu,name,cmd,true,pos);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @return the names of the menus
+	 */
+	public static String[] getMenuNames(){
+		if (MAINRCONSOLE == null)
+			return new String[]{};
+		JMenuBar mb = MAINRCONSOLE.getJMenuBar();
+		String[] names = new String[mb.getMenuCount()];
+		for(int i=0;i<mb.getMenuCount();i++){
+			names[i] = mb.getMenu(i).getText();
+		}
+		return names;
+	}
+
+	/**
+	 * 
+	 * 
+	 * 
+	 * @param menuName menu
+	 * @return the names of the items
+	 */
+	public static String[] getMenuItemNames(String menuName){
+		if (MAINRCONSOLE == null)
+			return new String[]{};		
+		JMenu m = EzMenuSwing.getMenu(MAINRCONSOLE, menuName);
+		String[] names = new String[m.getItemCount()];
+		for(int i=0; i<m.getItemCount();i++){
+			names[i] = m.getItem(i)!=null ? m.getItem(i).getText() : "-";
+		}
+		return names;
+	}
+	
+	/**
+	 * Remove a menu
+	 * 
+	 * @param pos index
+	 */
+	public static void removeMenu(int pos){
+		if (MAINRCONSOLE == null)
+			return ;
+		MAINRCONSOLE.getJMenuBar().remove(pos);
+	}
+	
+	/**
+	 * Remove a menu
+	 * @param name menu to remove
+	 */
+	public static void removeMenu(String name){
+		String[] names = getMenuNames();
+		for(int i=0;i<names.length;i++)
+			if(names[i].equals(name))
+				MAINRCONSOLE.remove(i);
+	}
+	
+	/**
+	 * remove a menu item
+	 * @param menuName name of menu
+	 * @param pos index of item
+	 */
+	public static void removeMenuItem(String menuName,int pos){
+		JMenu menu = EzMenuSwing.getMenu(MAINRCONSOLE, menuName);
+		menu.remove(pos);
+	}
+	
+	/**
+	 * remove a menu item
+	 * @param menuName name of menu
+	 * @param itemName name of item
+	 */
+	public static void removeMenuItem(String menuName,String itemName){
+		JMenu menu = EzMenuSwing.getMenu(MAINRCONSOLE, menuName);
+		String[] names = getMenuItemNames(menuName);
+		for(int i=0;i<names.length;i++)
+			if(names[i].equals(itemName))
+				menu.remove(i);
+	}
+	
+	public static void insertSubMenu(String menuName,String subMenuName,int pos, String[] labels, String[] cmds){
+		
+		JMenu sm = new JMenu(subMenuName);
+		sm.setMnemonic(KeyEvent.VK_S);
+		for(int i = 0;i<labels.length;i++){
+			JMenuItem mi = new JMenuItem();
+			mi.setText(labels[i]);
+			mi.setActionCommand(cmds[i]);
+			mi.addActionListener(new JGRListener(true));
+			sm.add(mi);
+		}
+		JMenu menu = EzMenuSwing.getMenu(MAINRCONSOLE, menuName);
+		menu.insert(sm, pos);
+	}
+	
+	public static void addSubMenu(String menuName,String subMenuName, String[] labels, String[] cmds){
+		
+		JMenu sm = new JMenu(subMenuName);
+		sm.setMnemonic(KeyEvent.VK_S);
+		for(int i = 0;i<labels.length;i++){
+			JMenuItem mi = new JMenuItem();
+			mi.setText(labels[i]);
+			mi.setActionCommand(cmds[i]);
+			mi.addActionListener(new JGRListener(true));
+			sm.add(mi);
+		}
+		JMenu menu = EzMenuSwing.getMenu(MAINRCONSOLE, menuName);
+		menu.add(sm);
+	}
+	
+	
 
 	/**
 	 * Set R_HOME (in java app).

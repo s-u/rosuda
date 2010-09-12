@@ -9,6 +9,8 @@ package org.rosuda.JGR.toolkit;
 //
 // $Id$
 
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -16,9 +18,14 @@ import java.awt.event.WindowListener;
 
 import javax.swing.WindowConstants;
 
+import org.rosuda.JGR.JGR;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.javaGD.GDInterface;
+import org.rosuda.javaGD.JGDBufferedPanel;
 
 /** Implementation of {@see JavaGD} which uses TJFrame instead of Frame */
 public class JavaGD extends GDInterface implements ActionListener, WindowListener {
@@ -48,12 +55,16 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 		};
 		jfr.addWindowListener(this);
 
-		String[] Menu = { "+", "File", "Save as PDF...", "savePDF", "Save as EPS...", "saveEPS", "+", "Edit", "@CCopy (as image)", "copyImg",
+		String[] Menu = { 
+				"+", "File", "Save as PDF", "save_pdf", "Save as EPS", "save_eps", 
+					"Save as PNG", "save_png", "Save as JPEG", "save_jpeg", "Save as BMP", "save_bmp",
+					"Save as TIFF", "save_tiff", 
+				"+", "Edit", "@CCopy (as image)", "copyImg",
 				"~Window", "0" };
 		EzMenuSwing.getEzMenu(jfr, this, Menu);
 
 		jfr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		c = new org.rosuda.javaGD.JGDBufferedPanel(w, h);
+		c = new JGRBufferedPanel(w, h);
 		jfr.getContentPane().add((org.rosuda.javaGD.JGDPanel) c);
 		jfr.setSize((int) w, (int) h);
 		jfr.pack();
@@ -107,6 +118,10 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 			res = fd.getDirectory();
 		if (fd.getFile() != null)
 			res = (res == null) ? fd.getFile() : (res + fd.getFile());
+		
+			
+		if(!res.endsWith(suffix))
+			res+="." + suffix;
 		return res;
 	}
 
@@ -130,24 +145,43 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 		String cmd = e.getActionCommand();
 		if (cmd.equals("copyImg"))
 			org.rosuda.util.ImageSelection.copyComponent((java.awt.Component) c, false, true);
-		if (cmd.equals("savePDF")) {
-			String fn = getFileDlg(true, "pdf");
-			if (fn != null) {
-				fn = escapeStr(fn);
-				org.rosuda.JRI.Rengine.getMainEngine().eval(
-						".jgr.save.JavaGD.as(useDevice=pdf, source=" + (getDeviceNumber() + 1) + ", file=\"" + fn
+		
+		if(cmd.startsWith("save")){
+			String sfx = cmd.split("_")[1];
+			String fn = getFileDlg(true, sfx);
+			if(fn!=null){
+				try{
+				
+					if(sfx.equals("pdf")){
+						JGR.eval(".jgr.save.JavaGD.as(useDevice=pdf, source=" + 
+								(getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",onefile=TRUE, paper=\"special\")");
-			}
-		}
-		if (cmd.equals("saveEPS")) {
-			String fn = getFileDlg(true, "eps");
-			if (fn != null) {
-				fn = escapeStr(fn);
-				org.rosuda.JRI.Rengine.getMainEngine().eval(
-						".jgr.save.JavaGD.as(useDevice=postscript, " + (getDeviceNumber() + 1) + ", file=\"" + fn
+					}else if(sfx.equals("eps")){
+						JGR.eval(".jgr.save.JavaGD.as(useDevice=postscript, " + 
+								(getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",onefile=FALSE, paper=\"special\")");
+					}else if(sfx.equals("png")){
+						JGR.eval(".jgr.save.JavaGD.as(useDevice=png, source=" + 
+								(getDeviceNumber() + 1) + ", file=\"" + fn
+								+ "\",units=\"in\",res=244)");
+					}else if(sfx.equals("jpeg")){
+						JGR.eval(".jgr.save.JavaGD.as(useDevice=jpeg, source=" + 
+								(getDeviceNumber() + 1) + ", file=\"" + fn
+								+ "\",units=\"in\",res=72)");
+					}else if(sfx.equals("bmp")){
+						JGR.eval(".jgr.save.JavaGD.as(useDevice=bmp, source=" + 
+								(getDeviceNumber() + 1) + ", file=\"" + fn
+								+ "\",units=\"in\",res=244)");
+					}else if(sfx.equals("tiff")){
+						JGR.eval(".jgr.save.JavaGD.as(useDevice=tiff, source=" + 
+								(getDeviceNumber() + 1) + ", file=\"" + fn
+								+ "\",units=\"in\",res=244)");
+					}
+					
+				}catch(Exception ex){ex.printStackTrace();}
 			}
 		}
+
 	}
 
 	public void windowClosing(WindowEvent e) {
@@ -171,5 +205,56 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 	}
 
 	public void windowDeactivated(WindowEvent e) {
+	}
+}
+
+
+class JGRBufferedPanel extends JGDBufferedPanel{
+	Dimension lastSize;
+	public JGRBufferedPanel(double w, double h) {
+		super(w, h);
+		lastSize=getSize();
+	}
+	public JGRBufferedPanel(int w, int h) {
+		super(w, h);
+		lastSize = getSize();
+	}
+	
+	public void devOff(){
+		try {
+			JGR.eval("dev.off("+(this.devNr+1)+")");
+		} catch (REngineException e) {
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void initRefresh() {
+		try {
+			JGR.idleEval("try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)");
+		} catch (REngineException e) {
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public synchronized void paintComponent(Graphics g) {
+		Dimension d=getSize();
+        if (!d.equals(lastSize)) {
+            REXP exp=null;
+			try {
+				exp = JGR.idleEval("try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)");
+			} catch (REngineException e) {
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				e.printStackTrace();
+			}
+            if(exp!=null)
+            	lastSize=d;
+            return;
+        }
+		super.paintComponent(g);
 	}
 }
