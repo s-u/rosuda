@@ -567,7 +567,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				}else if(cmd=="New Data"){
 					String inputValue = JOptionPane.showInputDialog("Data Name: ");
 					if(inputValue!=null)
-						Deducer.eval(inputValue.trim()+"<-data.frame()");
+						Deducer.eval(inputValue.trim()+"<-data.frame(Var1=NA)");
 				}
 			}
 		};
@@ -591,19 +591,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			((RDataFrameModel) dataScrollPane.getExTable().getModel()).removeCachedData();
 	}
 	
-	public void setDataDependentMenusEnabled(boolean enabled){
-		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Sort","Merge",
-									"transpose","Frequencies","Descriptives","Subset",
-									"contin", "One Sample", "Two Sample",
-									"ksample","corr"};
-		ArrayList dataRequiredMenuItems = new ArrayList();
-		JMenuItem temp;
-		for(int i=0;i<dataRequiredFor.length;i++){
-			temp = ((JMenuItem)EzMenuSwing.getItem(this,dataRequiredFor[i]));
-			if(temp!=null)
-				temp.setEnabled(enabled);
-		}
-	}
 	/**
 	 * 
 	 * A model for the data selection combo box.
@@ -651,10 +638,10 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		}
 		public void refresh(Vector v){
 			String dataName = null;
-			this.removeAllElements();
 			int prevSize = items.size();
 			if(getSelectedItem()!=null)
-				dataName = ((RObject)getSelectedItem()).getName();			
+				dataName = ((RObject)getSelectedItem()).getName();	
+			this.removeAllElements();			
 			items = new Vector(v);
 			selectedIndex=0;			
 			if(items.size()>0){
@@ -684,10 +671,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() { 
 							refresh();
-							if(Deducer.getData().size()==0){
-								setDataDependentMenusEnabled(false);
-							}else
-								setDataDependentMenusEnabled(true);	
 							
 							((DataFrameComboBoxModel) dataSelector.getModel()).refresh(Deducer.getData());
 							if(dataSelector.getModel().getSize()==0 && dataScrollPane!=null){

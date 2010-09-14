@@ -6,10 +6,12 @@ import java.awt.event.ActionListener;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import org.rosuda.JGR.util.ErrorMsg;
 
-public class SingletonAddRemoveButton extends IconButton implements ActionListener{
+public class SingletonAddRemoveButton extends IconButton implements ActionListener, ListDataListener{
 	private SingletonDJList singList;
 	private String[] cmdText;
 	private String[] tooltipText;
@@ -21,7 +23,7 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 		singList=lis;
 		tooltipText=tooltip;
 		cmdText=cmd;
-		new Thread(new Refresher()).start();
+		singList.getModel().addListDataListener(this);
 	}
 	
 	public SingletonAddRemoveButton(String[] tooltip,String[] cmd,SingletonDJList lis,VariableSelector var){
@@ -31,36 +33,31 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 		tooltipText=tooltip;
 		cmdText=cmd;
 		variableSelector = var;
-		new Thread(new Refresher()).start();
+		singList.getModel().addListDataListener(this);
+	}
+	
+	public void setList(SingletonDJList list){
+		singList.getModel().removeListDataListener(this);
+		singList = list;
+		singList.getModel().addListDataListener(this);
+	}
+	
+	public void refreshListListener(){
+		singList.getModel().addListDataListener(this);
 	}
 	
 	
-	class Refresher implements Runnable {
-		public Refresher() {
-		}
-
-		public void run() {
-			while (true)
-				try {
-					Thread.sleep(500);
-					Runnable doWorkRunnable = new Runnable() {
-						public void run() { 
-							if(singList.getModel().getSize()>0){
-								theButton.setToolTipText(tooltipText[1]);
-								theButton.setActionCommand(cmdText[1]);
-								ImageIcon icon = new ImageIcon(getClass().getResource("/icons/1leftarrow_32.png"));
-								theButton.setIcon(icon);
-							}else{
-								theButton.setToolTipText(tooltipText[0]);
-								theButton.setActionCommand(cmdText[0]);
-								ImageIcon icon = new ImageIcon(getClass().getResource("/icons/1rightarrow_32.png"));
-								theButton.setIcon(icon);
-							}
-						}};
-					SwingUtilities.invokeLater(doWorkRunnable);
-				} catch (Exception e) {
-					new ErrorMsg(e);
-				}
+	public void refresh(){
+		if(singList.getModel().getSize()>0){
+			theButton.setToolTipText(tooltipText[1]);
+			theButton.setActionCommand(cmdText[1]);
+			ImageIcon icon = new ImageIcon(getClass().getResource("/icons/1leftarrow_32.png"));
+			theButton.setIcon(icon);
+		}else{
+			theButton.setToolTipText(tooltipText[0]);
+			theButton.setActionCommand(cmdText[0]);
+			ImageIcon icon = new ImageIcon(getClass().getResource("/icons/1rightarrow_32.png"));
+			theButton.setIcon(icon);
 		}
 	}
 
@@ -82,6 +79,18 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 			}
 		}
 		
+	}
+
+	public void intervalAdded(ListDataEvent e) {
+		refresh();
+	}
+
+	public void intervalRemoved(ListDataEvent e) {
+		refresh();
+	}
+
+	public void contentsChanged(ListDataEvent e) {
+		refresh();
 	}
 	
 }

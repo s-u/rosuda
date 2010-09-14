@@ -54,7 +54,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 	private IconButton exchAssump;
 	private IconButton jButton1;
 	private IconButton mwOptions;
-	private IconButton addFactor;
+	private SingletonAddRemoveButton addFactor;
 	private IconButton removeOutcome;
 	private IconButton addOutcome;
 	private JButton help;
@@ -405,6 +405,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 		boolean allExist;
 		testModel=mod;
 		factor.setModel(new DefaultListModel());
+		addFactor.refreshListListener();
 		outcomes.setModel(new DefaultListModel());
 		if(mod.dataName!=null){
 			variableSelector.setSelectedData(mod.dataName);
@@ -416,10 +417,12 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 				return;
 			}
 			allExist=variableSelector.removeAll(mod.factorName);
-			if(allExist)
+			if(allExist){
 				factor.setModel(mod.factorName);
-			else{
+				addFactor.refreshListListener();
+			}else{
 				reset();
+				addFactor.refreshListListener();
 				return;
 			}
 			if(mod.subset=="" || RController.isValidSubsetExp(mod.subset,mod.dataName)){

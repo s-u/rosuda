@@ -60,7 +60,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 	private JButton plots;
 	private SubsetPanel subset;
 	private JPanel subsetPanel;
-	private JButton addFactor;
+	private SingletonAddRemoveButton addFactor;
 	private JPanel factorPanel;
 	private JButton remove;
 	private JButton add;
@@ -280,6 +280,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 		boolean allExist;
 
 		factor.setModel(new DefaultListModel());
+		addFactor.refreshListListener();
 		outcomes.setModel(new DefaultListModel());
 		if(mod.dataName!=null){
 			variableSelector.setSelectedData(mod.dataName);
@@ -291,10 +292,12 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				return;
 			}
 			allExist=variableSelector.removeAll(mod.factorName);
-			if(allExist)
+			if(allExist){
 				factor.setModel(mod.factorName);
-			else{
+				addFactor.refreshListListener();
+			}else{
 				reset();
+				addFactor.refreshListListener();
 				return;
 			}
 			if(mod.subset=="" || RController.isValidSubsetExp(mod.subset,mod.dataName)){

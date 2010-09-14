@@ -196,7 +196,9 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 				}else
 					newModel.addElement(mod.get(i));
 			}
+			singleList.getModel().removeListDataListener(addRemoveButton);
 			singleList.setModel(newModel);
+			addRemoveButton.refreshListListener();
 		}
 	}
 

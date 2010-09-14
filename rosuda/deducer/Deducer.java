@@ -713,13 +713,14 @@ public class Deducer {
 		return JGR.MAINRCONSOLE.getUniqueName(var);
 	}
 
-	public static void refreshData(){
-		REXP x = Deducer.eval(".getDataObjects()");
+	public static synchronized void refreshData(){
+		REXP x = Deducer.idleEval(".getDataObjects()");
+		if(x==null)
+			return;
 		String[] data;
-		if (x != null)
-			JGR.DATA.clear();
+		JGR.DATA.clear();
 		try {
-			if (x != null && !x.isNull() && (data = x.asStrings()) != null) {	
+			if (!x.isNull() && (data = x.asStrings()) != null) {	
 				int a = 1;
 				for (int i = 0; i < data.length; i++) {
 					boolean b = (data[i].equals("null") || data[i].trim().length() == 0);

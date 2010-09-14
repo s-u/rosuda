@@ -42,12 +42,12 @@ public class GLMDialog extends JDialog implements ActionListener {
 	protected JPanel contPanel;
 	protected JLabel typeLabel;
 	protected JComboBox type;
-	protected JButton addOutcome;
+	protected SingletonAddRemoveButton addOutcome;
 	protected JPanel weightPanel;
 	protected SubsetPanel subset;
 	protected JPanel subsetPanel;
 	protected SingletonDJList weights;
-	protected JButton addWeight;
+	protected SingletonAddRemoveButton addWeight;
 	protected SingletonDJList outcome;
 	protected JPanel outcomePanel;
 	protected HelpButton help;
@@ -300,7 +300,7 @@ public class GLMDialog extends JDialog implements ActionListener {
 			return;
 		}
 		outcome.setModel(mod.outcomeVars);
-		
+		addOutcome.refreshListListener();
 		valid = variableSelector.removeAll(mod.numericVars);
 		if(!valid){
 			resetModel();
@@ -321,6 +321,7 @@ public class GLMDialog extends JDialog implements ActionListener {
 			return;
 		}
 		weights.setModel(mod.weights);
+		addWeight.refreshListListener();
 		if(SubsetDialog.isValidSubsetExp(mod.subset, mod.data))
 			subset.setText(mod.subset);
 		if(families.getIndexOf(mod.family)>=0)
