@@ -44,6 +44,7 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 	
 	public void refreshListListener(){
 		singList.getModel().addListDataListener(this);
+		refresh();
 	}
 	
 	
