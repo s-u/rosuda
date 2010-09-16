@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JList;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -16,7 +17,7 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 	private String[] cmdText;
 	private String[] tooltipText;
 	private SingletonAddRemoveButton theButton=this;
-	private VariableSelector variableSelector;
+	private JList leftList;
 	public SingletonAddRemoveButton(String[] tooltip, ActionListener al,
 			String[] cmd,SingletonDJList lis){
 		super("/icons/1rightarrow_32.png", tooltip[0], al,cmd[0]);
@@ -32,7 +33,17 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 		singList=lis;
 		tooltipText=tooltip;
 		cmdText=cmd;
-		variableSelector = var;
+		leftList = var.getJList();
+		singList.getModel().addListDataListener(this);
+	}
+	
+	public SingletonAddRemoveButton(String[] tooltip,String[] cmd,SingletonDJList lis,JList leftList){
+		super("/icons/1rightarrow_32.png", tooltip[0], null,cmd[0]);
+		this.addActionListener(this);
+		singList=lis;
+		tooltipText=tooltip;
+		cmdText=cmd;
+		this.leftList = leftList;
 		singList.getModel().addListDataListener(this);
 	}
 	
@@ -66,17 +77,17 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if(cmd.equals(cmdText[0])){
-			Object[] objs=variableSelector.getJList().getSelectedValues();
+			Object[] objs=leftList.getSelectedValues();
 			if(objs.length>1){
-				variableSelector.getJList().setSelectedIndex(variableSelector.getJList().getSelectedIndex());
+				leftList.setSelectedIndex(leftList.getSelectedIndex());
 			}else if(objs.length==1 && singList.getModel().getSize()==0){
-					variableSelector.remove(objs[0]);
-					((DefaultListModel)singList.getModel()).addElement(objs[0]);
+				((DefaultListModel)leftList.getModel()).removeElement(objs[0]);
+				((DefaultListModel)singList.getModel()).addElement(objs[0]);
 			}
 		}else{
 			DefaultListModel tmpModel =(DefaultListModel)singList.getModel();
 			if(tmpModel.getSize()>0){
-				variableSelector.add(tmpModel.remove(0));	
+				((DefaultListModel)leftList.getModel()).addElement(tmpModel.remove(0));	
 			}
 		}
 		

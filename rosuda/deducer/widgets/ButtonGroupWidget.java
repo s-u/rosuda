@@ -7,6 +7,7 @@ import java.util.EventListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
@@ -75,7 +76,10 @@ public class ButtonGroupWidget extends JPanel implements DeducerWidget {
 			for(int i=0;i<radioBoxes.size();i++){
 				radioBox = (JRadioButton) radioBoxes.get(i);
 				group.add(radioBox);
+				if(i==0)
+					this.add(Box.createVerticalGlue());
 				this.add(radioBox);
+				this.add(Box.createVerticalGlue());
 			}
 
 		} catch (Exception e) {

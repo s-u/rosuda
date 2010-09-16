@@ -29,7 +29,7 @@ public class DJList extends JList implements DragSourceListener, DropTargetListe
                                                            DnDConstants.ACTION_MOVE,
                                                            this);
         DropTarget dropTarget = new DropTarget (this, this);
-		
+		this.setModel(new DefaultListModel());
 	}
 	
 	public int getTransferMode(){

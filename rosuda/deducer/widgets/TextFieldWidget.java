@@ -88,6 +88,7 @@ public class TextFieldWidget extends JPanel implements DeducerWidget, FocusListe
 		if(title==null || !show){
 			this.remove(titleLabel);
 			this.remove(textField);
+			this.setPreferredSize(new java.awt.Dimension(187, 22));
 			{
 				this.add(textField, new AnchorConstraint(0, 1000, 1000, 0, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
@@ -97,6 +98,7 @@ public class TextFieldWidget extends JPanel implements DeducerWidget, FocusListe
 		}else{
 			this.remove(titleLabel);
 			this.remove(textField);
+			this.setPreferredSize(new java.awt.Dimension(187, 47));
 			{
 				this.add(titleLabel, new AnchorConstraint(0, 1000, 22, 0, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL,
@@ -114,6 +116,9 @@ public class TextFieldWidget extends JPanel implements DeducerWidget, FocusListe
 		}
 		
 	}
+	
+	public JLabel getLabel(){return titleLabel;}
+	public JTextField getTextField(){return textField;}
 	
 	public void setNumeric(boolean numeric) {
 		this.numeric = numeric;

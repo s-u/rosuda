@@ -85,6 +85,7 @@ public class ObjectChooserWidget extends JPanel implements DeducerWidget, Window
 		if(title==null || !show){
 			this.remove(titleLabel);
 			this.remove(objectCombo);
+			this.setPreferredSize(new java.awt.Dimension(187, 29));
 			{
 				this.add(objectCombo, new AnchorConstraint(0, 1000, 1000, 0, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
@@ -94,6 +95,7 @@ public class ObjectChooserWidget extends JPanel implements DeducerWidget, Window
 		}else{
 			this.remove(titleLabel);
 			this.remove(objectCombo);
+			this.setPreferredSize(new java.awt.Dimension(187, 47));
 			{
 				this.add(titleLabel, new AnchorConstraint(0, 1000, 22, 0, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL,
@@ -110,6 +112,10 @@ public class ObjectChooserWidget extends JPanel implements DeducerWidget, Window
 			}			
 		}
 	}
+	
+	public JLabel getLabel(){return titleLabel;}
+	public JComboBox getComboBox(){return objectCombo;}
+	
 	
 	public void refreshObjects(){
 		try{

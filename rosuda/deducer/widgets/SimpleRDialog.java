@@ -125,7 +125,7 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
-		if(cmd=="Run"){
+		if(cmd.equals("Run") || cmd.equals("OK")){
 			String state = getWidgetStatesAsString();
 			REXP rCheck = null;
 			if(rCheckFunc!=null)

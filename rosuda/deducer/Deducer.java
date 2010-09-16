@@ -585,7 +585,9 @@ public class Deducer {
 			}).start();
 	}
 				
-
+	public static String makeValidVariableName(String var) {
+		return var.replaceAll("[ -+*/\\()=!~`@#$%^&*<>,?;:\"\']", ".");
+	}
 	
 	public static String makeFormula(DefaultListModel outcomes,DefaultListModel terms){
 		String formula = "";

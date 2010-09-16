@@ -143,6 +143,13 @@ public class ListWidget extends JPanel implements DeducerWidget{
 		return list.getSelectedValues();
 	}
 	
+	public String[] getItems(){
+		String[] items = new String[list.getModel().getSize()];
+		for(int i=0;i<list.getModel().getSize();i++)
+			items[i] = (String) list.getModel().getElementAt(i);
+		return items;
+	}
+	
 	/**
 	 * adds either an action or mouse listener to each box
 	 * @param lis
