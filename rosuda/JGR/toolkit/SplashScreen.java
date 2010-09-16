@@ -40,6 +40,8 @@ public class SplashScreen extends JWindow implements Runnable {
 	private final Dimension splashSize = new Dimension(300, 200);
 
 	private Image splash;
+	
+	private boolean contin = true;
 
 	public SplashScreen() {
 		try {
@@ -105,8 +107,9 @@ public class SplashScreen extends JWindow implements Runnable {
 	}
 
 	public void run() {
-		while (thread != null)
+		while (contin)
 			try {
+				Thread.sleep(200);
 			} catch (Exception e) {
 				new ErrorMsg(e);
 			}
@@ -119,5 +122,6 @@ public class SplashScreen extends JWindow implements Runnable {
 		setVisible(false);
 		dispose();
 		thread = null;
+		contin=false;
 	}
 }
