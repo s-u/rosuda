@@ -43,6 +43,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	private JTextField filter;
 	private JLabel filterText;
 	private String rFilter = "";
+	private String rDataFilter = "";
 	private String splitStr = null;
 	private boolean copyMode = false;
 	
@@ -124,7 +125,15 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		dataComboBox.removeActionListener(this);
 		dataComboBoxModel.removeAllElements();
 		for(int i=0;i<Deducer.getData().size();i++){
-			dataComboBoxModel.addElement(((RObject) Deducer.getData().elementAt(i)).getName());
+			String dataName = ((RObject) Deducer.getData().elementAt(i)).getName();
+			boolean isValid = true;
+			if(!rDataFilter.equals("")){
+				REXP rIsValid = Deducer.eval(rDataFilter + "(" + dataName +")");
+				if(rIsValid!=null && !((REXPLogical)rIsValid).isTRUE()[0])
+					isValid=false;
+			}
+			if(isValid)
+				dataComboBoxModel.addElement(dataName);
 		}		
 		if(dat !=null)
 			this.setSelectedData(dat);
@@ -244,6 +253,9 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			if(dataName != null)
 				variableList.setModel(new FilteringModel(
 						Deducer.eval("names("+dataName+")").asStrings()));
+			else
+				variableList.setModel(new FilteringModel(
+						new String[] {"No Data."}));
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
@@ -396,6 +408,13 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	public void keyPressed(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {}
 	
+	public void setRDataFilter(String rDataFilter) {
+		this.rDataFilter = rDataFilter;
+	}
+
+	public String getRDataFilter() {
+		return rDataFilter;
+	}
 	private class VarDJList extends DJList{
 		public void drop(DropTargetDropEvent dtde) {
 			String dataName = (String)dataComboBox.getSelectedItem();

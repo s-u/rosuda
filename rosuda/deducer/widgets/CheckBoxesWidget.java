@@ -130,7 +130,11 @@ public class CheckBoxesWidget extends javax.swing.JPanel implements DeducerWidge
 	 * @return text of selected item
 	 */
 	public String[] getSelectedItemText(){
-		return (String[]) ((Vector)getModel()).toArray();
+		Vector m = (Vector)getModel();
+		String[] tmp = new String[m.size()];
+		for(int i=0;i<m.size();i++)
+			tmp[i] = (String) m.elementAt(i);
+		return tmp;
 	}
 	
 	/**
