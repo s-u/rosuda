@@ -884,7 +884,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				new Thread(new Runnable() {
 					public void run() {
 						((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine())
-								.getRni().rniStop(1);
+								.getRni().rniStop(0);
 					}
 				}).start();
 			} catch (Exception exe) {
