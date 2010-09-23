@@ -183,6 +183,13 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 		}
 
 	}
+	
+    public void executeDevOff() {
+        if (c==null || c.getDeviceNumber()<0) return;
+        try {
+        	JGR.eval("try({ dev.set("+(c.getDeviceNumber()+1)+"); dev.off()},silent=TRUE)");
+        }catch(Exception e){e.printStackTrace();}
+    }
 
 	public void windowClosing(WindowEvent e) {
 		if (c != null)
