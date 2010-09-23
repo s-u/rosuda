@@ -392,7 +392,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				String rcode;
 				String value = singleField.getText();
 				String into = into1Field.getText();
-				if(value.length()==0 || into.length()==0)
+				if(into.length()==0)
 					return;
 				if(!isNumeric(into))
 					into="'"+addSlashes(into)+"'";	
@@ -415,7 +415,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				String value1 = doubleField1.getText().trim();
 				String value2 = doubleField2.getText().trim();
 				String into = into2Field.getText().trim();
-				if(value1.length()==0 || value2.length()==0 || into.length()==0)
+				if((value1.length()==0 && value2.length()==0) || into.length()==0)
 					return;		
 				if(!isNumeric(into))
 					into="'"+addSlashes(into)+"'";

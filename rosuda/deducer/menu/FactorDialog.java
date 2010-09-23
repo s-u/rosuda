@@ -137,6 +137,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 						levelList = new DJList();
 						levelScroller.setViewportView(levelList);
 						levelList.setModel(levelListModel);
+						levelList.setFixedCellHeight(20);
 					}
 				}
 			}
@@ -172,8 +173,16 @@ public class FactorDialog extends JDialog implements ActionListener {
 			}
 		}else if(cmd=="Add"){
 			String result =JOptionPane.showInputDialog(this, "Please Enter the new factor Level", "New Factor Level", JOptionPane.INFORMATION_MESSAGE);
-			if(result!=null && result.length()>0)
-				((DefaultListModel)levelList.getModel()).add(0,result);
+			if(result!=null){
+				if(result.length()>0)
+					((DefaultListModel)levelList.getModel()).add(0,result);
+				else{
+					int b = JOptionPane.showConfirmDialog(this, "Add an empty character vector to the factor levels?");
+					if(b==JOptionPane.OK_OPTION){
+						((DefaultListModel)levelList.getModel()).add(0,result);
+					}
+				}
+			}
 		}else if(cmd == "Delete"){
 			int[] ind= levelList.getSelectedIndices();
 			if(ind.length>0){
