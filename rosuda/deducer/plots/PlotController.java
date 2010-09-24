@@ -16,6 +16,7 @@ public class PlotController {
 	protected static Map themes;
 	protected static Map coords;
 	protected static Map pos;
+	protected static Map menuElements;
 	protected static String[] templateNames = new String[]{"pie","histogram","bar","boxplot","scatter",
 			"line","series","bubble"};
 	protected static String[] geomNames = {"abline","area","bar","bin2d","blank","boxplot","contour","crossbar","density","density2d",
@@ -38,7 +39,7 @@ public class PlotController {
 	public static void init(){
 		if(initialized==false){
 			templates = new LinkedHashMap();
-			
+			menuElements = new LinkedHashMap();
 			geoms = new LinkedHashMap();
 			for(int j=0;j<geomNames.length;j++)
 				geoms.put(geomNames[j], PlottingElement.createElement("geom",geomNames[j]));
@@ -201,6 +202,21 @@ public class PlotController {
 			newNames[i] = nm[i];
 		newNames[l] = pe.getName();
 		themes.put(pe.getName(), pe);
+	}
+	
+	public static void addMenuElement(String name,PlottingElement pe){
+		menuElements.put(name, pe);
+	}
+	
+	public static PlottingElementMenuDialog getMenuDialog(String name){
+		PlottingElement pe = (PlottingElement) menuElements.get(name);
+		if(pe==null){
+			pe = (PlottingElement) templates.get(name);
+			addMenuElement(name,pe);
+		}
+		if(pe==null)
+			return null;
+		return new PlottingElementMenuDialog(null,pe);
 	}
 	
 }

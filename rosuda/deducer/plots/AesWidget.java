@@ -229,7 +229,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 					this.add(slider, new AnchorConstraint(28, 933, 472, 70, 
 							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
-					slider.setPreferredSize(new java.awt.Dimension(214, 37));
+					slider.setPreferredSize(new java.awt.Dimension(214, 41));
 					slider.setMajorTickSpacing(5000);
 					slider.setMinorTickSpacing(1000);
 					slider.setPaintTicks(true);
@@ -413,7 +413,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 					new JLabel(newModel.upperBound.toString()));
 			slider.setLabelTable( labelTable );
 			slider.setPaintLabels(true);
-			this.setMinimumSize(new Dimension(0,64));
+			this.setMinimumSize(new Dimension(0,70));
 		}else if(newModel.dataType.equals(Aes.DATA_NONE) ){
 			valueComponent = new JPanel();
 		}else if(newModel.dataType.equals(Aes.DATA_LINE)){

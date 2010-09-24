@@ -164,10 +164,19 @@ public class Deducer {
 
 		    
 		    insertMenu(JGR.MAINRCONSOLE,"Plots",menuIndex);
-		    insertJMenuItem(JGR.MAINRCONSOLE, "File", "Open Plot", "Open plot", cListener, 3);
 		    //EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open plot", "openplot", cListener);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Import Template", "Import template", cListener);		    
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Import Template", "Import template", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open Plot", "Open plot", cListener);		   
+		    EzMenuSwing.getMenu(JGR.MAINRCONSOLE, "Plots").addSeparator();
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Histogram", "histogram", cListener);	
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Pie", "pie", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Box-plot", "boxplot", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Bar", "bar", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Scatter", "scatter", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Line", "line", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Series", "series", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Bubble", "bubble", cListener);
 		    menuIndex++;
 	    	
 			//Replace DataTable with Data Viewer
@@ -458,6 +467,17 @@ public class Deducer {
 					PlotController.addTemplate(el);
 				}
 			}
+		}else if(cmd.equals("histogram")||	cmd.equals("pie")		|| 
+				cmd.equals("bar") 		||	cmd.equals("boxplot")	||
+				cmd.equals("scatter")	||	cmd.equals("line")		||
+				cmd.equals("bubble") 	||	cmd.equals("series")
+				){
+			try{
+				PlotController.init();
+				PlottingElementMenuDialog d = PlotController.getMenuDialog(cmd);
+				d.setLocationRelativeTo(null);
+				d.setVisible(true);
+			}catch(Exception e){e.printStackTrace();}
 		}
 		
 		if(needsRLocked && fromConsole && !isJGR()){
