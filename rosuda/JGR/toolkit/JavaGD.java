@@ -19,6 +19,8 @@ import java.awt.event.WindowListener;
 import javax.swing.WindowConstants;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.RController;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngineException;
@@ -151,7 +153,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 			String fn = getFileDlg(true, sfx);
 			if(fn!=null){
 				try{
-				
+					fn = escapeStr(fn);
 					if(sfx.equals("pdf")){
 						JGR.eval(".jgr.save.JavaGD.as(useDevice=pdf, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
@@ -178,7 +180,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 								+ "\",units=\"in\",res=244)");
 					}
 					
-				}catch(Exception ex){ex.printStackTrace();}
+				}catch(Exception ex){new ErrorMsg(ex);}
 			}
 		}
 

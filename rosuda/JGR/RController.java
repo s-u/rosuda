@@ -348,6 +348,19 @@ public class RController {
 		return null;
 	}
 
+	public static String addSlashes(String str){
+		if(str==null) return "";
+
+		StringBuffer s = new StringBuffer(str);
+		for(int i = 0; i < s.length(); i++){
+			if(s.charAt (i) == '\"')
+				s.insert(i++, '\\');
+			else if(s.charAt (i) == '\'')
+				s.insert(i++, '\\');
+		}
+		
+		return s.toString();
+	}
 	public static String makeValidVariableName(String var) {
 		return var.replaceAll("[ -+*/\\()=!~`@#$%^&*<>,?;:\"\']", ".");
 	}

@@ -216,7 +216,10 @@ public class JGR {
 		}
 		try {
 			rEngine = new JRIEngine(rargs, MAINRCONSOLE);
-		} catch (REngineException e) {
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,
+					"Unable to start R: " + e.getMessage(),
+					"REngine problem", JOptionPane.ERROR_MESSAGE);
 			System.err.println("Cannot start REngine " + e);
 			System.exit(1);
 		}

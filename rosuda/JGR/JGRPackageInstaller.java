@@ -176,7 +176,7 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\"" + destDir + "\",type=\"mac.binary\")", true);
 			// JGR.MAINRCONSOLE.execute("install.packages("+cmd+",\""+destDir+"\",contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
 			else
-				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\"" + destDir + "\")", true);
+				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\"" + RController.addSlashes(destDir) + "\")", true);
 		}
 	}
 
