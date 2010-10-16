@@ -718,14 +718,14 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 						}
 				
 						final int ind = l.getSelectedIndex();
-						if(ind+1 < lastIndex)
-							lastIndex++;
+						//if(ind+1 < lastIndex)
+						//	lastIndex++;
 						SwingUtilities.invokeLater(new Runnable(){
 							public void run() {
 								if(ind<0)
 									mod.insertElementAt(p, 0);
 								else
-									mod.insertElementAt(p, ind+1);
+									mod.insertElementAt(p, ind);
 								updatePlot();								
 							}
 							
@@ -734,7 +734,9 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 					}
 					
 				})).start();
-				
+				int ind = l.getSelectedIndex();
+				if(ind+1 < lastIndex)
+					lastIndex++;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
