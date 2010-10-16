@@ -4,6 +4,7 @@ package org.rosuda.deducer;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +13,6 @@ import java.util.Vector;
 
 
 import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -61,7 +61,7 @@ public class Deducer {
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	static int menuIndex=3;
 	static String recentActiveData = "";
-	static final String Version= "0.4-1";
+	static final String Version= "0.4-2";
 	public static String guiEnv = "gui.working.env";
 	public static boolean insideJGR;
 	public static boolean started;
@@ -167,16 +167,35 @@ public class Deducer {
 		    //EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open plot", "openplot", cListener);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Import Template", "Import template", cListener);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open Plot", "Open plot", cListener);		   
-		    EzMenuSwing.getMenu(JGR.MAINRCONSOLE, "Plots").addSeparator();
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Histogram", "histogram", cListener);	
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Pie", "pie", cListener);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Box-plot", "boxplot", cListener);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Bar", "bar", cListener);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Scatter", "scatter", cListener);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Line", "line", cListener);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Series", "series", cListener);
-		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Bubble", "bubble", cListener);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open Plot", "Open plot", cListener);		
+		    JMenu sm = new JMenu("Templates");
+			sm.setMnemonic(KeyEvent.VK_S);
+			String[] labels = new String[] {"Histogram","Pie","Box-plot","Bar","Scatter","Line","Series","Bubble"};
+			String[] cmds = new String[] {"histogram","pie","boxplot","bar","scatter","line","series","bubble"};
+			for(int i = 0;i<labels.length;i++){
+				JMenuItem mi = new JMenuItem();
+				mi.setText(labels[i]);
+				mi.setActionCommand(cmds[i]);
+				mi.addActionListener(cListener);
+				sm.add(mi);
+			}
+			JMenu menu = EzMenuSwing.getMenu(JGR.MAINRCONSOLE, "Plots");
+			menu.add(sm);
+			menu.addSeparator();	
+			
+			sm = new JMenu("Interactive");
+			sm.setMnemonic(KeyEvent.VK_S);
+			labels = new String[] {"Scatter","Histogram","Bar","Box-plot (long)","Box-plot (wide)","Mosaic","Parallel Coordinate"};
+			cmds = new String[] {"iplot","ihist","ibar","iboxl","iboxw","imosaic","ipcp"};
+			for(int i = 0;i<labels.length;i++){
+				JMenuItem mi = new JMenuItem();
+				mi.setText(labels[i]);
+				mi.setActionCommand(cmds[i]);
+				mi.addActionListener(cListener);
+				sm.add(mi);
+			}
+			menu.add(sm);
+			
 		    menuIndex++;
 	    	
 			//Replace DataTable with Data Viewer
@@ -478,6 +497,20 @@ public class Deducer {
 				d.setLocationRelativeTo(null);
 				d.setVisible(true);
 			}catch(Exception e){e.printStackTrace();}
+		}else if(cmd.equals("iplot")){
+			Deducer.eval(".getDialog('Interactive Scatter Plot')$run()");
+		}else if(cmd.equals("ihist")){
+			Deducer.eval(".getDialog('Interactive Histogram')$run()");
+		}else if(cmd.equals("ibar")){
+			Deducer.eval(".getDialog('Interactive Bar Plot')$run()");
+		}else if(cmd.equals("iboxl")){
+			Deducer.eval(".getDialog('Interactive Box Plot Long')$run()");
+		}else if(cmd.equals("iboxw")){
+			Deducer.eval(".getDialog('Interactive Box Plot Wide')$run()");
+		}else if(cmd.equals("imosaic")){
+			Deducer.eval(".getDialog('Interactive Mosaic Plot')$run()");
+		}else if(cmd.equals("ipcp")){
+			Deducer.eval(".getDialog('Interactive Parallel Coordinate Plot')$run()");
 		}
 		
 		if(needsRLocked && fromConsole && !isJGR()){
