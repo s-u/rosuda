@@ -16,12 +16,18 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.twosample.TwoSampleModel;
@@ -34,6 +40,7 @@ import org.rosuda.deducer.toolkit.RemoveButton;
 import org.rosuda.deducer.toolkit.SingletonAddRemoveButton;
 import org.rosuda.deducer.toolkit.SingletonDJList;
 import org.rosuda.deducer.toolkit.VariableSelector;
+
 
 
 public class KSampleDialog extends javax.swing.JDialog implements ActionListener{
@@ -58,6 +65,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 	private JCheckBox welch;
 	private JPanel medianPanel;
 	private JButton plots;
+	private JButton pairwise;
 	private SubsetPanel subset;
 	private JPanel subsetPanel;
 	private SingletonAddRemoveButton addFactor;
@@ -194,10 +202,20 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 			}
 			{
 				plots = new JButton();
-				getContentPane().add(plots, new AnchorConstraint(565, 303, 737, 148, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(plots, new AnchorConstraint(565, 303, 737, 4, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 				plots.setText("Plots");
 				plots.addActionListener(this);
 				plots.setPreferredSize(new java.awt.Dimension(84, 22));
+				
+				pairwise = new JButton();
+				getContentPane().add(pairwise, new AnchorConstraint(565, 425, 737, 110, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
+				pairwise.setText("Pairwise");
+				pairwise.addActionListener(this);
+				pairwise.setPreferredSize(new java.awt.Dimension(84, 22));
 			}
 			{
 				subsetPanel = new JPanel();
@@ -322,7 +340,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 		if(cmd=="Cancel"){
 			this.dispose();
 		}else if(cmd == "Reset"){
-			
+			this.setModel(new KSampleModel());
 		}else if(cmd == "Run"){
 			model.doWelch=welch.isSelected();
 			model.doAnova=anova.isSelected();
@@ -345,6 +363,10 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 			plt.setVisible(true);
 		}else if(cmd == "comboBoxChanged"){
 			setModel(new KSampleModel());
+		}else if(cmd == "Pairwise"){
+			PairwiseSubDialog sd = new PairwiseSubDialog(KSampleDialog.this);
+			sd.setLocationRelativeTo(pairwise);
+			sd.setVisible(true);
 		}
 		
 	}
@@ -359,6 +381,8 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 		public String subset="";
 		public String dataName="";
 		public OneWayPlotModel plots= new OneWayPlotModel();
+		public String pairwiseMethod = "";
+		public String pairwiseCorrection = "none";
 		
 		public boolean run(){
 			if(dataName==null)
@@ -402,6 +426,24 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				cmd += "k.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 					",\n\ttest=kruskal.test)"+"\n";
 			}
+			
+			if(pairwiseMethod == "t-test (welch)"){
+				for(int i=0;i<variables.size();i++)
+					cmd += "pairwise.t.test(" +subn + "$" + variables.get(i).toString() + "," + 
+										subn + "$" + factor + 
+										", p.adjust.method = '" + model.pairwiseCorrection +"')\n";
+			}else if(pairwiseMethod == "t-test (equal variance)"){
+				for(int i=0;i<variables.size();i++)
+					cmd += "pairwise.t.test(" +subn + "$" + variables.get(i).toString() + "," + 
+										subn + "$" + factor + "pool.sd = TRUE" +
+										", p.adjust.method = '" + model.pairwiseCorrection +"')\n";
+			}else if(pairwiseMethod == "wilcoxon"){
+				for(int i=0;i<variables.size();i++)
+					cmd += "pairwise.wilcox.test(" +subn + "$" + variables.get(i).toString() + "," + 
+										subn + "$" + factor + 
+										", p.adjust.method = '" + model.pairwiseCorrection +"')\n";
+			}
+			
 			cmd+=model.plots.getCmd(subn, outcomes, factor);
 			if(isSubset)
 				cmd+="rm("+subn+")\n";
@@ -410,4 +452,84 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 		}
 	}
 
+	class PairwiseSubDialog extends javax.swing.JDialog {
+		private JComboBox correction;
+		private JLabel label1;
+		private OkayCancelPanel okayCancel;
+		private JComboBox method;
+		private JLabel label2;
+		
+		public PairwiseSubDialog(javax.swing.JDialog frame) {
+			super(frame);
+			initGUI();
+			method.setSelectedItem(model.pairwiseMethod);
+			correction.setSelectedItem(model.pairwiseCorrection);
+		}
+		
+		private void initGUI() {
+			try {
+				{
+					getContentPane().setLayout(null);
+					{
+						ComboBoxModel correctionModel = 
+							new DefaultComboBoxModel(
+									new String[] { "holm"   ,    "hochberg" ,  "hommel"  ,   "bonferroni", "BH" ,
+											"BY"   ,      "fdr"      ,  "none"      });
+						correction = new JComboBox();
+						getContentPane().add(correction);
+						correction.setModel(correctionModel);
+						correction.setBounds(113, 66, 113, 22);
+					}
+					{
+						label1 = new JLabel();
+						getContentPane().add(label1);
+						label1.setText("Correction:");
+						label1.setBounds(12, 70, 89, 15);
+						label1.setHorizontalAlignment(SwingConstants.TRAILING);
+					}
+					{
+						label2 = new JLabel();
+						getContentPane().add(label2);
+						label2.setText("Method:");
+						label2.setBounds(24, 32, 77, 15);
+						label2.setHorizontalAlignment(SwingConstants.TRAILING);
+					}
+					{
+						ComboBoxModel methodModel = 
+							new DefaultComboBoxModel(
+									new String[] { "","t-test (welch)","t-test (equal variance)","wilcoxon" });
+						method = new JComboBox();
+						getContentPane().add(method);
+						method.setModel(methodModel);
+						method.setBounds(113, 28, 113, 22);
+					}
+					{
+						ActionListener al = new ActionListener(){
+
+							public void actionPerformed(ActionEvent arg0) {
+								if(arg0.getActionCommand() == "OK"){
+									model.pairwiseMethod = (String) method.getSelectedItem();
+									model.pairwiseCorrection = (String) correction.getSelectedItem();
+									
+								}
+								PairwiseSubDialog.this.dispose();
+							}
+							
+						};
+						okayCancel = new OkayCancelPanel(false,false,al);
+						getContentPane().add(okayCancel);
+						okayCancel.setBounds(64, 100, 162, 34);
+					}
+				}
+				this.setModal(true);
+				this.setSize(249, 168);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 }
+
+
+
