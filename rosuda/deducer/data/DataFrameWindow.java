@@ -48,6 +48,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Component;
 import java.awt.MenuBar;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ActionListener;
@@ -67,6 +68,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -81,6 +83,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -209,9 +212,15 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				{
 					DataFrameComboBoxModel dataSelectorModel = //new DataFrameComboBoxModel();
 						new DataFrameComboBoxModel(JGR.DATA);
+					BasicComboBoxRenderer dataSelectorRenderer = new BasicComboBoxRenderer(){
+						public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+							return super.getListCellRendererComponent(list, value==null ? null : ((RObject)value).getName(), index, isSelected, cellHasFocus);
+						}
+					};
 					dataSelector = new JComboBox();
 					dataSelectorPanel.add(dataSelector, new AnchorConstraint(432, 594, 906, 415, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					dataSelector.setModel(dataSelectorModel);
+					dataSelector.setRenderer(dataSelectorRenderer);
 					dataSelector.setPreferredSize(new java.awt.Dimension(149, 28));
 					dataSelector.addActionListener(this);
 				}
@@ -223,7 +232,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					jButton1.setPreferredSize(new java.awt.Dimension(32,32));
 				}
 				{
-					jButton2 = new IconButton("/icons/trashcan_remove_32.png","Clear",this,"Clear Data");
+					jButton2 = new IconButton("/icons/trashcan_remove_32.png","Remove from Workspace",this,"Clear Data");
 					dataSelectorPanel.add(jButton2, new AnchorConstraint(144, 12, 971, 863, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE));
 					jButton2.setPreferredSize(new java.awt.Dimension(40,40));
 				}
@@ -255,7 +264,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			}
 			String[] Menu = { "+", "File", "@NNew Data","newdata", "@LOpen Data", "loaddata","@SSave Data", "Save Data", "-",
 				 "-","@PPrint","print","~File.Quit", 
-				"+","Edit","@CCopy","copy","@XCut","cut", "@VPaste","paste","-","Remove Data", "Clear Data",
+				"+","Edit","@CCopy","copy","@XCut","cut", "@VPaste","paste","-","Remove Data from Workspace", "Clear Data",
 				"~Window", "+","Help","R Help","help", "~About","0" };
 			JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
 			
@@ -274,7 +283,9 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			
 			
 			pack();
-			this.setSize(839, 839);
+			int mw = Toolkit.getDefaultToolkit().getScreenSize().width-100;
+			int mh = Toolkit.getDefaultToolkit().getScreenSize().height-50;
+			this.setSize(Math.min(839,mw), Math.min(839,mh));
 			
 			final JFrame theFrame = this;
 			this.addComponentListener(new java.awt.event.ComponentAdapter() {
