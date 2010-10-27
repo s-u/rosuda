@@ -3,6 +3,7 @@ package org.rosuda.JGR.editor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -129,8 +130,9 @@ public class Editor extends TJFrame implements ActionListener {
 		rih.addKeyBindings();
 		textArea.setInputHandler(rih);
 		textArea.addCaretListener(cLabel);
-
-		textArea.setPreferredSize(new Dimension(600, 800));
+		int mw = Toolkit.getDefaultToolkit().getScreenSize().width-100;
+		int mh = Toolkit.getDefaultToolkit().getScreenSize().height-50;
+		textArea.setPreferredSize(new Dimension(Math.min(600,mw), Math.min(800,mh)));
 
 		JPanel status = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		status.add(modifiedStatus);
