@@ -382,9 +382,8 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			lastDescrModel = (DefaultListModel) descrList.getModel();
 			lastStrataModel = (DefaultListModel) strataList.getModel();
 			lastFuncModel = (DefaultListModel) runFuncList.getModel();
-			
-			JGR.MAINRCONSOLE.toFront();			
-			JGR.MAINRCONSOLE.execute("descriptive.table(vars = " +
+	
+			Deducer.execute("descriptive.table(vars = " +
 										Deducer.makeRCollection(vars, "d", false)+
 										(strata.size()<1 ? "" : (" ,\n\tstrata = " + Deducer.makeRCollection(strata,"d",false))) +
 										",data= "+dataName +

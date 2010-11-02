@@ -48,7 +48,7 @@ import org.rosuda.deducer.data.DataFrameWindow;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.REXPString;
+import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
 import org.rosuda.REngine.JRI.JRIEngine;
 
@@ -61,11 +61,13 @@ public class Deducer {
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	static int menuIndex=3;
 	static String recentActiveData = "";
-	static final String Version= "0.4-2";
+	static final String Version= "0.4-3";
 	public static String guiEnv = "gui.working.env";
 	public static boolean insideJGR;
 	public static boolean started;
-	public static JRIEngine engine; 
+	private static RConnector rConnection = null;
+	
+	
 	public Deducer(boolean jgr){
 		started=false;
 		try{
@@ -102,15 +104,10 @@ public class Deducer {
 			org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
 			
 			try {
-				engine = new JRIEngine(org.rosuda.JRI.Rengine.getMainEngine());
+				rConnection = new DefaultRConnector(new JRIEngine(org.rosuda.JRI.Rengine.getMainEngine()));
 			} catch (REngineException e) {
 				new ErrorMsg(e);
 			}
-			Common.getScreenRes();
-			JGR.setREngine(engine);
-			JGR.MAINRCONSOLE=new JGRConsolePlaceholder(engine);
-			JGR.MAINRCONSOLE.setVisible(false);
-			JGR.STARTED=true;
 			
 			
 			DeducerPrefs.initialize();
@@ -123,7 +120,7 @@ public class Deducer {
 	
 	public void startWithJGR(){
 		insideJGR=true;
-		engine = (JRIEngine)JGR.getREngine();
+		rConnection = new JGRConnector();
 		String dataMenu = "Data";
 		String analysisMenu = "Analysis";
 		try{
@@ -293,7 +290,7 @@ public class Deducer {
 			String inputValue = JOptionPane.showInputDialog("Data Name: ");
 			if(inputValue!=null){
 				String var = RController.makeValidVariableName(inputValue.trim());
-				JGR.MAINRCONSOLE.execute(var+"<-data.frame()");
+				execute(var+"<-data.frame()");
 				DataFrameWindow.setTopDataWindow(var);
 			}
 		}else if (cmd.equals("Open Data Set")){
@@ -342,7 +339,7 @@ public class Deducer {
 			data = sel.getSelection();
 			if(data!=null){
 				name = data.getName();
-				JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");
+				execute("rownames("+name+") <-1:dim("+name+")[1]");
 				DataFrameWindow.setTopDataWindow(name);
 			}
 			JGR.MAINRCONSOLE.toFront();
@@ -365,16 +362,14 @@ public class Deducer {
 			data = sel.getSelection();
 			if(data!=null){
 				name = data.getName();
-				JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");
+				execute(name+"<-as.data.frame(t("+name+"))");
 				DataFrameWindow.setTopDataWindow(name);
-				JGR.MAINRCONSOLE.toFront();
 			}
 		}else if(cmd.equals("subset")){
 			needsRLocked=true;
 			SubsetDialog sub = new SubsetDialog(JGR.MAINRCONSOLE);
 			sub.setLocationRelativeTo(null);
 			sub.setVisible(true);
-			JGR.MAINRCONSOLE.toFront();
 			WindowTracker.addWindow(sub);
 		}else if(cmd.equals("frequency")){
 			needsRLocked=true;
@@ -551,89 +546,39 @@ public class Deducer {
 		recentActiveData=data;
 	}
 	
-	/**
-	 * DEPRICATED: Do not use
-	 */
-	public static org.rosuda.JRI.REXP rniEval(String cmd){
-		org.rosuda.JRI.REXP result;
-		boolean obtainedLock = engine.getRni().getRsync().safeLock();
-		try {
-			result = engine.getRni().eval(cmd);
-		}finally {
-				if (obtainedLock) 
-					engine.getRni().getRsync().unlock();
-		}
-		return result;
+	public static REngine getREngine(){
+		return rConnection.getREngine();
 	}
 	
-	/**
-	 * DEPRICATED: Do not use
-	 * @param cmd
-	 * @return
-	 */
-	public static org.rosuda.JRI.REXP rniIdleEval(String cmd){
-		return engine.getRni().idleEval(cmd);
+	public static RConnector getRConnector(){
+		return rConnection;
+	}
+	
+	public static void setRConnector(RConnector rc){
+		rConnection = rc;
 	}
 	
 	public static REXP eval(String cmd){
-		if(engine==null){
-			try {
-				engine = new JRIEngine(org.rosuda.JRI.Rengine.getMainEngine());
-			} catch (REngineException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
-			return engine.parseAndEval(cmd);
-		} catch (REngineException e) {
-			new ErrorMsg(e);
-			return null;
-		} catch (REXPMismatchException e) {
-			new ErrorMsg(e);
-			return null;
-		}
+		return rConnection.eval(cmd);
 	}
 	
 	public static REXP idleEval(String cmd){
-		if(engine==null){
-			try {
-				engine = new JRIEngine(org.rosuda.JRI.Rengine.getMainEngine());
-			} catch (REngineException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
-			int lock = engine.tryLock();
-			if(lock==0)
-				return null;
-			else{
-				REXP e = engine.parseAndEval(cmd);
-				engine.unlock(lock);
-				return e;
-			}
-				
-		} catch (REngineException e) {
-			new ErrorMsg(e);
-			return null;
-		} catch (REXPMismatchException e) {
-			new ErrorMsg(e);
-			return null;
-		}
+		return rConnection.idleEval(cmd);
 	}
 	
 	public static void execute(String cmd){
-		JGR.MAINRCONSOLE.execute(cmd);
+		rConnection.execute(cmd);
 	}
 	
 	public static void execute(String cmd, boolean hist){
-		JGR.MAINRCONSOLE.execute(cmd,hist);
+		rConnection.execute(cmd,hist);
 	}
 	
 	public static void executeAndContinue(String cmd){
 		final String c = cmd;
 		(new Thread() {
 			public void run() {
-		JGR.MAINRCONSOLE.execute(c);
+				execute(c);
 			}
 			}).start();
 	}
@@ -698,6 +643,25 @@ public class Deducer {
 			a.add(lis[i]);
 		return makeRCollection(a,func,quotes);
 	}
+
+	/**
+	 * Gets a unique name based on a starting string
+	 * 
+	 * @param var
+	 * @return the value of var concatinated with a number
+	 */
+	public static String getUniqueName(String var) {
+		JGR.refreshObjects();
+		var = RController.makeValidVariableName(var);
+		if (!JGR.OBJECTS.contains(var))
+			return var;
+		int i = 1;
+		while (true) {
+			if (!JGR.OBJECTS.contains(var + i))
+				return var + i;
+			i++;
+		}
+	}
 	
 	/**
 	 * Gets a unique name based on a starting string
@@ -708,7 +672,51 @@ public class Deducer {
 	 * @return the value of var concatinated with a number
 	 */
 	public static String getUniqueName(String var, String envName) {
-		return JGR.MAINRCONSOLE.getUniqueName(var, envName);
+		var = RController.makeValidVariableName(var);
+
+		try {
+			REXPLogical temp = (REXPLogical) eval("is.environment("
+					+ envName + ")");
+			boolean isEnv = temp.isTRUE()[0];
+			if (!isEnv)
+				return var;
+		} catch (Exception e) {
+			new ErrorMsg(e);
+			return var;
+		}
+
+		boolean isUnique = false;
+
+		try {
+
+			REXPLogical temp = (REXPLogical) eval("exists('" + var
+					+ "',where=" + envName + ",inherits=FALSE)");
+			isUnique = temp.isFALSE()[0];
+			if (isUnique)
+				return var;
+
+		} catch (Exception e) {
+			new ErrorMsg(e);
+			return var;
+		}
+
+		int i = 1;
+		while (true) {
+
+			try {
+
+				REXPLogical temp = (REXPLogical) eval("exists('" + (var + i) + "',where=" + envName
+								+ ",inherits=FALSE)");
+				isUnique = temp.isFALSE()[0];
+
+			} catch (Exception e) {
+				new ErrorMsg(e);
+			} 
+
+			if (isUnique)
+				return var + i;
+			i++;
+		}
 	}
 	
 	/**
@@ -758,15 +766,7 @@ public class Deducer {
 		return "not-installed";
 	}
 	
-	/**
-	 * Gets a unique name based on a starting string
-	 * 
-	 * @param var
-	 * @return the value of var concatinated with a number
-	 */
-	public static String getUniqueName(String var) {
-		return JGR.MAINRCONSOLE.getUniqueName(var);
-	}
+
 
 	public static synchronized void refreshData(){
 		REXP x = Deducer.idleEval(".getDataObjects()");

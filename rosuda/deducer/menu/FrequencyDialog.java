@@ -174,9 +174,8 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 			ArrayList varList = new ArrayList();
 			for(int i=0;i<freqList.getModel().getSize();i++)
 				varList.add(freqList.getModel().getElementAt(i));
-			this.dispose();
-			JGR.MAINRCONSOLE.toFront();			
-			JGR.MAINRCONSOLE.execute("frequencies("+dataName+
+			this.dispose();	
+			Deducer.execute("frequencies("+dataName+
 					"["+RController.makeRStringVector(varList)+"] , r.digits = "+digits+")");
 			lastDataName=dataName;
 			lastListModel = (DefaultListModel) freqList.getModel();

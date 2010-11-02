@@ -155,7 +155,7 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 				
 				try {
 					if(rRunFunc!=null)
-						Deducer.engine.parseAndEval(rRunFunc + "(" + state + ")");
+						Deducer.eval(rRunFunc + "(" + state + ")");
 					else if(runRef!=null){
 						REXP st = Deducer.eval(state);
 						runRef.getEngine().eval(new REXPLanguage(new RList(new REXP[] { runRef , st

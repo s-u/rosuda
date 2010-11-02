@@ -39,7 +39,7 @@ public class CorModel {
 			withVec = Deducer.makeRCollection(with, "d", false);
 		else
 			withVec ="";
-		String name = JGR.MAINRCONSOLE.getUniqueName("corr.mat");
+		String name = Deducer.getUniqueName("corr.mat");
 		if(dataName=="")
 			return false;
 		boolean isSubset=false;
@@ -48,7 +48,7 @@ public class CorModel {
 				JOptionPane.showMessageDialog(null, "Sorry, the subset expression seems to be invalid.");
 				return false;
 			}
-			subn = JGR.MAINRCONSOLE.getUniqueName(dataName+".sub");
+			subn = Deducer.getUniqueName(dataName+".sub");
 			cmd=subn+"<-subset("+dataName+","+subset+")"+"\n";
 			isSubset=true;
 		}else
@@ -121,7 +121,7 @@ public class CorModel {
 		else
 			cmd+="rm('"+name+"')\n";
 		
-		JGR.MAINRCONSOLE.executeLater(cmd);
+		Deducer.execute(cmd);
 		return true;
 	}
 	

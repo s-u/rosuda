@@ -233,7 +233,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			toVars = RController.makeRStringVector(toList);
 			fromVars = RController.makeRStringVector(fromList);
 			
-			JGR.MAINRCONSOLE.executeLater(data+"["+toVars+"] <- recode.variables("+data+
+			Deducer.execute(data+"["+toVars+"] <- recode.variables("+data+
 						"["+fromVars+"] , "+codes.getCodes()+")");
 			lastListModel = ((DefaultListModel)recodeVariableList.getModel());
 			lastDataName = (String)variableSelector.getJComboBox().getSelectedItem();

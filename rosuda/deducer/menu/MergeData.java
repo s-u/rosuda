@@ -467,7 +467,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 					for(int i=0;i<data2Unique.length;i++)
 						temp1+=" "+data2Unique[i];
 					Deducer.eval("cat('"+temp1+"\\n')");
-					JGR.MAINRCONSOLE.executeLater("",false);
+					Deducer.execute("",false);
 				}
 			}else{
 				byX="\"row.names\"";
@@ -495,8 +495,8 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 					excludeX.add(varNames[0]);
 				}
 			}
-			String temp1 = JGR.MAINRCONSOLE.getUniqueName(lastDataName1+".temp");
-			String temp2 = JGR.MAINRCONSOLE.getUniqueName(lastDataName2+".temp");
+			String temp1 = Deducer.getUniqueName(lastDataName1+".temp");
+			String temp2 = Deducer.getUniqueName(lastDataName2+".temp");
 			call+=(temp1+"<-"+lastDataName1+"[setdiff(colnames("+lastDataName1+"),"+
 								makeRStringVector(excludeX)+")]"	
 			);
@@ -512,7 +512,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			call+="\n"+(
 				"rm(list=c(\""+temp1+"\",\""+temp2+"\"))"
 			);
-			JGR.MAINRCONSOLE.executeLater(call);
+			Deducer.execute(call);
 			Deducer.setRecentData(lastDataSetName);
 			return true;
 		}catch(Exception e){new ErrorMsg(e);return false;}

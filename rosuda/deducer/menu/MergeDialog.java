@@ -24,6 +24,7 @@ import javax.swing.ScrollPaneConstants;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
@@ -63,7 +64,7 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 				getContentPane().add(newName, new AnchorConstraint(855, 428, 945, 110, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				if(lastNewData==null)
-					newName.setText(JGR.MAINRCONSOLE.getUniqueName("data.merged"));
+					newName.setText(Deducer.getUniqueName("data.merged"));
 				else
 					newName.setText(lastNewData);
 				newName.setPreferredSize(new java.awt.Dimension(166, 22));

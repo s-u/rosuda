@@ -102,7 +102,7 @@ public class TwoSampleModel{
 				JOptionPane.showMessageDialog(null, "Sorry, the subset expression seems to be invalid.");
 				return false;
 			}
-			subn = JGR.MAINRCONSOLE.getUniqueName(dataName+".sub");
+			subn = Deducer.getUniqueName(dataName+".sub");
 			cmd=subn+"<-subset("+dataName+","+subset+")"+"\n";
 			isSubset=true;
 		}else
@@ -170,7 +170,7 @@ public class TwoSampleModel{
 		if(isSubset)
 			cmd+="rm("+subn+")\n";
 		
-		JGR.MAINRCONSOLE.execute(cmd);
+		Deducer.execute(cmd);
 		return true;
 	}
 	

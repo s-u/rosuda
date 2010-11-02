@@ -310,7 +310,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 					JOptionPane.showMessageDialog(null, "Sorry, the subset expression seems to be invalid.");
 					return false;
 				}
-				subn = JGR.MAINRCONSOLE.getUniqueName(data+".sub");
+				subn = Deducer.getUniqueName(data+".sub");
 				cmd=subn+"<-subset("+data+","+subset+")"+"\n";
 				isSubset=true;
 			}else
@@ -342,7 +342,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 			}
 			if(isSubset)
 				cmd+="rm("+subn+")\n";
-			JGR.MAINRCONSOLE.execute(cmd);
+			Deducer.execute(cmd);
 			return true;
 		}
 		

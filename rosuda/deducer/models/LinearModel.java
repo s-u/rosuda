@@ -34,12 +34,12 @@ public class LinearModel extends GLMModel {
 		String modelName ;
 		if(preview)
 			if(prevModel==null){
-				modelName = Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName("model.lm",Deducer.guiEnv);
+				modelName = Deducer.guiEnv+"$"+Deducer.getUniqueName("model.lm",Deducer.guiEnv);
 			}else
 				modelName = prevModel.modelName;
 		else{
 			if(export.modelName.equals("<auto>") || export.modelName.equals(""))
-				modelName = JGR.MAINRCONSOLE.getUniqueName("model.lm");
+				modelName = Deducer.getUniqueName("model.lm");
 			else
 				modelName = RController.makeValidVariableName(export.modelName);
 		}
@@ -47,7 +47,7 @@ public class LinearModel extends GLMModel {
 		String dataName;
 		if(preview){
 			if(prevModel==null){
-				dataName = Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName(data,Deducer.guiEnv);
+				dataName = Deducer.guiEnv+"$"+Deducer.getUniqueName(data,Deducer.guiEnv);
 			}else
 				dataName = prevModel.data;
 		}else
@@ -75,7 +75,7 @@ public class LinearModel extends GLMModel {
 		cmd=runExport(cmd,modelName,preview,tmp,dataName,true);
 		
 		if(!preview)
-			JGR.MAINRCONSOLE.executeLater(cmd);
+			Deducer.execute(cmd);
 		String prev = "";
 		for(int i =0;i<tmp.size();i++)
 			prev+=tmp.get(i)+"\n";
@@ -219,10 +219,10 @@ public class LinearModel extends GLMModel {
 			Vector testCalls = new Vector();
 			String matrixName;
 			if(preview)
-				matrixName =  Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName(
+				matrixName =  Deducer.guiEnv+"$"+Deducer.getUniqueName(
 													"lh.mat",Deducer.guiEnv);
 			else
-				matrixName = JGR.MAINRCONSOLE.getUniqueName("lh.mat");
+				matrixName = Deducer.getUniqueName("lh.mat");
 			String call = "";
 			for(int i=0;i<tests.size();i++){
 				ExDefaultTableModel tmod = tests.getModel(i);

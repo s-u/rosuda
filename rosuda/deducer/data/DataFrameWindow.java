@@ -310,8 +310,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				    		
 				    	}
 				    	if(cnt==4){
-				    		JGR.MAINRCONSOLE.toFront();
-				    		JGR.MAINRCONSOLE.requestFocus();
 				    		return;
 				    	}
 				    	RController.refreshObjects();
@@ -488,8 +486,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					refresh();
 				}
 			}else if(cmd=="Open Data"){
-				JGR.MAINRCONSOLE.toFront();
-				JGR.MAINRCONSOLE.requestFocus();
 				new DataLoader();	
 			}else if(cmd=="Save Data"){
 
@@ -507,7 +503,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 						JOptionPane.QUESTION_MESSAGE);
 				if(confirm == JOptionPane.NO_OPTION)
 					return;
-				JGR.MAINRCONSOLE.executeLater("rm("+data + ")");
+				Deducer.execute("rm("+data + ")");
 				RController.refreshObjects();
 			}else if (cmd == "about")
 				new AboutDialog(this);
@@ -533,7 +529,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				dispose();
 			else if(cmd=="newdata"){
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
-				inputValue = JGR.MAINRCONSOLE.getUniqueName(inputValue);
+				inputValue = Deducer.getUniqueName(inputValue);
 				if(inputValue!=null){
 					Deducer.eval(inputValue.trim()+"<-data.frame(Var1=NA)");
 					RController.refreshObjects();
@@ -573,8 +569,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				String cmd = e.getActionCommand();
 				if(cmd=="Open Data"){	
-					new DataLoader();
-					JGR.MAINRCONSOLE.toFront();					
+					new DataLoader();			
 				}else if(cmd=="New Data"){
 					String inputValue = JOptionPane.showInputDialog("Data Name: ");
 					if(inputValue!=null)

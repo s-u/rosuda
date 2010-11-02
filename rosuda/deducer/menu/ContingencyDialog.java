@@ -323,14 +323,14 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		if(result==""){
 			result="tables";
 			result=RController.makeValidVariableName(result);
-			result=JGR.MAINRCONSOLE.getUniqueName(result);
+			result=Deducer.getUniqueName(result);
 		}else
-			result=JGR.MAINRCONSOLE.getUniqueName(result);
+			result=Deducer.getUniqueName(result);
 		
 		if(subsetPanel.getText().length()>0){
 			String sub = subsetPanel.getText();
 			if(SubsetDialog.isValidSubsetExp(sub,data)){
-				String tmp = JGR.MAINRCONSOLE.getUniqueName("tmp."+data);
+				String tmp = Deducer.getUniqueName("tmp."+data);
 				rCmd+=(tmp+"<-subset("+data+", "+sub+")")+"\n";
 				SubsetDialog.addToHistory(data, sub);				
 				data=tmp;
@@ -386,7 +386,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			this.dispose();
 		}else if(cmd == "Run"){
 			if(executeTables()){
-				JGR.MAINRCONSOLE.executeLater(rCmd);
+				Deducer.execute(rCmd);
 				saveToLast();
 				Deducer.setRecentData(variableSelector.getSelectedData());
 				this.dispose();

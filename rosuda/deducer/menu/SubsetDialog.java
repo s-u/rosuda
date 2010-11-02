@@ -360,7 +360,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 				return;
 			}
 			if(subName.getText().startsWith("<auto>"))
-				subn = JGR.MAINRCONSOLE.getUniqueName(data+".sub");
+				subn = Deducer.getUniqueName(data+".sub");
 			else
 				subn = RController.makeValidVariableName(subName.getText());
 			Deducer.execute(subn+"<-subset("+data+","+sub+")");
@@ -396,7 +396,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 		}else if(cmd=="Function Help"){
 			Object func = funcList.getSelectedValue();
 			if(func!=null)
-				JGR.MAINRCONSOLE.executeLater("help(\""+((String)func)+"\")",false);
+				Deducer.execute("help(\""+((String)func)+"\")",false);
 		}
 	}
 

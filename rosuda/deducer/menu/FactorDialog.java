@@ -210,7 +210,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 			if(cntr!=null){
 				call+="\n"+cntr.getCall(variable);
 			}
-			JGR.MAINRCONSOLE.executeLater(call);
+			Deducer.execute(call);
 			this.dispose();
 		}else if(cmd =="Contrasts"){
 			cntr = new ContrastDialog(null);

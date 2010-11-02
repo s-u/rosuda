@@ -12,6 +12,7 @@ import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.REngineException;
 import org.rosuda.REngine.RList;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.REngine.JRI.JRIEngine;
 
 public abstract class RListener {
 
@@ -39,7 +40,7 @@ public abstract class RListener {
 		
 		REXPReference actRef=null;
 		try {
-			actRef = Deducer.engine.createRJavaRef(event);
+			actRef = ((JRIEngine) Deducer.getREngine()).createRJavaRef(event);
 		} catch (REngineException e1) {
 			e1.printStackTrace();
 		}

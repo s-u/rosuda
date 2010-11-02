@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
-import javax.swing.table.DefaultTableModel;
 
-import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
-import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.ExDefaultTableModel;
 
@@ -36,12 +33,12 @@ public class GLMModel extends ModelModel {
 		String modelName ;
 		if(preview)
 			if(prevModel==null){
-				modelName = Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName("model.glm",Deducer.guiEnv);
+				modelName = Deducer.guiEnv+"$"+Deducer.getUniqueName("model.glm",Deducer.guiEnv);
 			}else
 				modelName = prevModel.modelName;
 		else{
 			if(export.modelName.equals("<auto>") || export.modelName.equals(""))
-				modelName = JGR.MAINRCONSOLE.getUniqueName("model.glm");
+				modelName = Deducer.getUniqueName("model.glm");
 			else
 				modelName = RController.makeValidVariableName(export.modelName);
 		}
@@ -49,7 +46,7 @@ public class GLMModel extends ModelModel {
 		String dataName;
 		if(preview){
 			if(prevModel==null){
-				dataName = Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName(data,Deducer.guiEnv);
+				dataName = Deducer.guiEnv+"$"+Deducer.getUniqueName(data,Deducer.guiEnv);
 			}else
 				dataName = prevModel.data;
 		}else
@@ -77,7 +74,7 @@ public class GLMModel extends ModelModel {
 		cmd=runExport(cmd,modelName,preview,tmp,dataName,false);
 		
 		if(!preview)
-			JGR.MAINRCONSOLE.executeLater(cmd);
+			Deducer.execute(cmd);
 		String prev = "";
 		for(int i =0;i<tmp.size();i++)
 			prev+=tmp.get(i)+"\n";
@@ -303,10 +300,10 @@ public class GLMModel extends ModelModel {
 				Vector testCalls = new Vector();
 				String matrixName;
 				if(preview)
-					matrixName =  Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName(
+					matrixName =  Deducer.guiEnv+"$"+Deducer.getUniqueName(
 														"lh.mat",Deducer.guiEnv);
 				else
-					matrixName = JGR.MAINRCONSOLE.getUniqueName("lh.mat");
+					matrixName = Deducer.getUniqueName("lh.mat");
 				String call = "";
 				for(int i=0;i<tests.size();i++){
 					ExDefaultTableModel tmod = tests.getModel(i);
@@ -370,7 +367,7 @@ public class GLMModel extends ModelModel {
 			String dataName,boolean isLm){
 		try{
 			if(!preview){
-				String temp = JGR.MAINRCONSOLE.getUniqueName("tmp");
+				String temp = Deducer.getUniqueName("tmp");
 				boolean anyExport=false;
 				if(export.cooks){
 					anyExport=true;
@@ -415,7 +412,7 @@ public class GLMModel extends ModelModel {
 				}
 				if(export.dfbeta){
 					anyExport=true;
-					cmd+="\n"+JGR.MAINRCONSOLE.getUniqueName(modelName+".dfbeta")+"<-dfbeta("+modelName+")";
+					cmd+="\n"+Deducer.getUniqueName(modelName+".dfbeta")+"<-dfbeta("+modelName+")";
 				}
 				if(export.dffits){
 					anyExport=true;
