@@ -7,6 +7,7 @@ import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
 import org.rosuda.REngine.JRI.JRIEngine;
+import org.w3c.dom.Document;
 
 public class DefaultRConnector implements RConnector{
 	private JRIEngine R;
@@ -34,6 +35,10 @@ public class DefaultRConnector implements RConnector{
 	}
 
 	public void execute(String cmd, boolean addToHist) {
+		execute(cmd);
+	}
+	
+	public void execute(String cmd,boolean addToHist,String title,Document xmlDialogState){
 		execute(cmd);
 	}
 

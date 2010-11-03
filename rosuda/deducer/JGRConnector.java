@@ -6,6 +6,7 @@ import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
+import org.w3c.dom.Document;
 
 public class JGRConnector implements RConnector{
 	REngine engine = JGR.getREngine();
@@ -14,6 +15,10 @@ public class JGRConnector implements RConnector{
 	}
 
 	public void execute(String cmd, boolean addToHist) {
+		JGR.MAINRCONSOLE.execute(cmd,addToHist);
+	}
+	
+	public void execute(String cmd,boolean addToHist,String title,Document xmlDialogState){
 		JGR.MAINRCONSOLE.execute(cmd,addToHist);
 	}
 

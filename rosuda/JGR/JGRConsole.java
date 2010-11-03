@@ -88,9 +88,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	/** Console command input area */
 	public SyntaxInput input = new SyntaxInput("console", true);
 
-	private final Document inputDoc = input.getDocument();
+	public Document inputDoc = input.getDocument();
 
-	private final Document outputDoc = output.getDocument();
+	public Document outputDoc = output.getDocument();
 
 	public static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK
 			: Event.CTRL_MASK;
@@ -99,7 +99,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	private String wspace = null;
 
-	private int currentHistPosition = 0;
+	public int currentHistPosition = 0;
 
 	private final StringBuffer console = new StringBuffer();
 
@@ -445,18 +445,15 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		if (cmd.startsWith("fix(") || cmd.startsWith("edit(")
 				|| cmd.startsWith("edit.data.frame(")) {
 			try {
-				outputDoc.insertString(outputDoc.getLength(), cmd + "\n",
-						JGRPrefs.CMD);
+				output.append(cmd + "\n",JGRPrefs.CMD);
 			} catch (Exception e) {
 			}
 			try {
-				outputDoc.insertString(outputDoc.getLength(),
-						"Editing is not supported yet!", JGRPrefs.RESULT);
+				output.append("Editing is not supported yet!", JGRPrefs.RESULT);
 			} catch (Exception e) {
 			}
 			try {
-				outputDoc.insertString(outputDoc.getLength(), "\n"
-						+ RController.getRPrompt(), JGRPrefs.CMD);
+				output.append( "\n" + RController.getRPrompt(), JGRPrefs.CMD);
 			} catch (Exception e) {
 			}
 			return false;
@@ -664,8 +661,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			Runnable doWork2 = new Runnable() {
 				public void run() {
 					try {
-						outputDoc.insertString(outputDoc.getLength(), s + "\n",
-								JGRPrefs.CMD);
+						output.append(s + "\n",JGRPrefs.CMD);
 						if (console.length() > 0) {
 							output.append(console.toString(), JGRPrefs.RESULT);
 							console.delete(0, console.length());
