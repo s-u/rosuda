@@ -15,7 +15,7 @@ public class SideWindow extends JFrame implements WindowListener, ComponentListe
 
 	protected Window parent;
 	protected int offset = 20;
-	
+	protected boolean ordering = false;
 	
 	public SideWindow(Window theParent) {
 		super();
@@ -38,15 +38,21 @@ public class SideWindow extends JFrame implements WindowListener, ComponentListe
 	}
 	
 	public void windowActivated(WindowEvent arg0) {
-		if(this.isVisible()){
-			parent.removeWindowListener(this);
-			parent.removeComponentListener(this);
-			parent.setAlwaysOnTop(true);
+
+		if(this.isVisible() && !ordering){
+			  SwingUtilities.invokeLater(new Runnable() {
+				    public void run() {
+				      ordering = true;
+				    }
+				  });
+			
 			this.toFront();
-			parent.setAlwaysOnTop(false);
-			//parent.toFront();
-			parent.addWindowListener(this);
-			parent.addComponentListener(this);
+			parent.toFront();
+			SwingUtilities.invokeLater(new Runnable() {
+			    public void run() {
+			      ordering = false;
+			    }
+			  });
 		}
 	}
 
