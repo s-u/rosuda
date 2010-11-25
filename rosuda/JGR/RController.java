@@ -776,7 +776,7 @@ public class RController {
 		REXP y;
 		double[] res;
 		try {
-			y = JGR.eval("summary(" + sx + ")[[\"r.squared\"]]");
+			y = JGR.eval("try(summary(" + sx + ")[[\"r.squared\"]],silent=TRUE)");
 			if (!y.isNull() && (res = y.asDoubles()) != null)
 				m.setRsquared(res[0]);
 		} catch (REngineException e) {
@@ -787,7 +787,7 @@ public class RController {
 			e.printStackTrace();
 		}
 		try {
-			y = JGR.eval("AIC(" + sx + ")");
+			y = JGR.eval("try(AIC(" + sx + "),silent=TRUE)");
 			if (!y.isNull() && (res = y.asDoubles()) != null)
 				m.setAic(res[0]);
 		} catch (REngineException e) {
@@ -798,7 +798,7 @@ public class RController {
 			e.printStackTrace();
 		}
 		try {
-			y = JGR.eval("deviance(" + sx + ")");
+			y = JGR.eval("try(deviance(" + sx + "),silent=TRUE)");
 			if (!y.isNull() && (res = y.asDoubles()) != null)
 				m.setDeviance(res[0]);
 		} catch (REngineException e) {
@@ -811,7 +811,7 @@ public class RController {
 		int[] res1;
 		REXP x;
 		try {
-			x = JGR.eval("summary(" + sx + ")[[\"df\"]]");
+			x = JGR.eval("try(summary(" + sx + ")[[\"df\"]],silent=TRUE)");
 			if (x != null && !x.isNull() && (res1 = x.asIntegers()) != null)
 				m.setDf(res1[0]);
 		} catch (REngineException e) {
@@ -824,7 +824,7 @@ public class RController {
 		String[] res2;
 		REXP z;
 		try {
-			z = JGR.eval("family(" + sx + ")[[\"family\"]]");
+			z = JGR.eval("try(family(" + sx + ")[[\"family\"]],silent=TRUE)");
 			if ((z != null && !z.isNull()) && (res2 = z.asStrings()) != null)
 				m.setFamily(res2[0]);
 		} catch (REngineException e) {
