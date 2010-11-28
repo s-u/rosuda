@@ -334,6 +334,12 @@ public class Stat {
 		s.name = "function";
 		s.defaultGeom = "path";
 		
+		Aes aes;
+		
+		aes = Aes.makeAes("x");
+		aes.required = true;
+		s.aess.add(aes);
+		
 		Param p;
 		
 		p= ParamFactory.makeParam("fun");
@@ -343,7 +349,6 @@ public class Stat {
 		s.params.add(p);
 		
 		s.generated.add("y");
-		s.generated.add("x");
 		
 		return s;
 	}	
