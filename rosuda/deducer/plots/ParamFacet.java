@@ -218,10 +218,6 @@ public class ParamFacet extends Param{
 			margins = new Boolean(node.getAttribute("margins").equals("true"));
 		else
 			margins = null;		
-		if(node.hasAttribute("margins"))
-			margins = new Boolean(node.getAttribute("margins").equals("true"));
-		else
-			margins = null;	
 		if(node.hasAttribute("spaceFixed"))
 			spaceFixed = new Boolean(node.getAttribute("spaceFixed").equals("true"));
 		else
@@ -239,9 +235,9 @@ public class ParamFacet extends Param{
 		else
 			drop = null;
 		if(node.hasAttribute("scaleWrap"))
-			scaleGrid = node.getAttribute("scaleWrap");
+			scaleWrap = node.getAttribute("scaleWrap");
 		else
-			scaleGrid = null;
+			scaleWrap = null;
 		if(node.hasAttribute("nrow"))
 			nrow = new Integer(Integer.parseInt(node.getAttribute("nrow")));
 		else
@@ -273,7 +269,6 @@ public class ParamFacet extends Param{
 			for(int i=0;i<attr.getLength();i++)
 				varsWrap[i] = attr.item(i).getNodeValue();
 		}
-		
 	}
 	
 	
