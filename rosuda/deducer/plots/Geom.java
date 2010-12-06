@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamLogical;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -1353,6 +1354,9 @@ public class Geom {
 		
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
+		
+		Param p = new ParamLogical("parse");
+		g.params.add(p);
 		
 		return g;
 	}
