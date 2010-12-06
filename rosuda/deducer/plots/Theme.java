@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamAny;
 import org.rosuda.deducer.widgets.param.ParamCharacter;
 import org.rosuda.deducer.widgets.param.ParamColor;
 import org.rosuda.deducer.widgets.param.ParamNumeric;
@@ -71,8 +72,6 @@ public class Theme implements ElementModel{
 		p.setName("title");
 		p.setTitle("title");
 		p.setViewType(Param.VIEW_ENTER_LONG);
-		p.setValue(null);
-		p.setDefaultValue(null);
 		t.params.add(p);		
 		
 		pf = new RFunctionList();
@@ -441,15 +440,14 @@ public class Theme implements ElementModel{
 	
 	public static RFunction makeUnit(){
 		RFunction rf = new RFunction();
-		rf.setName("theme_text");
+		rf.setName("unit");
 		Param rfp;
-		ParamNumeric rfpn;
+		ParamVector rfpn;
 		
-		rfpn = new ParamNumeric();
+		rfpn = new ParamVector();
 		rfpn.setName("x");
-		rfpn.setTitle("x");
-		rfpn.setViewType(Param.VIEW_ENTER);
-		rfpn.setLowerBound(new Double(0));
+		rfpn.setTitle("plot margins");
+		rfpn.setNumeric(true);
 		rf.add(rfpn);		
 		
 		rfp = new ParamCharacter("units");
