@@ -38,21 +38,26 @@ public class SideWindow extends JFrame implements WindowListener, ComponentListe
 	}
 	
 	public void windowActivated(WindowEvent arg0) {
-
+		final Window win = this;
 		if(this.isVisible() && !ordering){
 			  SwingUtilities.invokeLater(new Runnable() {
 				    public void run() {
 				      ordering = true;
+				      win.toFront();
+				      parent.toFront();	
+
 				    }
-				  });
-			
-			this.toFront();
-			parent.toFront();
-			SwingUtilities.invokeLater(new Runnable() {
-			    public void run() {
-			      ordering = false;
-			    }
 			  });
+			  (new Thread(new Runnable(){
+				public void run() {
+					try {
+						Thread.sleep(500);
+						ordering = false;
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}			  
+			  })).start();
 		}
 	}
 
