@@ -42,7 +42,7 @@ import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.PrefPanel;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
 import org.rosuda.deducer.data.DataFrameSelector;
-import org.rosuda.deducer.data.DataFrameWindow;
+import org.rosuda.deducer.data.DataViewer;
 
 
 import org.rosuda.REngine.REXP;
@@ -76,7 +76,7 @@ public class Deducer {
 				(new Thread() {
 					public void run() {
 					    if(DeducerPrefs.VIEWERATSTARTUP){
-						   	DataFrameWindow inst = new DataFrameWindow();
+						   	DataViewer inst = new DataViewer();
 					    	inst.setLocationRelativeTo(null);
 					    	inst.setVisible(true);
 					    	JGR.MAINRCONSOLE.toFront(); 
@@ -241,10 +241,10 @@ public class Deducer {
 	}
 	
 	public static void startViewerAndWait(){
-	   	DataFrameWindow inst = new DataFrameWindow();
+	   	DataViewer inst = new DataViewer();
     	inst.setLocationRelativeTo(null);
     	inst.setVisible(true);
-    	while(DataFrameWindow.dataWindows.size()>0){
+    	while(inst.isVisible()==false){
     		try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -291,12 +291,12 @@ public class Deducer {
 			if(inputValue!=null){
 				String var = RController.makeValidVariableName(inputValue.trim());
 				execute(var+"<-data.frame()");
-				DataFrameWindow.setTopDataWindow(var);
+				//DataFrameWindow.setTopDataWindow(var);
 			}
 		}else if (cmd.equals("Open Data Set")){
 			//needsRLocked=true;
 			DataLoader inst = new DataLoader();
-			DataFrameWindow.setTopDataWindow(inst.getDataName());
+			//DataFrameWindow.setTopDataWindow(inst.getDataName());
 			Deducer.setRecentData(inst.getDataName());
 		}else if(cmd.equals("Save Data Set")){
 			//needsRLocked=true;
@@ -340,7 +340,7 @@ public class Deducer {
 			if(data!=null){
 				name = data.getName();
 				execute("rownames("+name+") <-1:dim("+name+")[1]");
-				DataFrameWindow.setTopDataWindow(name);
+				//DataFrameWindow.setTopDataWindow(name);
 			}
 			JGR.MAINRCONSOLE.toFront();
 		}else if(cmd.equals("sort")){
@@ -363,7 +363,7 @@ public class Deducer {
 			if(data!=null){
 				name = data.getName();
 				execute(name+"<-as.data.frame(t("+name+"))");
-				DataFrameWindow.setTopDataWindow(name);
+				//DataFrameWindow.setTopDataWindow(name);
 			}
 		}else if(cmd.equals("subset")){
 			needsRLocked=true;
@@ -391,7 +391,7 @@ public class Deducer {
 			WindowTracker.addWindow(cont);
 		}else if (cmd.equals("table")){
 			needsRLocked=true;
-			DataFrameWindow inst = new DataFrameWindow();
+			DataViewer inst = new DataViewer();
 			inst.setLocationRelativeTo(null);
 			inst.setVisible(true);
 			WindowTracker.addWindow(inst);

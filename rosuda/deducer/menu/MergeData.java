@@ -413,7 +413,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			boolean merged = merge();
 			if(merged){	
 				this.dispose();
-				DataFrameWindow.setTopDataWindow(lastDataSetName);
+				//DataFrameWindow.setTopDataWindow(lastDataSetName);
 			}
 		}
 	}

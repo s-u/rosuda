@@ -56,15 +56,16 @@ class RDataFrameModel extends ExDefaultTableModel {
 			Deducer.eval(guiEnv+"<-new.env(parent=emptyenv())");
 		}
 		if(tempDataName!=null)
-			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");
+			removeCachedData();
 		rDataName = name;
-		tempDataName = Deducer.getUniqueName(rDataName,guiEnv);
-		try {
-			data = Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName).asList();
-		} catch (REXPMismatchException e) {
-			new ErrorMsg(e);
+		if(rDataName!=null){
+			tempDataName = Deducer.getUniqueName(rDataName + Math.random(),guiEnv);
+			try {
+				data = Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName).asList();
+			} catch (REXPMismatchException e) {
+				new ErrorMsg(e);
+			}
 		}
-		
 		this.fireTableStructureChanged();
 		this.fireTableDataChanged();
 	}
@@ -293,6 +294,7 @@ class RDataFrameModel extends ExDefaultTableModel {
 			new ErrorMsg(e);
 		}
 	}
+	
 	/**
 	 * Notifies components about changes in the model
 	 */
@@ -387,6 +389,17 @@ class RDataFrameModel extends ExDefaultTableModel {
 			return maxChar;
 		}
 		public void refresh(){
+			if(rDataName==null){
+				rowNames = new String[]{};
+				super.refresh();
+				return;
+			}
+			REXP exist = Deducer.eval("exists('"+rDataName+"')");
+			if(exist==null || !((REXPLogical)exist).isTRUE()[0]){
+				rowNames = new String[]{};
+				super.refresh();
+				return;				
+			}
 			try {
 				rowNames = Deducer.eval("rownames("+rDataName+")").asStrings();
 			} catch (REXPMismatchException e) {

@@ -28,7 +28,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 import org.rosuda.deducer.Deducer;
-import org.rosuda.deducer.data.DataFrameWindow;
 import org.rosuda.JGR.toolkit.SyntaxArea;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
@@ -369,18 +368,6 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 			lastDataName = variableSelector.getSelectedData();
 			Deducer.setRecentData(subn);
 			this.dispose();
-			final String subsetName = subn;
-			Runnable doWorkRunnable = new Runnable() {
-				public void run() { 
-			if(DataFrameWindow.dataWindows!=null && 
-					DataFrameWindow.dataWindows.size()>0){
-			DataFrameWindow dataView =(DataFrameWindow)DataFrameWindow.dataWindows.get(0);
-			dataView.setVisible(true); 
-			dataView.showData(subsetName);	
-					}
-				}
-			};
-			SwingUtilities.invokeLater(doWorkRunnable);	
 		}else if(cmd == "Reset"){
 			subsetEditor.setText("");
 			subName.setText("<auto>");

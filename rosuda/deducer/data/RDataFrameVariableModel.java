@@ -34,10 +34,7 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	}
 	
 	public int getColumnCount( ){
-		if(rDataName!=null)
 			return 5;
-		else
-			return 0;
 	}
 	
 	public int getRowCount(){

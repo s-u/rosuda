@@ -77,7 +77,6 @@ public class DeducerPrefs {
 		String[] names;
 		try {
 			names = prefs.keys();
-			System.out.println("names:"+names.length);
 			for(int i=0;i<names.length;i++){
 				if(!names[i].equals("SHOWDATA") && !names[i].equals("SHOWANALYSIS") &&
 					!names[i].equals("USEQUAQUACHOOSER") && !names[i].equals("VIEWERATSTARTUP")){

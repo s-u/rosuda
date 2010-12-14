@@ -35,7 +35,6 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
-import org.rosuda.deducer.data.DataFrameWindow;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
