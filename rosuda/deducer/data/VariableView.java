@@ -41,17 +41,20 @@ public class VariableView extends DataViewerTab implements ActionListener{
 	private void init(String dataName){
 		this.dataName = dataName;
 		comboBox = new JComboBox();
-		comboBox.addItem("String");
+		comboBox.addItem("Character");
 		comboBox.addItem("Factor");
 		comboBox.addItem("Double");
 		comboBox.addItem("Integer");
 		comboBox.addItem("Logical");
+		comboBox.addItem("Date");
+		comboBox.addItem("Time");
+		comboBox.addItem("Other");
 		RDataFrameVariableModel varModel = new RDataFrameVariableModel(dataName);
 		ex = new ExTable();	
 		ex.setModel(varModel);			
 		ex.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
 		ex.getColumnModel().getColumn(0).setPreferredWidth(200);
-		ex.getColumnModel().getColumn(1).setPreferredWidth(50);
+		ex.getColumnModel().getColumn(1).setPreferredWidth(70);
 		ex.getColumnModel().getColumn(2).setPreferredWidth(300);
 		ex.setColumnSelectionAllowed(true);
 		ex.setRowSelectionAllowed(true);		
@@ -67,7 +70,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 					tmp = (REXPLogical) Deducer.eval("is.factor("+datName+"$"+varName+")");
 		    		if(tmp!=null && tmp.isTRUE()[0]){
 		    			FactorDialog fact = new FactorDialog(null,datName+"$"+varName);
-		    			fact.setLocation(e.getPoint());
+		    			fact.setLocationRelativeTo(ex);
 		    			fact.setTitle("Factor Editor: "+varName);
 		    			fact.setVisible(true);
 		    		}

@@ -4,6 +4,8 @@
 package org.rosuda.deducer.data;
 
 
+import javax.swing.JOptionPane;
+
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
@@ -55,14 +57,27 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			}else if(col==0){
 				return Deducer.eval("colnames("+rDataName+")["+(row+1)+"]").asString();
 			}else if(col==1){
-				REXP var = Deducer.eval(rDataName+"[,"+(row+1)+"]");	
-				if (var.isNull()) return "NULL";
-				else if (var.isFactor()) return "Factor";				
+				REXP var = Deducer.eval(rDataName+"[,"+(row+1)+"]");
+				if(var==null)
+					return "?";
+				REXP cls = var.getAttribute("class");
+				String[] classes = null;
+				String theClass = null;
+				if(cls!=null){
+					classes = cls.asStrings();
+					if(classes.length>0)
+						theClass = classes[classes.length-1];	
+				}
+				if(theClass!=null && theClass.equals("Date")) return "Date";
+				else if(theClass!=null && theClass.equals("POSIXct")) return "Time";
+				else if (var.isNull()) return "NULL";
+				else if (var.isFactor()) return "Factor";
 				else if (var.isInteger()) return "Integer";
-				else if (var.isString()) return "String";
+				else if (var.isString()) return "Character";
 				else if (var.isLogical()) return "Logical";
 				else if (var.isNumeric()) return "Double";
-				else return "?";
+				else return "Other";
+
 			}else if(col==2){
 				REXP var = Deducer.eval(rDataName+"[,"+(row+1)+"]");
 				if(var.isFactor()){
@@ -94,17 +109,23 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			Deducer.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
 		}else if(col==1){
 			String type = value.toString().toLowerCase().trim();
-			if(type.equals("integer")) Deducer.eval(rDataName+"[,"+(row+1)+
-										"]<-as.integer("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("factor")) Deducer.eval(rDataName+"[,"+(row+1)+
-					"]<-as.factor("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("double")) Deducer.eval(rDataName+"[,"+(row+1)+
-					"]<-as.double("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("logical")) Deducer.eval(rDataName+"[,"+(row+1)+
-					"]<-as.logical("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("string")) Deducer.eval(rDataName+"[,"+(row+1)+
-					"]<-as.character("+rDataName+"[,"+(row+1)+"])");
-			return;
+			if(type.equals("integer")) 
+				Deducer.eval(rDataName+"[,"+(row+1)+"]<-as.integer("+rDataName+"[,"+(row+1)+"])");
+			else if(type.equals("factor")) 
+				Deducer.eval(rDataName+"[,"+(row+1)+"]<-as.factor("+rDataName+"[,"+(row+1)+"])");
+			else if(type.equals("double")) 
+				Deducer.eval(rDataName+"[,"+(row+1)+"]<-as.double("+rDataName+"[,"+(row+1)+"])");
+			else if(type.equals("logical")) 
+				Deducer.eval(rDataName+"[,"+(row+1)+"]<-as.logical("+rDataName+"[,"+(row+1)+"])");
+			else if(type.equals("character")) 
+				Deducer.eval(rDataName+"[,"+(row+1)+"]<-as.character("+rDataName+"[,"+(row+1)+"])");
+			else if(type.equals("date")) 
+				Deducer.eval(rDataName+"[,"+(row+1)+"]<-as.Date("+rDataName+"[,"+(row+1)+"])");
+			else if(type.equals("time")) 
+				Deducer.eval(rDataName+"[,"+(row+1)+"]<-as.POSIXct("+rDataName+"[,"+(row+1)+"])");			
+			else if(type.equals("other"))
+				JOptionPane.showMessageDialog(null, "Variables can not be changed to 'Other'");
+			return;					
 		}
 	}
 	

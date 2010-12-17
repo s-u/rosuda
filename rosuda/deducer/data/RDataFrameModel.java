@@ -11,10 +11,13 @@ import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPDouble;
 import org.rosuda.REngine.REXPFactor;
 import org.rosuda.REngine.REXPInteger;
+import org.rosuda.REngine.REXPLanguage;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REXPReference;
 import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.REXPVector;
+import org.rosuda.REngine.REXPGenericVector;
 import org.rosuda.REngine.RList;
 import org.rosuda.deducer.Deducer;
 
@@ -28,6 +31,8 @@ import org.rosuda.deducer.Deducer;
 class RDataFrameModel extends ExDefaultTableModel {
 	
 	private static String guiEnv = Deducer.guiEnv;
+	
+	private static REXPReference formatDate;
 	
 	private String rDataName=null;
 	
@@ -165,18 +170,25 @@ class RDataFrameModel extends ExDefaultTableModel {
 		}else{
 		try{
 			REXPVector column = (REXPVector)data.at(col);
+			REXP cls = column.getAttribute("class");
 			if(column.isNA()[row])
 				value = new NAHolder();
 			else if(column.isFactor())
 				value = ((REXPFactor)column).asFactor().at(row);
-			else if( column.isLogical())
-				value = new Boolean(((REXPLogical)column).asIntegers()[row]==1);					
-			else if(column.isInteger())
-				value = new Integer(((REXPInteger)column).asIntegers()[row]);	
-			else if(column.isNumeric())
-				value = new Double(((REXPDouble)column).asDoubles()[row]);
-			else if(column.isString())
-				value = ((REXPString)column).asStrings()[row];
+			else if(cls==null){
+				if( column.isLogical())
+					value = new Boolean(((REXPLogical)column).asIntegers()[row]==1);					
+				else if(column.isInteger())
+					value = new Integer(((REXPInteger)column).asIntegers()[row]);	
+				else if(column.isNumeric())
+					value = new Double(((REXPDouble)column).asDoubles()[row]);
+				else if(column.isString())
+					value = ((REXPString)column).asStrings()[row];
+			}else{
+				REXP val = Deducer.eval("format("+rDataName+"["+(row+1)+","+(col+1)+"])");
+				if(val!=null)
+					value = val.asString();
+			}
 		}catch(Exception e){
 			new ErrorMsg(e);
 		}
@@ -211,7 +223,17 @@ class RDataFrameModel extends ExDefaultTableModel {
 				isInteger=false;
 			}
 		}
-
+		REXP cls = currentValue.getAttribute("class");
+		String[] classes = null;
+		String theClass = null;
+		try{
+			if(cls!=null){
+				classes = cls.asStrings();
+				if(classes.length>0)
+					theClass = classes[classes.length-1];	
+			}
+		}catch(Exception e){}
+		
 
 		if(value==null){
 			if((row+1)<=numRealRows && (col+1)<=numRealCols)
@@ -255,7 +277,7 @@ class RDataFrameModel extends ExDefaultTableModel {
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+valueString+"'");
 				this.fireTableDataChanged();
 			}
-		}else if(currentValue.isInteger()){
+		}else if(theClass==null && currentValue.isInteger()){
 			if(!isInteger){
 				if(!isDouble){
 					Deducer.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
@@ -267,7 +289,7 @@ class RDataFrameModel extends ExDefaultTableModel {
 			}else{
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
 			}
-		}else if(currentValue.isNumeric()){
+		}else if(theClass==null && currentValue.isNumeric()){
 			if(!isDouble){
 				Deducer.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
@@ -275,6 +297,8 @@ class RDataFrameModel extends ExDefaultTableModel {
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
 			}
 			this.fireTableDataChanged();
+		}else if(theClass!=null){
+			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-as."+theClass+"('"+value.toString()+"')");
 		}
 		this.fireTableCellUpdated(row, col);
 		if((row+1)>numRealRows){

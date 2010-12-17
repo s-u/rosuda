@@ -19,10 +19,15 @@ public class ColumnHeaderListener extends MouseAdapter  {
 	private ExTable table;
 	private JPopupMenu menu;
 	
+	public ColumnHeaderListener(){this(new ExTable());}
 	public ColumnHeaderListener(ExTable t){
 		table = t;
 		JTableHeader header = table.getTableHeader();
 		header.addMouseListener(this);
+	}
+	
+	public void remove(){
+		table.getTableHeader().removeMouseListener(this);
 	}
 	
 	

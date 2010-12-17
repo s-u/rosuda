@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
@@ -27,8 +28,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
+import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.robjects.RObject;
@@ -92,7 +95,8 @@ public class DataViewer extends TJFrame implements ActionListener{
 				dataSelectorPanel.setMinimumSize(new java.awt.Dimension(100, 100));
 				{
 					saveButton = new IconButton("/icons/kfloppy.png","Save Data",this,"Save Data");
-					dataSelectorPanel.add(saveButton, new AnchorConstraint(12, 60, 805, 62, 
+					if(DataViewerController.showSaveDataButton())
+						dataSelectorPanel.add(saveButton, new AnchorConstraint(12, 60, 805, 62, 
 										AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
 										AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 					saveButton.setFont(new java.awt.Font("Dialog",0,8));
@@ -147,7 +151,8 @@ public class DataViewer extends TJFrame implements ActionListener{
 				}
 				{
 					openButton = new IconButton("/icons/opendata_24.png","Open Data",this,"Open Data");
-					dataSelectorPanel.add(openButton, new AnchorConstraint(12, 60, 805, 12, 
+					if(DataViewerController.showOpenDataButton())
+						dataSelectorPanel.add(openButton, new AnchorConstraint(12, 60, 805, 12, 
 							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 					openButton.setPreferredSize(new java.awt.Dimension(32,32));
@@ -155,7 +160,8 @@ public class DataViewer extends TJFrame implements ActionListener{
 				{
 					removeButton = new IconButton("/icons/trashcan_remove_32.png","Remove from Workspace",
 							this,"Clear Data");
-					dataSelectorPanel.add(removeButton, new AnchorConstraint(144, 12, 971, 863, 
+					if(DataViewerController.showClearDataButton())
+						dataSelectorPanel.add(removeButton, new AnchorConstraint(144, 12, 971, 863, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE));
 					removeButton.setPreferredSize(new java.awt.Dimension(40,40));
@@ -266,6 +272,25 @@ public class DataViewer extends TJFrame implements ActionListener{
 				if(!data.equals(dataName))
 					setData(data);
 				
+			}else if(cmd=="Open Data"){
+				new DataLoader();	
+			}else if(cmd=="Save Data"){
+				new SaveData(dataName);
+			}else if(cmd=="Clear Data"){
+				if(dataSelector.getSelectedItem()==null){
+					JOptionPane.showMessageDialog(this, "Invalid selection: There is no data loaded.");
+					return;
+				}
+				String data = ((RObject)dataSelector.getSelectedItem()).getName();
+				int confirm = JOptionPane.showConfirmDialog(null, "Remove Data Frame "+
+						data+" from enviornment?\n" +
+								"Unsaved changes will be lost.",
+						"Clear Data Frame", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+				if(confirm == JOptionPane.NO_OPTION)
+					return;
+				Deducer.execute("rm("+data + ")");
+				RController.refreshObjects();
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -353,7 +378,7 @@ class Refresher implements Runnable {
 		boolean cont = true;
 		while(cont){
 			try {
-				Thread.sleep(4000);
+				Thread.sleep(10000);
 				if(viewer==null || !viewer.isDisplayable())
 					cont=false;
 				else{

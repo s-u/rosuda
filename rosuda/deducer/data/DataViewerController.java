@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 
@@ -34,6 +35,13 @@ public class DataViewerController {
 	private static boolean started = false;
 	
 	private static JPanel panel;
+
+	private static boolean saveButton;
+
+	private static boolean openButton;
+
+	private static boolean clearButton;
+	
 	
 	public static void init(){
 		if(!started){
@@ -42,12 +50,14 @@ public class DataViewerController {
 			addTabFactory("Data View", new DataViewFactory());
 			addTabFactory("Variable View", new VariableViewFactory());
 			
-
+			saveButton=true;
+			openButton=true;
+			clearButton=true;
 			
 			
 			panel = new JPanel();
 			GridBagLayout panelLayout = new GridBagLayout();
-			panelLayout.rowWeights = new double[] {0.1, 0.1, 0.1};
+			panelLayout.rowWeights = new double[] {0.1, 0.1, 0.25, 0.1, 0.1};
 			panel.setLayout(panelLayout);
 			ActionListener lis = new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
@@ -58,6 +68,10 @@ public class DataViewerController {
 						String inputValue = JOptionPane.showInputDialog("Data Name: ");
 						if(inputValue!=null)
 							Deducer.eval(inputValue.trim()+"<-data.frame(Var1=NA)");
+					}else if(cmd=="tutorial"){
+						HelpButton.showInBrowser("http://www.youtube.com/user/MrIanfellows#p/u/5/iZ857h2j6wA");
+					}else if(cmd=="wiki"){
+						HelpButton.showInBrowser("http://www.deducer.org/manual.html");
 					}
 				}
 			};
@@ -69,7 +83,17 @@ public class DataViewerController {
 			IconButton openButton = new IconButton("/icons/opendata_128.png","Open Data Frame",lis,"Open Data");
 			openButton.setPreferredSize(new java.awt.Dimension(128,128));
 			panel.add(openButton, new GridBagConstraints(0, 1, 1,1,  0.0, 0.0,
-					GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			
+			IconButton vidButton = new IconButton("/icons/video_128.png","Online Tutorial Video",lis,"tutorial");
+			vidButton.setPreferredSize(new java.awt.Dimension(128,128));
+			panel.add(vidButton, new GridBagConstraints(0, 2, 1,1,  0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			
+			IconButton manButton = new IconButton("/icons/info_128.png","Online Manual",lis,"wiki");
+			manButton.setPreferredSize(new java.awt.Dimension(128,128));
+			panel.add(manButton, new GridBagConstraints(0, 3, 1,1,  0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		}
 	}
 	
@@ -129,6 +153,14 @@ public class DataViewerController {
 	public static void setDefaultPanel(JPanel p){
 		panel = p;
 	}
+	
+	public static boolean showSaveDataButton(){return saveButton;}
+	public static boolean showOpenDataButton(){return openButton;}
+	public static boolean showClearDataButton(){return clearButton;}
+	public static void setSaveDataVisible(boolean show){saveButton = show;}
+	public static void setOpenDataVisible(boolean show){openButton = show;}
+	public static void setClearDataVisible(boolean show){clearButton = show;}
+	
 	
 }
 
