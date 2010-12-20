@@ -28,11 +28,11 @@ import org.rosuda.ibase.toolkit.EzMenuSwing;
 
 public class VariableView extends DataViewerTab implements ActionListener{
 	
-	String dataName;
+	protected String dataName;
 	
-	private ExScrollableTable variableScrollPane;
-	private ExTable ex;
-	JComboBox comboBox;
+	protected ExScrollableTable variableScrollPane;
+	protected ExTable ex;
+	protected JComboBox comboBox;
 	public VariableView(String dataName){
 		super();
 		init(dataName);

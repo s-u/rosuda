@@ -304,10 +304,12 @@ public class DataViewer extends TJFrame implements ActionListener{
 			reloadTabs(null);
 			return;
 		}
-		for(int i=0; i < tabs.size(); i++){
-			DataViewerTab t = (DataViewerTab) tabs.get(i);
-			t.refresh();
-		}
+		DataViewerTab t = (DataViewerTab) tabbedPane.getSelectedComponent();
+		t.refresh();
+//		for(int i=0; i < tabs.size(); i++){
+//			DataViewerTab t = (DataViewerTab) tabs.get(i);
+//			t.refresh();
+//		}
 	}
 	
 }
@@ -378,7 +380,7 @@ class Refresher implements Runnable {
 		boolean cont = true;
 		while(cont){
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(5000);
 				if(viewer==null || !viewer.isDisplayable())
 					cont=false;
 				else{

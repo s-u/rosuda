@@ -94,6 +94,7 @@ public class DataViewerController {
 			manButton.setPreferredSize(new java.awt.Dimension(128,128));
 			panel.add(manButton, new GridBagConstraints(0, 3, 1,1,  0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			started=true;
 		}
 	}
 	

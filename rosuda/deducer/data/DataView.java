@@ -34,16 +34,16 @@ import org.rosuda.ibase.toolkit.EzMenuSwing;
 
 public class DataView extends DataViewerTab implements ActionListener {
 
-	private ExTable table;
-	private ExScrollableTable dataScrollPane;
-	private String dataName;
+	protected ExTable table;
+	protected ExScrollableTable dataScrollPane;
+	protected String dataName;
 
-	DataView(String dataName){
+	public DataView(String dataName){
 		super();
 		init(dataName);
 	}
 	
-	private void init(String dataName){
+	protected void init(String dataName){
 		this.dataName = dataName;		
 		RDataFrameModel dataModel = new RDataFrameModel(dataName);
 		dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
@@ -201,7 +201,7 @@ public class DataView extends DataViewerTab implements ActionListener {
 		 * @author ifellows
 		 *
 		 */
-		class ColumnContextMenu  implements ActionListener{
+		public class ColumnContextMenu  implements ActionListener{
 			int vColIndex,mColIndex;
 			
 			public ColumnContextMenu(MouseEvent evt){
