@@ -220,6 +220,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 	public void reloadTabs(String data){
 		cleanUp();
 		if(data==null){
+			dataName=null;
 			JPanel p = DataViewerController.getDefaultPanel();
 			tabbedPane.removeAll();
 			tabs.clear();
@@ -227,6 +228,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 			return;
 		}
 		try{
+			dataName=data;
 			String[] tabNames = DataViewerController.getTabNames();
 			tabbedPane.removeAll();
 			tabs.clear();
@@ -300,12 +302,13 @@ public class DataViewer extends TJFrame implements ActionListener{
 
 	public void refresh() {
 		((DataFrameComboBoxModel) dataSelector.getModel()).refresh(Deducer.getData());
-		if(((RObject)dataSelector.getSelectedItem()) == null){
+		if(((RObject)dataSelector.getSelectedItem()) == null && dataName!=null){
 			reloadTabs(null);
 			return;
 		}
-		DataViewerTab t = (DataViewerTab) tabbedPane.getSelectedComponent();
-		t.refresh();
+		Component t =  tabbedPane.getSelectedComponent();
+		if(t instanceof DataViewerTab)
+			((DataViewerTab)t).refresh();
 //		for(int i=0; i < tabs.size(); i++){
 //			DataViewerTab t = (DataViewerTab) tabs.get(i);
 //			t.refresh();

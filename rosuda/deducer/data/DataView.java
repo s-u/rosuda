@@ -61,12 +61,14 @@ public class DataView extends DataViewerTab implements ActionListener {
 		RDataFrameModel dataModel = new RDataFrameModel(dataName);
 		((RDataFrameModel)table.getModel()).removeCachedData();
 		table.setModel(dataModel);
+		dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+				getExTable().getModel()).getRowNamesModel());		
 		dataScrollPane.getExTable().setDefaultRenderer(Object.class,
 				dataModel.new RCellRenderer());
 	}
 
 	public void refresh() {
-		boolean changed=((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
+		boolean changed = ((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
 		if(changed){
 			dataScrollPane.getRowNamesModel().refresh();  
 			dataScrollPane.autoAdjustRowWidth();  
