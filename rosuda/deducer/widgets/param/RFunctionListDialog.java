@@ -140,8 +140,10 @@ public class RFunctionListDialog extends  JDialog implements ActionListener{
 	
 	public void run(){
 		try{
-			if(selector!=null)
+			if(selector!=null){
+				selector.refreshDataNames();
 				selector.setSelectedData(selector.getSelectedData());
+			}
 			if(initialModel!=null)
 				this.setToInitialModel();
 			this.setVisible(true);
