@@ -372,7 +372,15 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	 * 		Deletes the cached data frame from the gui environment
 	 */
 	public void removeCachedData(){
-		boolean tempStillExists = ((REXPLogical)Deducer.eval("exists('"+tempDataName+"',where="+guiEnv+",inherits=FALSE)")).isTRUE()[0];
+		boolean envDefined = ((REXPLogical)Deducer.eval("'"+guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
+		
+		if(!envDefined){
+			Deducer.eval(guiEnv+"<-new.env(parent=emptyenv())");
+		}
+		boolean tempStillExists = false;
+		REXP tmp = Deducer.eval("exists('"+tempDataName+"',where="+guiEnv+",inherits=FALSE)");
+		if(tmp instanceof REXPLogical)
+			tempStillExists = ((REXPLogical)tmp).isTRUE()[0];
 		if(tempStillExists)
 			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");		
 	}

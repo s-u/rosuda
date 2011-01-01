@@ -13,15 +13,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
-import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.RController;
-import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.RDataFrameVariableModel.VariableNumberListModel;
+import org.rosuda.deducer.toolkit.LoadData;
+import org.rosuda.deducer.toolkit.SaveData;
 import org.rosuda.deducer.menu.FactorDialog;
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
@@ -148,7 +148,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 		try{
 			String cmd = e.getActionCommand();		
 			if(cmd=="Open Data"){
-				new DataLoader();	
+				new LoadData();	
 			}else if(cmd=="Save Data"){
 
 				new SaveData(dataName);
@@ -190,7 +190,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 					RController.refreshObjects();
 				}
 			}else if (cmd == "loaddata"){
-				DataLoader dld= new DataLoader();
+				LoadData dld= new LoadData();
 			}else if (cmd == "help")
 				Deducer.execute("help.start()");
 			else if (cmd == "table"){

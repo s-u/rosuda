@@ -125,7 +125,7 @@ public class ObjectChooserWidget extends JPanel implements DeducerWidget, Window
 					(isIncludeInherited()? "TRUE":"FALSE")+")";
 			objs = Deducer.eval(call).asStrings();
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			objs = new String[]{};
 		}
 		ActionListener[] alis = objectCombo.getActionListeners();
@@ -194,7 +194,11 @@ public class ObjectChooserWidget extends JPanel implements DeducerWidget, Window
 	}
 
 	public String getRModel() {
-		return  "\"" +objectCombo.getSelectedItem().toString() +"\"";
+		Object str = objectCombo.getSelectedItem();
+		if(str!=null)
+			return  "\"" +str.toString() +"\"";
+		else 
+			return "NULL";
 	}
 
 	public String getTitle() {

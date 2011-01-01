@@ -28,10 +28,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
-import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
-import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.robjects.RObject;
@@ -39,6 +37,8 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.LoadData;
+import org.rosuda.deducer.toolkit.SaveData;
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
@@ -275,7 +275,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 					setData(data);
 				
 			}else if(cmd=="Open Data"){
-				new DataLoader();	
+				new LoadData();	
 			}else if(cmd=="Save Data"){
 				new SaveData(dataName);
 			}else if(cmd=="Clear Data"){

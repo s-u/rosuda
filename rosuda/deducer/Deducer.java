@@ -23,10 +23,8 @@ import javax.swing.ListModel;
 import javax.swing.UIManager;
 
 
-import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
-import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.PrefDialog;
@@ -39,7 +37,9 @@ import org.rosuda.deducer.models.*;
 import org.rosuda.deducer.plots.*;
 import org.rosuda.deducer.toolkit.DeducerPrefs;
 import org.rosuda.deducer.toolkit.HelpButton;
+import org.rosuda.deducer.toolkit.LoadData;
 import org.rosuda.deducer.toolkit.PrefPanel;
+import org.rosuda.deducer.toolkit.SaveData;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
 import org.rosuda.deducer.data.DataFrameSelector;
 import org.rosuda.deducer.data.DataViewer;
@@ -295,7 +295,7 @@ public class Deducer {
 			}
 		}else if (cmd.equals("Open Data Set")){
 			//needsRLocked=true;
-			DataLoader inst = new DataLoader();
+			LoadData inst = new LoadData();
 			//DataFrameWindow.setTopDataWindow(inst.getDataName());
 			Deducer.setRecentData(inst.getDataName());
 		}else if(cmd.equals("Save Data Set")){
