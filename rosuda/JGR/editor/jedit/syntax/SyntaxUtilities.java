@@ -96,8 +96,8 @@ public class SyntaxUtilities {
 	public static SyntaxStyle[] getDefaultSyntaxStyles() {
 		SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
 
-		styles[Token.COMMENT1] = new SyntaxStyle(JGRPrefs.COMMENTColor, true, false);
-		styles[Token.COMMENT2] = new SyntaxStyle(JGRPrefs.COMMENTColor, true, false);
+		styles[Token.COMMENT1] = new SyntaxStyle(JGRPrefs.COMMENTColor, JGRPrefs.COMMENT_IT, false);
+		styles[Token.COMMENT2] = new SyntaxStyle(JGRPrefs.COMMENTColor, JGRPrefs.COMMENT_IT, false);
 		styles[Token.KEYWORD1] = new SyntaxStyle(JGRPrefs.KEYWORDColor, false, JGRPrefs.KEYWORD_BOLD);
 		styles[Token.KEYWORD2] = new SyntaxStyle(JGRPrefs.OBJECTColor, JGRPrefs.OBJECT_IT, false);
 		styles[Token.KEYWORD3] = new SyntaxStyle(Color.darkGray, false, false); //not used?

@@ -36,6 +36,8 @@ import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPString;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.util.RecentList;
@@ -80,7 +82,7 @@ public class Editor extends TJFrame implements ActionListener {
 		String[] Menu = { "+", "File", "@NNew", "new", "@OOpen", "open", "#Open Recent","", "@SSave", "save", "!SSave as", "saveas", "-", "@PPrint", "print", "-",
 				"@QQuit", "quit", 
 				"+", "Edit", "@ZUndo","undo","!ZRedo","redo","-","@XCut", "cut", "@CCopy", "copy", "@VPaste", "paste", "-", 
-				"@/Comment out","commentcode","@;Uncomment","uncommentcode","-","!LShift Left","shiftleft","!RShift Right","shiftright","-","@RRun Selection","runselection","Run all","runall","-", "@FFind", "find", "@GFind next",
+				"@/Comment out","commentcode","@;Uncomment","uncommentcode","-","!LShift Left","shiftleft","!RShift Right","shiftright","-","Format Selection","Format Selection","-","@RRun Selection","runselection","Run all","runall","-", "@FFind", "find", "@GFind next",
 				"findnext", 
 				
 				"+", "Tools", "!IIncrease Font Size", "fontBigger", "!DDecrease Font Size", "fontSmaller", 
@@ -409,7 +411,21 @@ public class Editor extends TJFrame implements ActionListener {
 					textArea.commentSelection(false);
 				} catch (BadLocationException e1) {
 				}
-		}	
+		} else if (e.getActionCommand() == "Format Selection"){
+			if (textArea.getSelectedText() != null && textArea.getSelectedText().trim().length() > 0){
+				//System.out.println("here");
+				try{
+					String txt = textArea.getSelectedText();
+					JGR.getREngine().assign("..text_code..", txt);
+					REXP sexp = JGR.eval("reformat.code(..text_code..)");
+					if(sexp instanceof REXPString){
+						String newText = ((REXPString)sexp).asString();
+						textArea.setSelectedText(newText);
+					}
+					JGR.eval("rm('..text_code..')");
+				}catch(Exception ex){}
+			}			
+		}
 			
 			if (e.getActionCommand().startsWith("recent:")) {
 			if (modified)
@@ -439,7 +455,7 @@ public class Editor extends TJFrame implements ActionListener {
 			}
 			
 			if (e.getActionCommand() == "help")
-			JGR.MAINRCONSOLE.executeLater("help.start()", false);
+			JGR.MAINRCONSOLE.execute("help.start()", false);
 
 if (e.getActionCommand() == "shiftleft")
 			try {
@@ -456,14 +472,25 @@ if (e.getActionCommand() == "runall")
 			try {
 				String s = textArea.getText();
 				if (s.length() > 0)
-					JGR.MAINRCONSOLE.executeLater(s.trim(), true);
+					JGR.MAINRCONSOLE.execute(s.trim(), true);
 			} catch (Exception ex) {
 			}
 		else if (e.getActionCommand() == "runselection")
 			try {
-				String s = textArea.getSelectedText().trim();
+				
+				String s = textArea.getSelectedText();
+				if(s==null)
+					s="";
+				s=s.trim();
+				if(s.length()==0){
+					int line = textArea.getSelectionStartLine();
+					s = textArea.getLineText(line).trim();
+					int pos = textArea.getLineStartOffset(line+1);
+					if(pos>0)
+						textArea.setCaretPosition(pos);
+				}
 				if (s.length() > 0)
-					JGR.MAINRCONSOLE.executeLater(s.trim(), true);
+					JGR.MAINRCONSOLE.execute(s.trim(), true);
 			} catch (Exception ex) {
 			}
 

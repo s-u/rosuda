@@ -693,7 +693,7 @@ public abstract class InputHandler extends KeyAdapter {
 						break;
 
 				}
-				if (lastLine.charAt(lastLine.length() - 1) == '{')
+				if ((lastLine.length() - 1)>-1 && lastLine.charAt(lastLine.length() - 1) == '{')
 					textArea.overwriteSetSelectedText("\t");
 			}
 		}

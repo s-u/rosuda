@@ -127,6 +127,9 @@ public class JGRPrefs {
 	/** DefaultCommentColor */
 	public static Color COMMENTColor = new Color(0, 120, 0);
 
+	/** Default Comment italics */
+	public static boolean COMMENT_IT = true;
+	
 	/** DefaultQuoteSet */
 	public static MutableAttributeSet QUOTE = new SimpleAttributeSet();
 
@@ -200,6 +203,7 @@ public class JGRPrefs {
 		StyleConstants.setFontSize(NORMAL, FontSize);
 		StyleConstants.setForeground(NUMBER, NUMBERColor);
 		StyleConstants.setForeground(COMMENT, COMMENTColor);
+		StyleConstants.setItalic(COMMENT, COMMENT_IT);
 		StyleConstants.setForeground(KEYWORD, KEYWORDColor);
 		StyleConstants.setBold(KEYWORD, KEYWORD_BOLD);
 		StyleConstants.setForeground(OBJECT, OBJECTColor);
@@ -221,6 +225,7 @@ public class JGRPrefs {
 		StyleConstants.setFontSize(NORMAL, FontSize);
 		StyleConstants.setForeground(NUMBER, NUMBERColor);
 		StyleConstants.setForeground(COMMENT, COMMENTColor);
+		StyleConstants.setItalic(COMMENT, COMMENT_IT);
 		StyleConstants.setForeground(KEYWORD, KEYWORDColor);
 		StyleConstants.setBold(KEYWORD, KEYWORD_BOLD);
 		StyleConstants.setForeground(OBJECT, OBJECTColor);
@@ -330,6 +335,7 @@ public class JGRPrefs {
 		OBJECT_IT = editPrefs.getBoolean("OBJECT_IT", true);
 		AUTOTAB = editPrefs.getBoolean("AUTOTAB", true);
 		COMMENTColor = Color.decode(editPrefs.get("COMMENTColor", "#000000"));//"#007800"));
+		COMMENT_IT = editPrefs.getBoolean("COMMENT_IT", true);
 		QUOTEColor = Color.decode(editPrefs.get("QUOTEColor", "#0000ff"));
 		LINE_HIGHLIGHT = editPrefs.getBoolean("LINE_HIGHLIGHT", true);
 		HIGHLIGHTColor = Color.decode(editPrefs.get("HIGHLIGHTColor", "#e0e0e0"));
@@ -416,6 +422,7 @@ public class JGRPrefs {
 		editPrefs.putBoolean("OBJECT_IT", OBJECT_IT);
 		editPrefs.putBoolean("AUTOTAB", AUTOTAB);
 		editPrefs.put("COMMENTColor","#"+ Integer.toHexString(COMMENTColor.getRGB()).substring(2));
+		editPrefs.putBoolean("COMMENT_IT", COMMENT_IT);
 		editPrefs.put("QUOTEColor","#"+ Integer.toHexString(QUOTEColor.getRGB()).substring(2));
 		editPrefs.putBoolean("LINE_HIGHLIGHT", LINE_HIGHLIGHT);
 		editPrefs.put("HIGHLIGHTColor","#"+ Integer.toHexString(HIGHLIGHTColor.getRGB()).substring(2));

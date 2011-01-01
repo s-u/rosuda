@@ -65,7 +65,9 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private JComboBox sizeComboBox;
 	private JComboBox fontComboBox;
 
-	private final String[] sizes = { "2", "4", "6", "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24" };
+	private final String[] sizes = { "2", "4", "6", "8", "9", "10", 
+									"11", "12", "14", "16", "18", "20",
+									"22", "24" };
 	private JButton brackets;
 	private JLabel bracketLabel;
 	private JCheckBox autotab;
@@ -105,17 +107,18 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 			// objects,bold keywords,italic objects}
 			/* JGR */{ new Color(0, 120, 0), new Color(0, 0, 140), Color.red, Color.blue, new Color(50, 0, 140), new Boolean(true), new Boolean(true) },
 			/* eclipse */{ new Color(0x2f9956), new Color(0x7f0055), new Color(0x000000), new Color(0x0000ff), new Color(0x000000),
-					new Boolean(true), new Boolean(false) },
+					new Boolean(true), new Boolean(false), new Boolean(true) },
 			/* emacs */{ new Color(0xac2020), new Color(0x9c20ee), new Color(0x000000), new Color(0xbd8d8b), new Color(0x000000), new Boolean(true),
-					new Boolean(false) },
+					new Boolean(false), new Boolean(false) },
 			/* msvs */{ new Color(0x008000), new Color(0x0000ff), new Color(0x000000), new Color(0xa31515), new Color(0x000000), new Boolean(false),
-					new Boolean(false) },
+					new Boolean(false), new Boolean(false) },
 			/* vim */{ new Color(0x0000ff), new Color(0xB26818), new Color(0xff0000), new Color(0xff0000), new Color(0x000000), new Boolean(false),
-					new Boolean(false) },
+					new Boolean(false), new Boolean(false) },
 			/* xcode */{ new Color(0x007f1c), new Color(0x8f0055), new Color(0x2300ff), new Color(0xc00000), new Color(0x000000), new Boolean(false),
-					new Boolean(false) },
+					new Boolean(false), new Boolean(false) },
 
 	};
+	private JCheckBox italicComments;
 
 	private static PrefDialog instance;
 
@@ -177,7 +180,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 
 							DocumentPrefs.add(fontComboBox);
 							fontComboBox.setModel(fontComboBoxModel);
-							fontComboBox.setBounds(131, 9, 164, 21);
+							fontComboBox.setBounds(131, 7, 164, 23);
 						}
 						{
 							sizeLabel = new JLabel();
@@ -275,7 +278,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								style = new JComboBox();
 								documentPanel.add(style);
 								style.setModel(styleModel);
-								style.setBounds(110, 16, 106, 21);
+								style.setBounds(110, 14, 106, 25);
 								style.addActionListener(this);
 							}
 							{
@@ -337,15 +340,22 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								boldKeywords = new JCheckBox();
 								documentPanel.add(boldKeywords);
 								boldKeywords.setText("Bold Key Words");
-								boldKeywords.setBounds(180, 117, 122, 18);
+								boldKeywords.setBounds(180, 110, 130, 18);
 								boldKeywords.addActionListener(this);
 							}
 							{
 								italicObjects = new JCheckBox();
 								documentPanel.add(italicObjects);
 								italicObjects.setText("Italic Objects");
-								italicObjects.setBounds(180, 148, 122, 18);
+								italicObjects.setBounds(180, 135, 122, 18);
 								italicObjects.addActionListener(this);
+							}
+							{
+								italicComments = new JCheckBox();
+								documentPanel.add(italicComments);
+								italicComments.setText("Italic Comments");
+								italicComments.setBounds(180, 160, 135, 18);
+								italicComments.addActionListener(this);
 							}
 							{
 								sep = new JSeparator();
@@ -621,6 +631,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		setColor(objects, (Color) newStyle[4]);
 		boldKeywords.setSelected(((Boolean) newStyle[5]).booleanValue());
 		italicObjects.setSelected(((Boolean) newStyle[6]).booleanValue());
+		italicComments.setSelected(((Boolean) newStyle[6]).booleanValue());
 	}
 
 	public void setColor(JButton b, Color c) {
@@ -667,6 +678,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		setColor(objects, JGRPrefs.OBJECTColor);
 		boldKeywords.setSelected(JGRPrefs.KEYWORD_BOLD);
 		italicObjects.setSelected(JGRPrefs.OBJECT_IT);
+		italicComments.setSelected(JGRPrefs.COMMENT_IT);
 		for (int i = 0; i < styleDef.length; i++) {
 			// {comments,keywords,numbers,strings,
 			// objects,bold keywords,italic objects}
@@ -674,6 +686,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 					&& JGRPrefs.NUMBERColor.equals(styleDef[i][2]) && JGRPrefs.QUOTEColor.equals(styleDef[i][3])
 					&& JGRPrefs.OBJECTColor.equals(styleDef[i][4]) && (new Boolean(JGRPrefs.KEYWORD_BOLD)).equals(styleDef[i][5])
 					&& (new Boolean(JGRPrefs.OBJECT_IT)).equals(styleDef[i][6])
+					&& (new Boolean(JGRPrefs.COMMENT_IT)).equals(styleDef[i][7])
 
 			)
 				style.setSelectedIndex(i + 1);
@@ -764,7 +777,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		JGRPrefs.OBJECTColor = getColor(objects);
 		JGRPrefs.KEYWORD_BOLD = boldKeywords.isSelected();
 		JGRPrefs.OBJECT_IT = italicObjects.isSelected();
-
+		JGRPrefs.COMMENT_IT = italicComments.isSelected();
 		JGRPrefs.apply();
 		JGRPrefs.writePrefs(false);
 		return true;

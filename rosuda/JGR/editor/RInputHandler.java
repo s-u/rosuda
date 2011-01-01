@@ -118,10 +118,23 @@ public class RInputHandler extends DefaultInputHandler {
 	public static class r_run_lines extends insert_tab {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
-
-			String s = textArea.getSelectedText().trim();
-			if (s.length() > 0)
-				JGR.MAINRCONSOLE.execute(s.trim(), true);
+			try {
+				
+				String s = textArea.getSelectedText();
+				if(s==null)
+					s="";
+				s=s.trim();
+				if(s.length()==0){
+					int line = textArea.getSelectionStartLine();
+					s = textArea.getLineText(line).trim();
+					int pos = textArea.getLineStartOffset(line+1);
+					if(pos>0)
+						textArea.setCaretPosition(pos);
+				}
+				if (s.length() > 0)
+					JGR.MAINRCONSOLE.execute(s.trim(), true);
+			} catch (Exception ex) {
+			}
 		}
 	}
 

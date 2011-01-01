@@ -54,7 +54,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 	private JScrollPane tablePane;
 	private final String[] quotes = new String[] { "", "\\\"", "\\'" };
 	private final String[] seps = new String[] { "\\t", "", ",", ";", "|" };
-	private String previewName = JGR.MAINRCONSOLE.getUniqueName("temp_data");
+	private String previewName = "...temp_data12121...";
 	private String dataName = null;
 
 	public TxtTableLoader(String fileName, String rName) {
@@ -309,7 +309,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 			}
 		}
 		else
-			JGR.MAINRCONSOLE.execute(cmd, true);
+			execute(cmd, true);
 	}
 
 	private void loadPreview() {
@@ -337,12 +337,15 @@ public class TxtTableLoader extends javax.swing.JFrame {
 			new ErrorMsg(e);
 		}
 	}
+	
+	public void execute(String cmd,boolean hist){
+		JGR.MAINRCONSOLE.execute(cmd,hist);
+	}
 
 	private void loadActionPerformed(ActionEvent evt) {
 
 		loadInR(dataName, false);
 		this.dispose();
-		JGR.MAINRCONSOLE.toFront();
 	}
 
 	private void cancelActionPerformed(ActionEvent evt) {
