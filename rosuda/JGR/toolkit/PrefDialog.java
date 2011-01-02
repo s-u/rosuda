@@ -104,10 +104,11 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private final Object[][] styleDef = {
 
 			// {comments,keywords,numbers,strings,
-			// objects,bold keywords,italic objects}
-			/* JGR */{ new Color(0, 120, 0), new Color(0, 0, 140), Color.red, Color.blue, new Color(50, 0, 140), new Boolean(true), new Boolean(true) },
-			/* eclipse */{ new Color(0x2f9956), new Color(0x7f0055), new Color(0x000000), new Color(0x0000ff), new Color(0x000000),
-					new Boolean(true), new Boolean(false), new Boolean(true) },
+			// objects,bold keywords,italic objects,italic comments}
+			/* JGR */{ new Color(0, 120, 0), new Color(0, 0, 140), Color.red, Color.blue, new Color(50, 0, 140), new Boolean(true), 
+					new Boolean(true), new Boolean(true) },
+			/* eclipse */{ new Color(0x2f9956), new Color(0x7f0055), new Color(0x000000), new Color(0x0000ff), new Color(0x000000), new Boolean(true),
+						new Boolean(false), new Boolean(true) },
 			/* emacs */{ new Color(0xac2020), new Color(0x9c20ee), new Color(0x000000), new Color(0xbd8d8b), new Color(0x000000), new Boolean(true),
 					new Boolean(false), new Boolean(false) },
 			/* msvs */{ new Color(0x008000), new Color(0x0000ff), new Color(0x000000), new Color(0xa31515), new Color(0x000000), new Boolean(false),
