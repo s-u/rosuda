@@ -269,7 +269,7 @@ public class Coord implements ElementModel{
 		else if(coord.equals("equal"))
 			return makeEqual();		
 		else if(coord.equals("flip"))
-			return makeEqual();	
+			return makeFlip();	
 		else if(coord.equals("map"))
 			return makeMap();	
 		else if(coord.equals("polar"))
