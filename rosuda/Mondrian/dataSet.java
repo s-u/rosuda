@@ -187,6 +187,33 @@ public class dataSet {
     this.data.addElement(Var);
   }
   
+  public void addVariable(String name, boolean alpha, boolean categorical, String[] data, boolean[] miss) {
+ 
+    if (this.n == 0) { // this dataSet was never initialized - use data length to do that
+      this.n = data.length;
+      selectionArray = new double[n];
+      colorArray = new byte[n];
+      for(int i=0; i<n; i++)
+        colorArray[i] = 0;
+      filterA = new double[n];
+    }
+    Variable Var = new Variable(this.n, alpha, name);
+	for(int i=0; i<this.n; i++)
+	  Var.data[i] = Var.isLevel(data[i].trim());
+    System.arraycopy(miss, 0, Var.missing, 0, data.length);
+    for(int i=0; i<this.n; i++)
+      if( miss[i] ) {
+        Var.numMiss++;
+      }
+    Var.forceCategorical = false;
+    Var.isCategorical = categorical;
+    this.alpha = (boolean [])Util.resizeArray(this.alpha, ++this.k);
+    this.NAcount = (int [])Util.resizeArray(this.NAcount, this.k);
+    NAcount[NAcount.length-1] = Var.numMiss;
+    this.alpha[k-1] = alpha;
+    this.data.addElement(Var);
+  }
+  
   public boolean[] sniff(BufferedReader br) {
 
     String line, dummy="";
@@ -756,6 +783,42 @@ System.out.println(newQ.makeQuery());
     return new double[] {a, b, r2};
   }
 
+  public double[] colRegress(int k, int l, int col) {
+
+    double Sxx, Sxy, a, b, r2;
+    double sumx = 0;
+    double sumy = 0;
+    double sumxx = 0;
+    double sumxy = 0;
+    double sumyy = 0;
+    int count = 0;
+
+    double[] x = this.getRawNumbers(k);
+    double[] y = this.getRawNumbers(l);
+
+    for( int i=0; i<this.n; i++ ) {
+      if(colorArray[i] == col && x[i] < Double.MAX_VALUE && y[i] < Double.MAX_VALUE) {
+        count++;
+        sumx += x[i];
+        sumy += y[i];
+        sumxx += x[i]*x[i];
+        sumyy += y[i]*y[i];
+        sumxy += x[i]*y[i];
+      }
+    }
+	
+	if( count < 2 )
+  	  return new double[] {0, 0, 0};
+    else {
+      Sxx = sumxx - sumx * sumx / count;
+      Sxy = sumxy - sumx * sumy / count;
+      b = Sxy/Sxx;
+      a = (sumy - b * sumx) / count;
+      r2 = b * (count * sumxy - sumx * sumy) / (count * sumyy - sumy * sumy);
+	}
+    return new double[] {a, b, r2};
+  }
+
   public boolean alpha(int i) {
     return alpha[i];
   }
@@ -910,7 +973,7 @@ System.out.println(newQ.makeQuery());
       case 0:
         // Linear Colors
         for(int i=1; i<=k; i++) {
-          brushColors[i] = Color.getHSBColor((float)i/(float)k*1.0F, 0.5F, 1.0F);
+          brushColors[i] = Color.getHSBColor(0.225F+(float)i/(float)k*0.8F, 0.5F, 1.0F);
 //          System.out.println("Color: "+brushColors[i]);
         }
           break;
@@ -935,7 +998,15 @@ System.out.println(newQ.makeQuery());
         // Static Colors
 		int nCol = RGBs.length - 1;
         for(int i=0; i<k; i++)
-          brushColors[i+1] = new Color(RGBs[(i % nCol)+1][0], RGBs[(i % nCol)+1][1], RGBs[(i % nCol)+1][2]);
+//          brushColors[i+1] = new Color(RGBs[(i % nCol)+1][0], RGBs[(i % nCol)+1][1], RGBs[(i % nCol)+1][2]);
+		  if( i < nCol )
+			brushColors[i+1] = new Color(RGBs[i+1][0], RGBs[i+1][1], RGBs[i+1][2]);
+		  else if( i < 2*nCol )
+			brushColors[i+1] = new Color(RGBs[(i % nCol)+1][0], RGBs[(i % nCol)+1][1], RGBs[(i % nCol)+1][2]).darker();
+		  else if( i < 3*nCol )
+			brushColors[i+1] = (new Color(RGBs[(i % nCol)+1][0], RGBs[(i % nCol)+1][1], RGBs[(i % nCol)+1][2]).darker()).darker();
+		  else
+			brushColors[i+1] = (new Color(RGBs[nCol][0], RGBs[nCol][1], RGBs[nCol][2]).darker()).darker();  
           break;
     }
   }
@@ -1374,11 +1445,11 @@ System.out.println(newQ.makeQuery());
         permA = Qsort.qsort(ss, 0, levelP-1);
       }
       else {
-
         String[] sA = new String[levelP];
         for( int i=0; i<levelP; i++ ) 
           sA[i] = levelA[i].toUpperCase();
         permA = Qsort.qsort(sA, 0, levelP-1);
+//        permA = MergeSort.sort(sA);
       }
       IpermA = new int[levelP];
       for( int i=0; i<levelP; i++ ) {
