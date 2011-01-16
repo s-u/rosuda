@@ -33,13 +33,14 @@ public class Scatter2D extends DragBox {
   private double[] coeffs;
   private double[] selCoeffs = {-10000, -10000, 0};
   private int radius = 3;			// radius of points
-  private int[] alphas = {1, 2, 4, 8, 16, 32, 50, 68, 84, 92, 96, 98, 99};
+  private int[] alphas = {4, 8, 16, 32, 64, 125, 250, 375, 500, 750, 1000};
   private int alphap;
   private int alpha = alphas[alphap];			// transparency of points
   private String displayMode = "Free";
   private String modeString = "bins";
   private String smoothF = "none";
   private boolean compareToAll = true;
+  private boolean colorSmoother = false;
   private int smoother = 5;
   private boolean connectLines = false;
   private int lastPointId = -1;
@@ -85,15 +86,15 @@ public class Scatter2D extends DragBox {
     this.enableEvents(AWTEvent.ITEM_EVENT_MASK);
     this.requestFocus();
 
-    if( data.n < 50 )
-      alphap = 12;
-    else if ( data.n < 100 )
+    if( data.n < 400 )
       alphap = 10;
-    else if ( data.n < 500 )
+    else if ( data.n < 800 )
       alphap = 9;
-    else if ( data.n < 1000 )
+    else if ( data.n < 1600 )
       alphap = 8;
-    else if ( data.n < 2000 )
+    else if ( data.n < 3200 )
+      alphap = 7;
+    else if ( data.n < 6400 )
       alphap = 6;
     else
       alphap = 5;
@@ -179,6 +180,7 @@ public class Scatter2D extends DragBox {
   public void dataChanged(int var) {
     if( var == -1 ) {
       scaleChanged = true;
+      smoothChanged = true;
       create();
       paint(this.getGraphics() );
     }
@@ -386,7 +388,7 @@ public class Scatter2D extends DragBox {
               mode.add(alphaVal);
               JCheckBoxMenuItem[] alphians = new JCheckBoxMenuItem[20];
               for(int k=0; k<alphas.length; k++) {
-                alphians[k] =  new JCheckBoxMenuItem(Stat.roundToString((double)alphas[k]/100, 3));
+                alphians[k] =  new JCheckBoxMenuItem(Stat.roundToString((double)alphas[k]/1000, 4));
                 if( alpha == alphas[k] )
                   alphians[k].setState(true);
                 else
@@ -430,14 +432,27 @@ public class Scatter2D extends DragBox {
                 splines.setSelected(true);
                 splines.setEnabled(false);
               }
-              JCheckBoxMenuItem locfit = new JCheckBoxMenuItem("locfit ("+Stat.round(3.5/smoother,2)+")");
-//              smoothers.add(locfit);
-              locfit.setActionCommand("locfit");
-              locfit.addActionListener(this);
-              if( smoothF.equals("locfit") ) {
-                locfit.setSelected(true);
-                locfit.setEnabled(false);
+              JCheckBoxMenuItem princurve = new JCheckBoxMenuItem("principal curve ("+Stat.round((0.3+6.0*(1.0/((double)smoother+2.0))),2)+")");
+              smoothers.add(princurve);
+              princurve.setActionCommand("princurve");
+              princurve.addActionListener(this);
+              if( smoothF.equals("princurve") ) {
+                princurve.setSelected(true);
+                princurve.setEnabled(false);
               }
+
+              smoothers.addSeparator();
+
+              JCheckBoxMenuItem colSmoother = new JCheckBoxMenuItem("smoothers by color");
+              if( colorSmoother )
+                colSmoother.setSelected(true);
+              else
+                colSmoother.setSelected(false);
+              if( smoothF.equals("none") || !data.colorBrush ) 
+                colSmoother.setEnabled(false);
+              colSmoother.setActionCommand("color");
+              colSmoother.addActionListener(this);
+              smoothers.add(colSmoother);
 
               smoothers.addSeparator();
 
@@ -446,7 +461,7 @@ public class Scatter2D extends DragBox {
                 compareAll.setSelected(true);
               else
                 compareAll.setSelected(false);
-              if( smoothF.equals("none") ) 
+              if( smoothF.equals("none") || colorSmoother ) 
                 compareAll.setEnabled(false);
               compareAll.setActionCommand("compare");
               compareAll.addActionListener(this);
@@ -473,7 +488,7 @@ public class Scatter2D extends DragBox {
               if( !((MFrame)frame).hasR() ) {
                 loess.setEnabled(false);
                 splines.setEnabled(false);
-                locfit.setEnabled(false);
+                princurve.setEnabled(false);
               }
               
               mode.add(smoothers);
@@ -512,11 +527,6 @@ public class Scatter2D extends DragBox {
               }
               mode.add(weight);            */
 
-              JMenuItem invert  = new JMenuItem("invert plot");
-              mode.add(invert);
-              invert.setActionCommand("invert");
-              invert.addActionListener(this);
-
               JMenu conlines = new JMenu("add lines by");
               JCheckBoxMenuItem off = new JCheckBoxMenuItem("no lines");
               conlines.add(off);
@@ -549,7 +559,7 @@ public class Scatter2D extends DragBox {
 
   public void actionPerformed(ActionEvent e) {
     String command = e.getActionCommand();
-    if( command.equals("Fixed") || command.equals("Free") || command.equals("axes") || command.equals("invert") || command.equals("none") || command.equals("ls-line") || command.equals("loess") || command.equals("splines") || command.equals("locfit") || command.equals("nobyvar") || command.substring(0,Math.min(5, command.length())).equals("byvar") || command.equals("points") || command.equals("bins") || command.equals("auto") ) {
+    if( command.equals("Fixed") || command.equals("Free") || command.equals("axes") || command.equals("invert") || command.equals("none") || command.equals("ls-line") || command.equals("loess") || command.equals("splines") || command.equals("princurve") || command.equals("nobyvar") || command.substring(0,Math.min(5, command.length())).equals("byvar") || command.equals("points") || command.equals("bins") || command.equals("auto") ) {
       if( command.equals("Fixed") || command.equals("Free")) {
         displayMode = command;
       } else if( command.equals("bins") || command.equals("points")) {
@@ -562,9 +572,25 @@ public class Scatter2D extends DragBox {
           invert = false;
         else
           invert = true;
-      } else if( command.equals("none") || command.equals("ls-line") || command.equals("loess") || command.equals("splines") || command.equals("locfit") ) {
-        smoothF = command;
-        smoothChanged = true;
+      } else if( command.equals("none") || command.equals("ls-line") || command.equals("loess") || command.equals("splines") || command.equals("princurve") ) {
+		if( command.equals("princurve") ) {
+		  // test is princurve library is installed
+		  try {
+            RConnection c = new RConnection();
+            int isPCinst = c.eval("is.element(\"princurve\", installed.packages()[,1])").asInteger();
+		    if( isPCinst == 1 ) {
+		      smoothF = command;
+              smoothChanged = true;
+            } else 
+		      JOptionPane.showMessageDialog(this, "Is the R-package \"princurve\" installed?\nInstall via: > install.packages(\"princurve\") ");
+			c.close();
+          } catch(RserveException rse) {System.out.println("Rserve exception (test package installation): "+rse.getMessage());}
+            catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
+//            catch(REngineException ren) {System.out.println("REngine exception : "+ren.getMessage());}
+		} else {
+          smoothF = command;
+          smoothChanged = true;
+		}
       } else if( command.equals("nobyvar") ) {
         connectLines = false;
         byVar = -1;
@@ -602,7 +628,7 @@ public class Scatter2D extends DragBox {
       paint(g);
       g.dispose();
     }
-    else if( command.equals("rougher") || command.equals("smoother") || command.equals("compare") ) {
+    else if( command.equals("rougher") || command.equals("smoother") || command.equals("compare") || command.equals("color") ) {
       if( command.equals("smoother") ) {
         if( smoother > 1 ) {
           smoother -= 1;
@@ -615,6 +641,9 @@ public class Scatter2D extends DragBox {
         }
       } else if( command.equals("compare") ) {
         compareToAll = !compareToAll;
+        smoothChanged = true;
+      } else if( command.equals("color") ) {
+        colorSmoother = !colorSmoother;
         smoothChanged = true;
       }
       paint(this.getGraphics());
@@ -888,7 +917,7 @@ public class Scatter2D extends DragBox {
           pg = fg;
         else
           pg = bg;
-        pg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha/100)));
+        pg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha/1000)));
         
         Color[] cols = new Color[1];
         if( data.colorBrush ) {
@@ -905,18 +934,7 @@ public class Scatter2D extends DragBox {
           if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
             pg.fillOval( (int)userToWorldX( xVal[i] )-(radius*pF-1)/2, (int)userToWorldY( yVal[i] )-(radius*pF-1)/2, radius*pF, radius*pF);
         }
-        
-        if( invert ) {
-          media.addImage(bi,0);
-          try {
-            media.waitForID(0);
-            ti = Util.makeColorTransparent(fi, new Color(0).gray);
-            bg.drawImage(ti, 0, 0, Color.black, null);
-          }
-          catch(InterruptedException e) {}
-          pg.dispose();
-        }
-      } else {
+	} else {
         for( int i=0; i<rects.size(); i++ ) {
           MyRect r = (MyRect)rects.elementAt(i);
 //          bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
@@ -929,7 +947,7 @@ public class Scatter2D extends DragBox {
             bg.fillRect(r.x, r.y, r.w, r.h);
             r.setColor(Color.black);
           }
-          bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.min(1, r.obs/100*alpha))));
+          bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.min(1, r.obs/1000*alpha))));
           r.draw(bg);
           r.setColor(Color.black);
         }
@@ -1017,7 +1035,7 @@ public class Scatter2D extends DragBox {
       }*/
       tbg.setColor(DragBox.hiliteColor);
       if( ((MFrame)frame).getAlphaHi() )
-        ((Graphics2D)tbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.pow((float)alpha/100,0.75))));
+        ((Graphics2D)tbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.pow((float)alpha/1000,0.75))));
 
       for( int i=0; i<data.n; i++) {
         if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
@@ -1028,7 +1046,7 @@ public class Scatter2D extends DragBox {
     } else {
       for( int i=0; i<rects.size(); i++ ) {
         MyRect r = (MyRect)rects.elementAt(i);
-        bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.min(1, r.obs/100*alpha))));
+        bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.min(1, r.obs/1000*alpha))));
         int id = ((Integer)(r.tileIds.elementAt(0))).intValue();
         double weight;
         if( (weight = binning.getSelected(id)) > 0 ) {
@@ -1043,6 +1061,9 @@ public class Scatter2D extends DragBox {
 
     if( smoothChanged || true ) { // add regression lines
       smoothChanged = false;
+	  
+	  if( !colorSmoother ) {
+	  
       ttbg.setColor(Color.black);
 
       if( smoothF.equals("ls-line" ) ) {
@@ -1057,14 +1078,14 @@ public class Scatter2D extends DragBox {
                      (int)userToWorldX( xMax ), (int)userToWorldY( xMax * coeffs[1] + coeffs[0]) );
       }
 
-      if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
+      if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("princurve") ) {
 
         try {
           RConnection c = new RConnection();
           if( smoothF.equals("splines") )
             c.voidEval("library(splines)");
-          if( smoothF.equals("locfit") )
-            c.voidEval("library(locfit)" );
+          if( smoothF.equals("princurve") )
+            c.voidEval("library(princurve)" );
 
           c.assign("x",data.getRawNumbers(Vars[0]));
           c.assign("y",data.getRawNumbers(Vars[1]));
@@ -1090,21 +1111,17 @@ public class Scatter2D extends DragBox {
           double[] fitted = {0};
           double[] CIl = {0};
           double[] CIu = {0};
+          double[] fitX = {0};
+          double[] fitY = {0};
+		  int[] tag = {0};
           if( smoothF.equals("loess") ) 
-//            fitted = c.eval("predict(lowess(x, y, f=1/"+smoother+"), data.frame(x=xf))").asDoubleArray();
             fitted = c.eval("predict(loess(y ~ x, span=3.75/"+smoother+", degree = 1, family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubles();
-          if( smoothF.equals("locfit") ) {
-            RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
-            fitted = sL.at("fit").asDoubles();
-            CIl    = new double[fitted.length];
-            CIu    = new double[fitted.length];
-            double[] se = sL.at("se.fit").asDoubles();
-            for( int f=0; f<=200; f++ ) {
-              CIl[f] = fitted[f] - se[f];
-              CIu[f] = fitted[f] + se[f];
-            }
+          if( smoothF.equals("princurve") ) {
+            RList pcL = c.eval("pcL <- principal.curve(as.matrix(cbind(x,y), 1, any), spar="+(0.3+6.0*(1.0/((double)smoother+2.0)))+")").asList();
+			fitX = c.eval("(pcL$s)[,1]").asDoubles();
+			fitY = c.eval("(pcL$s)[,2]").asDoubles();
+			tag  = c.eval("pcL$tag").asIntegers();
           }
-//            fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
           if( smoothF.equals("splines") ) {
             c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
             fitted = c.eval("sP[,1]").asDoubles();
@@ -1125,17 +1142,139 @@ public class Scatter2D extends DragBox {
             ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
           }
 
-          for( int f=0; f<200; f++ ) {
-            ttbg.drawLine( (int)userToWorldX( xSMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
-                           (int)userToWorldX( xSMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
+          if( smoothF.equals("princurve") ) 
+		    for( int f=0; f<fitX.length-1; f++ )
+				ttbg.drawLine( (int)userToWorldX( fitX[tag[f]-1]  ), (int)userToWorldY( fitY[tag[f]-1] ),
+							   (int)userToWorldX( fitX[tag[f+1]-1]), (int)userToWorldY( fitY[tag[f+1]-1] ));
+		  else
+			for( int f=0; f<200; f++ ) {
+				ttbg.drawLine( (int)userToWorldX( xSMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
+							   (int)userToWorldX( xSMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
 //            System.out.println(fitted[f]+" / "+fitted[f+1]);
           }
 
           c.close();
-        } catch(RserveException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+        } catch(RserveException rse) {System.out.println("Rserve exception (base smoother): "+rse.getMessage());}
           catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
           catch(REngineException ren) {System.out.println("REngine exception : "+ren.getMessage());}
       }
+	  } // end base smoother
+	  
+	  // then color smoothers
+	  
+	  int nCols = 0;
+	  if( data.colorBrush )
+	    nCols = data.getNumColors();
+      if( nCols > 0 && colorSmoother ) {
+		for( int col = 1; col < nCols; col++) {
+          ttbg.setColor(data.getColorByID(col));
+  		  ttbg.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+          if( smoothF.equals("ls-line" ) ) {
+            selCoeffs = data.colRegress(Vars[0], Vars[1], col);
+            System.out.println("Coeffs: "+selCoeffs[0]+"  "+ selCoeffs[1]);
+            if( !Double.isNaN(selCoeffs[0]) && !Double.isNaN(selCoeffs[1]) )
+              ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * selCoeffs[1] + selCoeffs[0]),
+                             (int)userToWorldX( xMax ), (int)userToWorldY( xMax * selCoeffs[1] + selCoeffs[0]) );
+          }
+          if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("princurve") ) {
+            try {
+              RConnection c = new RConnection();
+              if( smoothF.equals("splines") )
+                c.voidEval("library(splines)");
+			  if( smoothF.equals("princurve") )
+				c.voidEval("library(princurve)" );
+
+              double[] selX = new double[data.n];
+              double[] selY = new double[data.n];
+
+              double xSelMin = Double.MAX_VALUE;
+              double xSelMax = Double.MIN_VALUE;
+
+              int k=0;
+              for( int i=0; i<data.n; i++ )
+                if( data.getColor(i) == data.getColorByID(col) && !data.getMissings(Vars[0])[i] ) {           // && xVal[i]<Double.MAX_VALUE && yVal[i]<Double.MAX_VALUE
+                  selX[k] = xVal[i];
+                  selY[k] = yVal[i];
+
+				  xSelMin = Math.min(selX[k], xSelMin);
+				  xSelMax = Math.max(selX[k], xSelMax);
+				  
+                  k++;
+                }
+
+              double[] selXP = new double[k];
+              double[] selYP = new double[k];
+              for( int i=0; i<k; i++ ) {
+				selXP[i] = selX[i];
+				selYP[i] = selY[i];
+			  }
+				
+              if( k>0 ) {                           // Not all selected cases are missing in at least one dimension
+                c.assign("x",selXP);
+                c.assign("y",selYP);
+
+                c.voidEval("ids <- x<1e300&y<1e300");
+                c.voidEval("x<-x[ids]");
+                c.voidEval("y<-y[ids]");
+
+                double[] xForFit = new double[200+1];
+                double step = (xSelMax-xSelMin)/200;
+                for( int f=0; f<200+1; f++ )
+                  xForFit[f] = xSelMin + step*(double)f;
+                c.assign("xf",xForFit);
+              
+                double[] fitted = {0};
+                double[] CIl = {0};
+                double[] CIu = {0};
+				double[] fitX = {0};
+				double[] fitY = {0};
+				int[] tag = {0};
+                if( smoothF.equals("loess") ) 
+                  fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+", family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubles();
+				if( smoothF.equals("princurve") ) {
+					RList pcL = c.eval("pcL <- principal.curve(as.matrix(cbind(x,y), 1, any), spar="+(0.3+6.0*(1.0/((double)smoother+2.0)))+")").asList();
+					fitX = c.eval("(pcL$s)[,1]").asDoubles();
+					fitY = c.eval("(pcL$s)[,2]").asDoubles();
+					tag  = c.eval("pcL$tag").asIntegers();
+				}
+                //						fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
+				if( smoothF.equals("splines") ) {
+                  c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
+                  fitted = c.eval("sP[,1]").asDoubles();
+                  CIl = c.eval("sP[,2]").asDoubles();
+                  CIu = c.eval("sP[,3]").asDoubles();
+                }
+                if( smoothF.equals("splines") ) {
+                  Polygon CI = new Polygon();
+                  for( int f=0; f<=200; f++ ) {
+                    CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIl[f] ) );
+                  }
+                  for( int f=200; f>=0; f-- ) {
+                    CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIu[f] ) );
+                  }
+                  ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.25)));
+                  ttbg.fillPolygon(CI);
+                  ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
+                }
+              
+				if( smoothF.equals("princurve") ) 
+					for( int f=0; f<fitX.length-1; f++ )
+						ttbg.drawLine( (int)userToWorldX( fitX[tag[f]-1]  ), (int)userToWorldY( fitY[tag[f]-1] ),
+									   (int)userToWorldX( fitX[tag[f+1]-1]), (int)userToWorldY( fitY[tag[f+1]-1] ));
+				else
+					for( int f=0; f<200; f++ )
+						if( ! (Double.isNaN(fitted[f]) || Double.isNaN(fitted[f+1])) ) 
+							ttbg.drawLine( (int)userToWorldX( xSelMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
+										   (int)userToWorldX( xSelMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
+              }
+			  ttbg.setStroke(new BasicStroke(1));
+              c.close();
+            } catch(RserveException rse) {System.out.println("Rserve exception (color group): "+rse.getMessage());}
+              catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
+              catch(REngineException ren) {System.out.println("REngine exception : "+ren.getMessage());}
+		  }	
+		}
+      } // end color group smoothers
       int nSel = data.countSelection();
       if( nSel > 1 ) {
         ttbg.setColor(DragBox.hiliteColor);
@@ -1146,13 +1285,13 @@ public class Scatter2D extends DragBox {
             ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * selCoeffs[1] + selCoeffs[0]),
                            (int)userToWorldX( xMax ), (int)userToWorldY( xMax * selCoeffs[1] + selCoeffs[0]) );
         }
-        if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
+        if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("princurve") ) {
           try {
             RConnection c = new RConnection();
             if( smoothF.equals("splines") )
               c.voidEval("library(splines)");
-            if( smoothF.equals("locfit") )
-              c.voidEval("library(locfit)" );
+  		    if( smoothF.equals("princurve") )
+			  c.voidEval("library(princurve)" );
 
             double[] selX = new double[nSel];
             double[] selY = new double[nSel];
@@ -1160,7 +1299,7 @@ public class Scatter2D extends DragBox {
             int k=0;
             for( int i=0; i<data.n; i++ )
               if( selection[i] > 0 ) {           // && xVal[i]<Double.MAX_VALUE && yVal[i]<Double.MAX_VALUE
-                selX[k]   = xVal[i];
+                selX[k] = xVal[i];
                 selY[k] = yVal[i];
                 k++;
               }
@@ -1193,19 +1332,17 @@ public class Scatter2D extends DragBox {
               double[] fitted = {0};
               double[] CIl = {0};
               double[] CIu = {0};
+			  double[] fitX = {0};
+			  double[] fitY = {0};
+			  int[] tag = {0};
               if( smoothF.equals("loess") ) 
                 fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+", family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubles();
-              if( smoothF.equals("locfit") ) {
-                RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
-                fitted = sL.at("fit").asDoubles();
-                CIl    = new double[fitted.length];
-                CIu    = new double[fitted.length];
-                double[] se = sL.at("se.fit").asDoubles();
-                for( int f=0; f<=200; f++ ) {
-                  CIl[f] = fitted[f] - se[f];
-                  CIu[f] = fitted[f] + se[f];
-                }
-              }
+			  if( smoothF.equals("princurve") ) {
+				RList pcL = c.eval("pcL <- principal.curve(as.matrix(cbind(x,y), 1, any), spar="+(0.3+6.0*(1.0/((double)smoother+2.0)))+")").asList();
+				fitX = c.eval("(pcL$s)[,1]").asDoubles();
+				fitY = c.eval("(pcL$s)[,2]").asDoubles();
+				tag  = c.eval("pcL$tag").asIntegers();
+			  }
               //						fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
               if( smoothF.equals("splines") ) {
                 c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
@@ -1213,7 +1350,7 @@ public class Scatter2D extends DragBox {
                 CIl = c.eval("sP[,2]").asDoubles();
                 CIu = c.eval("sP[,3]").asDoubles();
               }
-              if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
+              if( smoothF.equals("splines") ) {
                 Polygon CI = new Polygon();
                 for( int f=0; f<=200; f++ ) {
                   CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIl[f] ) );
@@ -1226,17 +1363,23 @@ public class Scatter2D extends DragBox {
                 ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
               }
               
-              for( int f=0; f<200; f++ )
-                ttbg.drawLine( (int)userToWorldX( xSelMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
-                               (int)userToWorldX( xSelMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
+			  if( smoothF.equals("princurve") ) 
+				for( int f=0; f<fitX.length-1; f++ )
+					ttbg.drawLine( (int)userToWorldX( fitX[tag[f]-1]  ), (int)userToWorldY( fitY[tag[f]-1] ),
+								   (int)userToWorldX( fitX[tag[f+1]-1]), (int)userToWorldY( fitY[tag[f+1]-1] ));
+			  else
+                for( int f=0; f<200; f++ )
+				  if( ! (Double.isNaN(fitted[f]) || Double.isNaN(fitted[f+1])) ) 
+                    ttbg.drawLine( (int)userToWorldX( xSelMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
+                                   (int)userToWorldX( xSelMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
             }
-                c.close();
-          } catch(RserveException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+            c.close();
+          } catch(RserveException rse) {System.out.println("Rserve exception (highlight smoother): "+rse.getMessage());}
             catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
             catch(REngineException ren) {System.out.println("REngine exception : "+ren.getMessage());}
         }
-      }
-    }
+      } // end highlighted smoothers
+    } // end update smoother
     
     ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
     ttbg.setColor(Color.black);
