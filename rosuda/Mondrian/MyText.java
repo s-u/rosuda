@@ -90,7 +90,7 @@ public class MyText {
     if( FM.stringWidth(s) >= extend ) {
       String shorty = s;	
       String addOn = "";
-      while( FM.stringWidth( shorty ) > extend ) {
+      while( FM.stringWidth( shorty ) >= extend ) {
         shorty = shorty.substring(0,shorty.length() - 1);
         addOn = "É";
       }
