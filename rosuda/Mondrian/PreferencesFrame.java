@@ -20,7 +20,7 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
   static String[] schemes = {
     "RoSuDa classic","#ffff99","#c0c0c0","#000000","#00ff00",  
     "Terra di Siena","#dfb860","#c0c0c0", "#000000","#b46087", 
-    "Xtra red","#ffff99","#c0c0c0","#000000","#ff0000", 
+    "Xtra red","#ffffB3","#c0c0c0","#000000","#ff0000", 
     "DataDesk","#000000","#000000","#ffffff","#ff0000", 
     "Daltonian","#009999","#c0c0c0","#000000","#ff7400", 
     null
