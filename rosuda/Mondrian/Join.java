@@ -64,7 +64,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   public JMenuBar menubar;
   public JMenu windows, help, dv, sam, trans, lastOM;
   private JMenuItem n, nw, c, q, t, m, o, odf, s, ss, sa, ts, p, od, mv, mn, pr, b, bw, pc, pb, byx, sc, sc2, hi, hiw, cc, cs, vm, rc, oh, mds, pca;
-  public  JMenuItem ca, fc, fs, me, transPlus, transMinus, transTimes, transDiv, transNeg, transInv, transLog, transExp;
+  public  JMenuItem ca, fc, fs, me, transPlus, transMinus, transTimes, transDiv, transNeg, transInv, transLog, transExp, transMin, transMax;
   private JCheckBoxMenuItem se, ah, ih, os, as;
   private ModelNavigator Mn;
   private PreferencesFrame Pr;
@@ -252,6 +252,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     trans.add(transInv = new JMenuItem("1/x"));
     trans.add(transLog = new JMenuItem("log(x)"));
     trans.add(transExp = new JMenuItem("exp(x)"));
+    trans.addSeparator();                     // Put a separator in the menu
+    trans.add(transMin = new JMenuItem("Min(x1, ..., xk)"));
+    trans.add(transMax = new JMenuItem("Max(x1, ..., xk)"));
     
     calc.add(mds = new JMenuItem("2-dim MDS"));
     mds.setEnabled(false);
@@ -495,6 +498,16 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
                                transform(8);
                                }
                                });
+    transMin.addActionListener(new ActionListener() {     // min(x, ..., y)
+                               public void actionPerformed(ActionEvent e) {
+                               transform(9);
+                               }
+                               });
+    transMax.addActionListener(new ActionListener() {     // max(x, ..., y)
+                               public void actionPerformed(ActionEvent e) {
+                               transform(10);
+                               }
+                               });
     se.addActionListener(new ActionListener() {     // Change the selection mode
                          public void actionPerformed(ActionEvent e) {
                          switchSelection();
@@ -598,7 +611,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("v1.1", 260, 285);
+    g.drawString("v1.2", 260, 285);
     
     mondrianRunning = true;
     
@@ -733,8 +746,12 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   
   public void refCard() {
     final MFrame refCardf = new MFrame(this);
-    
-    Icon RefIcon = new ImageIcon(Util.readGif("ReferenceCard.gif"));
+    Icon RefIcon;
+	
+    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") == -1 ) 
+		RefIcon = new ImageIcon(Util.readGif("ReferenceCardWin.gif"));
+	else
+		RefIcon = new ImageIcon(Util.readGif("ReferenceCardMac.gif")); 
     
     JLabel RefLabel = new JLabel(RefIcon);
     JScrollPane refScrollPane = new JScrollPane(RefLabel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -770,6 +787,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   }
   
   public void transform(int mode) {
+  
+    int numVarSel = (varNames.getSelectedIndices()).length;
+  
     checkHistoryBuffer();
     
     System.out.println("Transform: "+mode);
@@ -777,9 +797,11 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     dataSet data = ((dataSet)dataSets.elementAt(thisDataSet));
     
     double[]  tData = new double[data.n];
+	String[] tLabel = new String[data.n];
     boolean[] tMiss = new boolean[data.n];
     String name1 = data.getName(selectBuffer[1]);
     String name2 = data.getName(selectBuffer[0]);
+    String name0 = data.getName(selectBuffer[numVarSel-1]);
     switch(mode) {
       case 1:
         name = name1+" + "+name2;
@@ -804,6 +826,18 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         break;
       case 8:
         name = "exp("+name2+")";
+        break;
+      case 9:
+	    if( numVarSel > 2 )
+			name = "Min("+name0+", ..., "+name2+")";
+		else
+			name = "Min("+name0+", "+name2+")";
+        break;
+      case 10:
+	    if( numVarSel > 2 )
+			name = "Max("+name0+", ..., "+name2+")";
+		else
+			name = "Max("+name0+", "+name2+")";
         break;
     }
     double[] var1 = data.getRawNumbers(selectBuffer[1]);
@@ -849,18 +883,53 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         case 8:
           tData[i] = Math.exp(var2[i]);
           break;
+		case 9:
+		case 10:
+		  double minVal = Double.MAX_VALUE;
+		  double maxVal = Double.MIN_VALUE;
+		  String Label  = "";
+		  boolean isMiss = true;
+		  boolean thisMiss = false;
+		  for( int k=0; k<numVarSel; k++ ) {
+		    thisMiss = (data.getMissings(selectBuffer[k]))[i];
+		    if( !thisMiss ) 
+			  if( mode == 9 )
+				if( (data.getRawNumbers(selectBuffer[k]))[i] < minVal ) {
+					minVal = (data.getRawNumbers(selectBuffer[k]))[i];
+					Label  = data.getName(selectBuffer[k]);
+				}
+			  if( mode == 10 )
+				if( (data.getRawNumbers(selectBuffer[k]))[i] > maxVal ) {
+					maxVal = (data.getRawNumbers(selectBuffer[k]))[i];
+					Label  = data.getName(selectBuffer[k]);
+				}
+			isMiss = isMiss && thisMiss;
+		  }
+		  tMiss[i] = isMiss;
+		  if( mode == 9 )
+		    tData[i] = minVal;
+		  else
+		    tData[i] = maxVal;
+		  tLabel[i] = Label;
+//		  System.out.println("Value: "+tData[i]+" Label: "+Label+" Missing: "+isMiss);
+		  break;
       }
     }
     for( int i=0; i<data.n; i++ )
       if( tMiss[i] )
         tData[i] = Double.MAX_VALUE;
     boolean what;
-    if( mode < 5 )
-      what = data.categorical(selectBuffer[0]) && data.categorical(selectBuffer[1]);
-    else    
-      what = data.categorical(selectBuffer[0]);
-    data.addVariable(name, false, what, tData, tMiss);
-    varNames = null;
+	if( mode < 9 ) {
+		if( mode < 5 )
+			what = data.categorical(selectBuffer[0]) && data.categorical(selectBuffer[1]);
+		else 
+			what = data.categorical(selectBuffer[0]);
+		data.addVariable(name, false, what, tData, tMiss);
+	} else {
+		data.addVariable("Value of "+name, false, false, tData, tMiss);
+		data.addVariable("Label of "+name, true,  true, tLabel, tMiss);
+	}
+	varNames = null;
     setVarList();
   }
   
@@ -2600,7 +2669,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       case 1:
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
           b.setEnabled(true);
-//n.setEnabled(true);
+		  n.setEnabled(true);
           hi.setEnabled(false);
           hiw.setEnabled(false);
           pb.setEnabled(false);
@@ -2610,9 +2679,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           hi.setEnabled(true);
           hiw.setEnabled(true);
           pb.setEnabled(true);
+		  n.setEnabled(false);
         }
         mv.setEnabled(true);
-        n.setEnabled(false);
         bw.setEnabled(false);
         nw.setEnabled(false);
         pc.setEnabled(false);
@@ -2694,17 +2763,20 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     // Now handle transform Menue
     int alphs = 0;
+	int numVarSel = varNames.getSelectedIndices().length;
     dataSet data = ((dataSet)dataSets.elementAt(thisDataSet));
-    for( int i=0; i<varNames.getSelectedIndices().length; i++ )
+    for( int i=0; i<numVarSel; i++ )
       if( data.alpha(varNames.getSelectedIndices()[i]) )
         alphs++;
-    if( alphs == 0 && (varNames.getSelectedIndices().length == 2 || varNames.getSelectedIndices().length == 1) ) {
+    if( alphs == 0 && numVarSel > 0 ) {
       trans.setEnabled(true);
-      if( alphs == 0 && varNames.getSelectedIndices().length == 2 ) {
+      if( alphs == 0 && numVarSel == 2 ) {
         transPlus.setText(data.getName(selectBuffer[1])+" + "+data.getName(selectBuffer[0]));
 		transMinus.setText(data.getName(selectBuffer[1])+" - "+data.getName(selectBuffer[0]));
         transTimes.setText(data.getName(selectBuffer[1])+" * "+data.getName(selectBuffer[0]));
         transDiv.setText(data.getName(selectBuffer[1])+" / "+data.getName(selectBuffer[0]));
+		transMin.setText("Min("+data.getName(selectBuffer[numVarSel-1])+", "+data.getName(selectBuffer[0])+")");
+		transMax.setText("Max("+data.getName(selectBuffer[numVarSel-1])+", "+data.getName(selectBuffer[0])+")");
         transNeg.setText("-x");
         transInv.setText("1/x");
         transLog.setText("log(x)");
@@ -2713,11 +2785,13 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         transMinus.setEnabled(true);
         transTimes.setEnabled(true);
         transDiv.setEnabled(true);
+        transMin.setEnabled(true);
+        transMax.setEnabled(true);
         transNeg.setEnabled(false);
         transInv.setEnabled(false);
         transLog.setEnabled(false);
         transExp.setEnabled(false);
-      } else { 
+      } else if( alphs == 0 && numVarSel == 1 ) {
 		if( data.getName(selectBuffer[0]).indexOf("-") > 0 || data.getName(selectBuffer[0]).indexOf("+") > 0 )
 			transNeg.setText("-("+data.getName(selectBuffer[0])+")");
 		else
@@ -2740,7 +2814,32 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         transInv.setEnabled(true);
         transLog.setEnabled(true);
         transExp.setEnabled(true);
-      }
+        transMin.setEnabled(false);
+        transMax.setEnabled(false);
+        transMin.setText("Min(x1, ..., xk)");
+		transMax.setText("Max(x1, ..., xk)");
+	  } else {
+        transNeg.setText("-x");
+        transInv.setText("1/x");
+        transLog.setText("log(x)");
+        transExp.setText("exp(x)");
+        transPlus.setText("x + y");
+        transMinus.setText("x - y");
+        transTimes.setText("x * y");
+        transDiv.setText("x / y");
+        transPlus.setEnabled(false);
+        transMinus.setEnabled(false);
+        transTimes.setEnabled(false);
+        transDiv.setEnabled(false);
+        transNeg.setEnabled(false);
+        transInv.setEnabled(false);
+        transLog.setEnabled(false);
+        transExp.setEnabled(false);
+        transMin.setEnabled(true);
+        transMax.setEnabled(true);
+		transMin.setText("Min("+data.getName(selectBuffer[numVarSel-1])+", ..., "+data.getName(selectBuffer[0])+")");
+		transMax.setText("Max("+data.getName(selectBuffer[numVarSel-1])+", ..., "+data.getName(selectBuffer[0])+")");
+	  }
     } else 
       trans.setEnabled(false);
   }
