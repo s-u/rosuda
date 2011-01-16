@@ -652,7 +652,7 @@ public class Map extends DragBox {
         p.setBorderColor(new Color(0, 0, 0, (int)(2.55*alphas[borderAlpha])));
         smallPolys.addElement(p);
         for( int j=0; j<data.k; j++ )
-          if( match[i] > -1 && data.getName(j).toLowerCase().indexOf("name") >= 0 ) {
+          if( match[i] > -1 && data.getName(j).toLowerCase().indexOf("name") >= 0 && data.getNumMissings(j) < data.n ) {
             p.setLabel(data.getLevelName(j, (data.getNumbers(j))[match[i]]));
             j = data.k;
           }
