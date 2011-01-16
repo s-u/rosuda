@@ -150,93 +150,94 @@ public class PC extends DragBox implements ActionListener {
     else super.processEvent(evt);
   }
   
-  public String getToolTipText(MouseEvent e) {
-    if( e.isControlDown() ) {
-      int minXDist = Integer.MAX_VALUE;
-      int minYDist = Integer.MAX_VALUE;
-      int popXId = 0;
-      int popYId = 0;
-	  int numSel = data.countSelection();
-	  
-      Polygon p = poly[0];
-      for( int j=0; j<k; j++ ) {
-        if( Math.abs(p.xpoints[j]-e.getX()) < minXDist ) {
-          popXId = j;
-          minXDist =  Math.abs(p.xpoints[j]-e.getX());
-        }
-      }
-      for( int i=0; i<data.n; i++ ) {
-        p = poly[i];
-        if( Math.abs(p.ypoints[popXId]-e.getY()) < minYDist ) {
-          popYId = i;
-          minYDist =  Math.abs(p.ypoints[popXId]-e.getY());
-        }
-      }
-      if( minXDist < slotWidth/4 ) {
-        String x="";
-        if( data.phoneNumber(vars[permA[popXId]]) ) {
-          x = " " + data.getName(vars[permA[popXId]])+'\n'+" Number\t "+ Util.toPhoneNumber(dataCopy[permA[popXId]][popYId]);
-        }
-        else if( data.categorical(vars[permA[popXId]]) )
-          if( paintMode.equals("Poly") ) {
-            x = " " + data.getName(vars[permA[popXId]]);
-            x = x + " \n Level\t "+data.getLevelName(vars[permA[popXId]], dataCopy[permA[popXId]][popYId]);
-          }
-          else
-            for( int i = 0;i < rects.size(); i++) {
-              MyRect r = (MyRect)rects.elementAt(i);
-              if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
-                return Util.info2Html(r.getLabel());
-              }
-            }
-          else {
-            boolean hitBox = false;
-            x = " "+((MyText)names.elementAt(popXId)).getText();
-			if( numSel == 0 || ((boxPlot)(bPlots.elementAt(popXId))).selN == 0 )
-				x = x + "\n" + ((boxPlot)(bPlots.elementAt(popXId))).n + " cases in class";
-			else
-				x = x + "\n" + ((boxPlot)(bPlots.elementAt(popXId))).selN + "/" + ((boxPlot)(bPlots.elementAt(popXId))).n 
-				             + "(" + Stat.round(100.0 * ((boxPlot)(bPlots.elementAt(popXId))).selN/((boxPlot)(bPlots.elementAt(popXId))).n, 1) + "%)";
-            if( !paintMode.equals("Poly") ) {
-              double saveMin = getLly();
-              double saveMax = getUry();
-              setCoordinates(0,Mins[permA[popXId]],1,Maxs[permA[popXId]],-1);
-              if( worldToUserY(e.getY()) > ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[1]  &&
-                 worldToUserY(e.getY()) < ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[5]    ) {
-                x = x + ((boxPlot)(bPlots.elementAt(popXId))).get5num();
-                hitBox = true;
-              }
-              setCoordinates(0,saveMin,1,saveMax,-1);
-            } 
-            if( !hitBox ) {
-              if( e.isShiftDown() ) { // extended query, does not have a var name header
-                x = "";
-                int[] selectedIds = varList.getSelectedIndices();
-                for( int sel=0; sel<selectedIds.length; sel++ ) {
-                  x = x + "\n" + data.getName(selectedIds[sel])+"\t ";
-                  if( (data.getMissings(selectedIds[sel]))[popYId] )
-                    x = x + "NA";
-                  else {
-                    if( data.categorical(selectedIds[sel]) )
-                      if( data.alpha(selectedIds[sel]) )
-                        x = x + data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[popYId]);
-                      else
-                        x = x + data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[popYId]);
-                      else
-                        x = x + (data.getRawNumbers(selectedIds[sel]))[popYId];
-                  }
-                }
-              } else
-                x = x + " \n Value\t "+dataCopy[permA[popXId]][popYId];
-            }
-          }
-        return Util.info2Html(x);
-      }
-      return null;
-    } else
-      return null;
-  }
-  
+	public String getToolTipText(MouseEvent e) {
+		if( e.isControlDown() ) {
+			int minXDist = Integer.MAX_VALUE;
+			int minYDist = Integer.MAX_VALUE;
+			int popXId = 0;
+			int popYId = 0;
+			int numSel = data.countSelection();
+			
+			Polygon p = poly[0];
+			for( int j=0; j<k; j++ ) {
+				if( Math.abs(p.xpoints[j]-e.getX()) < minXDist ) {
+					popXId = j;
+					minXDist =  Math.abs(p.xpoints[j]-e.getX());
+				}
+			}
+			for( int i=0; i<data.n; i++ ) {
+				p = poly[i];
+				if( Math.abs(p.ypoints[popXId]-e.getY()) < minYDist ) {
+					popYId = i;
+					minYDist =  Math.abs(p.ypoints[popXId]-e.getY());
+				}
+			}
+			if( minXDist < slotWidth/4 ) {
+				String x="";
+				if( data.phoneNumber(vars[permA[popXId]]) ) {
+					x = " " + data.getName(vars[permA[popXId]])+'\n'+" Number\t "+ Util.toPhoneNumber(dataCopy[permA[popXId]][popYId]);
+				}
+				else if( data.categorical(vars[permA[popXId]]) )
+					if( paintMode.equals("Poly") ) {
+						x = " " + data.getName(vars[permA[popXId]]);
+						x = x + " \n Level\t "+data.getLevelName(vars[permA[popXId]], dataCopy[permA[popXId]][popYId]);
+					}
+					else
+						for( int i = 0;i < rects.size(); i++) {
+							MyRect r = (MyRect)rects.elementAt(i);
+							if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
+								return Util.info2Html(r.getLabel());
+							}
+						}
+					else {
+						boolean hitBox = false;
+						x = " "+((MyText)names.elementAt(popXId)).getText();
+						if( !paintMode.equals("Poly") ) {
+							if( paintMode.equals("XbyY") ) 
+							if( numSel == 0 || ((boxPlot)(bPlots.elementAt(popXId))).selN == 0 )
+								x = x + "\n" + ((boxPlot)(bPlots.elementAt(popXId))).n + " cases in class";
+							else
+								x = x + "\n" + ((boxPlot)(bPlots.elementAt(popXId))).selN + "/" + ((boxPlot)(bPlots.elementAt(popXId))).n 
+								+ "(" + Stat.round(100.0 * ((boxPlot)(bPlots.elementAt(popXId))).selN/((boxPlot)(bPlots.elementAt(popXId))).n, 1) + "%)";
+							double saveMin = getLly();
+							double saveMax = getUry();
+							setCoordinates(0,Mins[permA[popXId]],1,Maxs[permA[popXId]],-1);
+							if( worldToUserY(e.getY()) > ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[1]  &&
+							   worldToUserY(e.getY()) < ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[5]    ) {
+								x = x + ((boxPlot)(bPlots.elementAt(popXId))).get5num();
+								hitBox = true;
+							}
+							setCoordinates(0,saveMin,1,saveMax,-1);
+						} 
+						if( !hitBox ) {
+							if( e.isShiftDown() ) { // extended query, does not have a var name header
+								x = "";
+								int[] selectedIds = varList.getSelectedIndices();
+								for( int sel=0; sel<selectedIds.length; sel++ ) {
+									x = x + "\n" + data.getName(selectedIds[sel])+"\t ";
+									if( (data.getMissings(selectedIds[sel]))[popYId] )
+										x = x + "NA";
+									else {
+										if( data.categorical(selectedIds[sel]) )
+											if( data.alpha(selectedIds[sel]) )
+												x = x + data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[popYId]);
+											else
+												x = x + data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[popYId]);
+											else
+												x = x + (data.getRawNumbers(selectedIds[sel]))[popYId];
+									}
+								}
+							} else
+								x = x + " \n Value\t "+dataCopy[permA[popXId]][popYId];
+						}
+					}
+				return Util.info2Html(x);
+			}
+			return null;
+		} else
+			return null;
+	}
+	
 
   public void processMouseEvent(MouseEvent e) {
 
@@ -442,42 +443,60 @@ public class PC extends DragBox implements ActionListener {
             JMenu alphaM = new JMenu("Alpha");
             JCheckBoxMenuItem alpha1 = new JCheckBoxMenuItem("1.0");
             JCheckBoxMenuItem alpha05 = new JCheckBoxMenuItem("0.5");
-            JCheckBoxMenuItem alpha01 = new JCheckBoxMenuItem("0.1");
-            JCheckBoxMenuItem alpha005  = new JCheckBoxMenuItem("0.05");
-            JCheckBoxMenuItem alpha001 = new JCheckBoxMenuItem("0.01");
-            JCheckBoxMenuItem alpha0005 = new JCheckBoxMenuItem("0.005");
+            JCheckBoxMenuItem alpha025 = new JCheckBoxMenuItem("0.25");
+            JCheckBoxMenuItem alpha01 = new JCheckBoxMenuItem("0.125");
+            JCheckBoxMenuItem alpha005  = new JCheckBoxMenuItem("0.064");
+            JCheckBoxMenuItem alpha0025  = new JCheckBoxMenuItem("0.032");
+            JCheckBoxMenuItem alpha001 = new JCheckBoxMenuItem("0.016");
+            JCheckBoxMenuItem alpha0005 = new JCheckBoxMenuItem("0.008");
+            JCheckBoxMenuItem alpha00025 = new JCheckBoxMenuItem("0.004");
             if( alpha >= 0.99 )
               alpha1.setState(true);
             else if( alpha >= 0.49 )
               alpha05.setState(true);
-            else if( alpha >= 0.099 )
+            else if( alpha >= 0.249 )
+              alpha025.setState(true);
+            else if( alpha >= 0.1249 )
               alpha01.setState(true);
-            else if( alpha >= 0.049 )
+            else if( alpha >= 0.0639 )
               alpha005.setState(true);
-            else if( alpha >= 0.0099 )
+            else if( alpha >= 0.0319 )
+              alpha0025.setState(true);
+            else if( alpha >= 0.0159 )
               alpha001.setState(true);
-            else if( alpha >= 0.0049 )
+            else if( alpha >= 0.0079 )
               alpha0005.setState(true);
+            else if( alpha >= 0.0039 )
+              alpha00025.setState(true);
 
             alphaM.add(alpha1);
             alphaM.add(alpha05);
+            alphaM.add(alpha025);
             alphaM.add(alpha01);
             alphaM.add(alpha005);
+            alphaM.add(alpha0025);
             alphaM.add(alpha001);
             alphaM.add(alpha0005);
-            alpha1.setActionCommand("1.0");
+            alphaM.add(alpha00025);
 
+            alpha1.setActionCommand("1.0");
             alpha05.setActionCommand("0.5");
-            alpha01.setActionCommand("0.1");
-            alpha005.setActionCommand("0.05");
-            alpha001.setActionCommand("0.01");
-            alpha0005.setActionCommand("0.005");
+            alpha025.setActionCommand("0.25");
+            alpha01.setActionCommand("0.125");
+            alpha005.setActionCommand("0.064");
+            alpha0025.setActionCommand("0.032");
+            alpha001.setActionCommand("0.016");
+            alpha0005.setActionCommand("0.008");
+            alpha00025.setActionCommand("0.004");
             alpha1.addActionListener(this);
             alpha05.addActionListener(this);
+            alpha025.addActionListener(this);
             alpha01.addActionListener(this);
             alpha005.addActionListener(this);
+            alpha0025.addActionListener(this);
             alpha001.addActionListener(this);	  
             alpha0005.addActionListener(this);	  
+            alpha00025.addActionListener(this);	  
             scaleType.add(alphaM);
 
 
@@ -766,27 +785,39 @@ public class PC extends DragBox implements ActionListener {
             return;
           else if( alpha >= 0.49 )
             alpha = 1.0F;
-          else if( alpha >= 0.099 )
+          else if( alpha >= 0.249 )
             alpha = 0.5F;
-          else if( alpha >= 0.049 )
-            alpha = 0.1F;
-          else if( alpha >= 0.0099 )
-            alpha = 0.05F;
-          else if( alpha >= 0.0049 )
-            alpha = 0.01F;
+          else if( alpha >= 0.1249 )
+            alpha = 0.25F;
+          else if( alpha >= 0.0639 )
+            alpha = 0.125F;
+          else if( alpha >= 0.0319 )
+            alpha = 0.064F;
+          else if( alpha >= 0.0159 )
+            alpha = 0.032F;
+          else if( alpha >= 0.0079 )
+            alpha = 0.016F;
+          else if( alpha >= 0.0039 )
+            alpha = 0.008F;
         }
         else {
           if( alpha >= 0.99 )
             alpha = 0.5F;
           else if( alpha >= 0.49 )
-            alpha = 0.1F;
-          else if( alpha >= 0.099 )
-            alpha = 0.05F;
-          else if( alpha >= 0.049 )
-            alpha = 0.01F;
-          else if( alpha >= 0.0099 )
-            alpha = 0.005F;
-          else if( alpha >= 0.0049 )
+            alpha = 0.25F;
+          else if( alpha >= 0.249 )
+            alpha = 0.125F;
+          else if( alpha >= 0.1249 )
+            alpha = 0.064F;
+          else if( alpha >= 0.0639 )
+            alpha = 0.032F;
+          else if( alpha >= 0.0319 )
+            alpha = 0.016F;
+          else if( alpha >= 0.0159 )
+            alpha = 0.008F;
+          else if( alpha >= 0.0079 )
+            alpha = 0.004F;
+          else if( alpha >= 0.0039 )
             return;
         }
         this.dataChanged(0);
@@ -859,7 +890,9 @@ public class PC extends DragBox implements ActionListener {
         create(width, height);
         update(this.getGraphics());
       }
-      else if( command.equals("1.0") || command.equals("0.5") || command.equals("0.1") || command.equals("0.05") || command.equals("0.01") || command.equals("0.005") ) {
+      else if( command.equals("1.0")  || command.equals("0.5")   || command.equals("0.25")  || 
+	           command.equals("0.125")  || command.equals("0.064")  || command.equals("0.032") || 
+			   command.equals("0.016") || command.equals("0.008") || command.equals("0.004") ) {
         alpha = (float)Util.atod(command);
 //System.out.println("alpha: "+alpha);
 
@@ -1111,14 +1144,19 @@ public class PC extends DragBox implements ActionListener {
         }
         if( paintMode.equals("Poly") && !hotSelection && !zoomToSel) {
           for( int i=0; i<data.n; i++ ) {
-            if( data.colorArray[i] > 0 )
+            if( data.colorArray[i] > 0 ) {
+			  bg.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+			  bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0F)));
               bg.setColor(cols[data.colorArray[i]]);
+			}
             else
               bg.setColor(MFrame.lineColor);
             if( !data.hasMissings )  
               bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
             else
               myDrawPolyline(bg, poly[i].xpoints, poly[i].ypoints, i);
+			bg.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha)));
           }
         }
         if( paintMode.equals("Poly") && zoomToSel ) {
