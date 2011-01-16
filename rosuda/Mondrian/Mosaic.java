@@ -844,25 +844,25 @@ public class Mosaic extends DragBox implements ActionListener {
         createMosaic(0, 0, startTable, x1, y1, Math.max(x2-subX,1), Math.max(y2-subY,1), info); 
 
         // Create labels for the first 2 dimensions 
-        int pF = 1;
-        if( printing )
-          pF = printFactor;
-        if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
-          for(int j=0; j<Math.min(2, maxLevel); j++)
-            for( int i=0; i<levels[j]; i++) {
-//System.out.println("Levels("+i+"): "+lnames[j][i]);
-              if( Dirs[j] == 'x' )
-                label = new MyText(lnames[j][i], (int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), border-5*pF, 0, (x2-x1)/levels[j]-2);
-              else
-                label = new MyText(lnames[j][i], -(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))), border-6*pF,  -Math.PI/2.0, (y2-y1)/levels[j]-2);
-              Labels.addElement(label);
-            }
-        }
-        
+		  int pF = 1;
+		  if( printing )
+			  pF = printFactor;
+		  if( k == 1 || Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
+			  for(int j=0; j<Math.min(2, maxLevel); j++)
+				  for( int i=0; i<levels[j]; i++) {
+					  //System.out.println("Levels("+i+"): "+lnames[j][i]);
+					  if( Dirs[j] == 'x' )
+						  label = new MyText(lnames[j][i], (int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), border-5*pF, 0, (x2-x1)/levels[j]-3);
+					  else
+						  label = new MyText(lnames[j][i], -(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))), border-6*pF,  -Math.PI/2.0, (y2-y1)/levels[j]-3);
+					  Labels.addElement(label);
+				  }
+		  }
+		  
         if( displayMode.equals("Multiple Barcharts") ||  displayMode.equals("Fluctuation") ) {
           double maxCount=0;
 
-          System.out.println(" Dir: "+multBarDir+" Spine: "+multBarSpine); 
+//          System.out.println(" Dir: "+multBarDir+" Spine: "+multBarSpine); 
           
           for (int i=0; i<rects.size(); i++) 
             maxCount = Math.max(maxCount, ((MyRect)(rects.elementAt(i))).obs);
