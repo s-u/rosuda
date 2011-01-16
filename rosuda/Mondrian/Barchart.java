@@ -305,9 +305,15 @@ public class Barchart extends DragBox implements ActionListener {
         
         for( int i = 0;i < rects.size(); i++) {
           MyRect r = (MyRect)rects.elementAt(i);
-          if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
-            return Util.info2Html(r.getLabel());
-          }
+		  if( r.getWidth() > 3 && r.getHeight() > 3) {
+			if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
+			  return Util.info2Html(r.getLabel());
+            }
+		  } else {
+			if ( r.intersects(new Rectangle(e.getX()-2, e.getY()+sb.getValue()-2, 5, 5) ) ) {
+			  return Util.info2Html(r.getLabel());
+            }
+		  }
         }
         // end FOR
         return null;
@@ -608,14 +614,16 @@ public void processKeyEvent(KeyEvent e) {
     paint(g);
     g.dispose();
   } else if ( Character.isSpaceChar(e.getKeyChar()) || Character.isJavaLetterOrDigit(e.getKeyChar()) || (e.getKeyChar() == KeyEvent.VK_PERIOD) || (e.getKeyChar() == KeyEvent.VK_MINUS) ) {
-	if( searchText.equals("") )
+	if( !(e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+		if( searchText.equals("") )
+			startT = new Date().getTime();
+		if( new Date().getTime() < startT + 1000 ) {
+			searchText += e.getKeyChar();
+		} else 
+			searchText = ""+e.getKeyChar();
 		startT = new Date().getTime();
-	if( new Date().getTime() < startT + 1000 ) {
-		searchText += e.getKeyChar();
-	} else 
-		searchText = ""+e.getKeyChar();
-	startT = new Date().getTime();
-	System.out.println("Search Text: "+searchText);
+		System.out.println("Search Text: "+searchText);
+	}
 	if( !searchText.equals("") )
 		for( int i = 0;i < labels.size(); i++) {
 			String tmp = (((MyText)labels.elementAt(i)).getText()); 
@@ -668,18 +676,14 @@ public void actionPerformed(ActionEvent e) {
       if( command.equals("rel") )
         for( int i=0; i<sortA.length; i++ )
           sortA[i] = ((MyRect)rects.elementAt(i)).getHilite();
-      int[] perm = Qsort.qsort(sortA, 0, sortA.length-1);
+//      int[] perm = Qsort.qsort(sortA, 0, sortA.length-1);
+      int[] perm = MergeSort.sort(sortA);		// We use Merge Sort now to have stable results of successive sorts
       int[] tperm = new int[perm.length];
       for( int i=0; i<perm.length; i++ )
         tperm[i] = v.permA[perm[i]];
       for( int i=0; i<perm.length; i++ ) {      // Store results, ...
         v.permA[i] = tperm[i];
         v.IpermA[v.permA[i]] = i;
-      }
-      for( int i=0; i<v.permA.length/2; i++ ) {// ... and reverse the order!
-        int save = v.permA[i];
-        v.permA[i] = v.permA[v.permA.length-i-1];
-        v.permA[v.permA.length-i-1] = save;
       }
       for( int i=0; i<v.permA.length; i++ ) {
         v.IpermA[v.permA[i]] = i;
