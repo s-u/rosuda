@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 
 
 import javax.swing.DefaultListModel;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionListener;
 
 /**
@@ -78,6 +79,7 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 					singleList = new SingletonDJList();
 					listPanel.add(singleList, BorderLayout.CENTER);
 					singleList.setModel(new DefaultListModel());
+					singleList.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 				}
 			}
 			{

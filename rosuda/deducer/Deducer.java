@@ -71,7 +71,7 @@ public class Deducer {
 	public Deducer(boolean jgr){
 		started=false;
 		try{
-			if(jgr && ((JRIEngine)JGR.getREngine()).getRni()!=null){
+			if(jgr && JGR.isJGRmain()){
 				startWithJGR();
 				(new Thread() {
 					public void run() {
@@ -759,7 +759,7 @@ public class Deducer {
 												"Install", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null,
 												new String[]{"Yes","No"}, "Yes");
 		if(inst==JOptionPane.OK_OPTION){
-			Deducer.eval("install.packages('" + packageName + "')");
+			Deducer.eval("install.packages('" + packageName + "',,'http://cran.r-project.org')");
 			if(isInstalled(packageName))
 				return "installed";
 		}

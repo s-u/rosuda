@@ -46,7 +46,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	private String rDataFilter = "";
 	private String splitStr = null;
 	private boolean copyMode = false;
-	
+	private static String recentData ;
 	public VariableSelector() {
 		super();
 		initGUI();
@@ -61,6 +61,9 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 				} catch (Exception e) {
 					new ErrorMsg(e);
 				}
+			else{
+				variableList.setModel( new DefaultListModel());
+			}
 		}catch(Exception e1){
 			variableList.setModel( new DefaultListModel());
 			dataComboBox.setModel(new DefaultComboBoxModel());

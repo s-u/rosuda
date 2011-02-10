@@ -271,8 +271,10 @@ public class DataViewer extends TJFrame implements ActionListener{
 				String data = ((RObject)dataSelector.getSelectedItem()).getName();
 				if(data == null || data == "")
 					return;
-				if(!data.equals(dataName))
+				if(!data.equals(dataName)){
 					setData(data);
+					Deducer.setRecentData(dataName);
+				}
 				
 			}else if(cmd=="Open Data"){
 				new LoadData();	

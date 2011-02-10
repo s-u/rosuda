@@ -20,6 +20,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionListener;
 
 /**
@@ -85,7 +86,7 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 			varList = new DJList();
 			listScrollPane.setViewportView(varList);
 			varList.setModel(new DefaultListModel());
-
+			varList.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 			
 			buttonPanel = new JPanel();
 			this.add(buttonPanel, new AnchorConstraint(275, 140, 768, 2, 

@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.rosuda.deducer.toolkit.XMLHelper;
 import org.rosuda.deducer.widgets.param.Param;
 import org.rosuda.deducer.widgets.param.ParamLogical;
 import org.w3c.dom.Document;
@@ -1546,9 +1547,9 @@ public class Geom {
 			defaultPosition = null;
 		Element child = (Element) node.getElementsByTagName("params").item(0);
 		params = new Vector();
-		NodeList nl = child.getElementsByTagName("Param");
-		for(int i=0;i<nl.getLength();i++){
-			Element n = (Element) nl.item(i);
+		Vector nl = XMLHelper.getChildrenElementsByTag(child, "Param");
+		for(int i=0;i<nl.size();i++){
+			Element n = (Element) nl.get(i);
 			cn = n.getAttribute("className");
 			Param p = Param.makeParam(cn);
 			p.setFromXML(n);
@@ -1557,9 +1558,9 @@ public class Geom {
 		
 		child = (Element) node.getElementsByTagName("aess").item(0);
 		aess = new Vector();
-		nl = child.getElementsByTagName("Aes");
-		for(int i=0;i<nl.getLength();i++){
-			Element n = (Element) nl.item(i);
+		nl = XMLHelper.getChildrenElementsByTag(child,"Aes");
+		for(int i=0;i<nl.size();i++){
+			Element n = (Element) nl.get(i);
 			Aes aes = new Aes();
 			aes.setFromXML(n);
 			aess.add(aes);
