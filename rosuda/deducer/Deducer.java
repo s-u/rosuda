@@ -70,6 +70,7 @@ public class Deducer {
 	
 	public Deducer(boolean jgr){
 		started=false;
+		Common.getScreenRes(); //initializes value if not already set
 		try{
 			if(jgr && JGR.isJGRmain()){
 				startWithJGR();
@@ -93,6 +94,7 @@ public class Deducer {
 	
 	public void startNoJGR(){
 		try{
+			
 			insideJGR=false;
 		    String nativeLF = UIManager.getSystemLookAndFeelClassName();
 		    try {

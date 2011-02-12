@@ -153,7 +153,7 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 			if (file != null && !file.isDirectory()
 					&& !(file.getName().toLowerCase().endsWith(".rdata") || file.getName().toLowerCase().endsWith(".rda"))) {
 				String name = file.getName().replaceAll("\\..*", "");
-				name = JGR.MAINRCONSOLE.getUniqueName(name);
+				name = getUniqueName(name);
 				rDataNameField.setText(name);
 			} else
 				rDataNameField.setText("");
