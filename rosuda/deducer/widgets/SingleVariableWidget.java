@@ -64,14 +64,14 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
-			this.setPreferredSize(new java.awt.Dimension(239, 50));
+			this.setPreferredSize(new java.awt.Dimension(239, 65));
 			{
 				listPanel = new JPanel();
 				BorderLayout listPanelLayout = new BorderLayout();
 				this.add(listPanel, new AnchorConstraint(5, 1002, 940, 64, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
-				listPanel.setPreferredSize(new java.awt.Dimension(195, 45));
+				listPanel.setPreferredSize(new java.awt.Dimension(195, 50));
 				listPanel.setLayout(listPanelLayout);
 				if(title!=null)
 					listPanel.setBorder(BorderFactory.createTitledBorder(title));
@@ -85,7 +85,7 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 			{
 				addRemoveButton = new SingletonAddRemoveButton(new String[]{"Add","Remove"},
 						new String[]{"Add","Remove"},singleList,selector);
-				this.add(addRemoveButton, new AnchorConstraint(14, 156, 845, 0, 
+				this.add(addRemoveButton, new AnchorConstraint(16, 156, 845, 0, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 				addRemoveButton.setPreferredSize(new java.awt.Dimension(32, 34));

@@ -5,6 +5,7 @@ import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class DJList extends JList implements DragSourceListener, DropTargetListe
                                                            DnDConstants.ACTION_MOVE,
                                                            this);
         DropTarget dropTarget = new DropTarget (this, this);
+        
 		this.setModel(new DefaultListModel());
 	}
 	

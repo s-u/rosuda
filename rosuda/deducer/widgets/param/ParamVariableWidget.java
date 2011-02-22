@@ -41,13 +41,13 @@ public class ParamVariableWidget extends ParamWidget{
 		this.removeAll();
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);
-		this.setPreferredSize(new java.awt.Dimension(241, 50));
-		this.setMaximumSize(new java.awt.Dimension(2000, 50));
 		variable = new SingleVariableWidget(selector);
-
+		this.setSize(241,75);
 		this.add(variable, new AnchorConstraint(0, 10, 1000, 16, 
 				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS, 
 				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS));
+		this.setPreferredSize(new java.awt.Dimension(241, 75));
+		this.setMaximumSize(new java.awt.Dimension(2000, 75));
 	}
 
 }

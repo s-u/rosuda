@@ -84,9 +84,10 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 			listScrollPane = new JScrollPane();
 			listPanel.add(listScrollPane, BorderLayout.CENTER);
 			varList = new DJList();
+			varList.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 			listScrollPane.setViewportView(varList);
 			varList.setModel(new DefaultListModel());
-			varList.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+			
 			
 			buttonPanel = new JPanel();
 			this.add(buttonPanel, new AnchorConstraint(275, 140, 768, 2, 

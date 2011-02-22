@@ -41,6 +41,7 @@ import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
 
 
 public class ContingencyDialog extends JDialog implements ActionListener {
@@ -191,9 +192,9 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				strataPanel = new JPanel();
 				BorderLayout strataPanelLayout = new BorderLayout();
 				strataPanel.setLayout(strataPanelLayout);
-				getContentPane().add(strataPanel, new AnchorConstraint(662, 776, 749, 469, AnchorConstraint.ANCHOR_REL,
+				getContentPane().add(strataPanel, new AnchorConstraint(650, 776, 749, 469, AnchorConstraint.ANCHOR_REL,
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				strataPanel.setPreferredSize(new java.awt.Dimension(226, 45));
+				strataPanel.setPreferredSize(new java.awt.Dimension(226, 50));
 				strataPanel.setBorder(BorderFactory.createTitledBorder("Stratify By"));
 				{
 					ListModel stratumListModel = new DefaultListModel();
@@ -215,6 +216,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					ListModel columnListModel = 
 						new DefaultListModel();
 					columnList = new DJList();
+					columnList.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 					columnPanel.add(columnList, BorderLayout.CENTER);
 					columnList.setModel(columnListModel);
 				}
@@ -231,6 +233,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					ListModel rowListModel = 
 						new DefaultListModel();
 					rowList = new DJList();
+					rowList.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 					rowPanel.add(rowList, BorderLayout.CENTER);
 					rowList.setModel(rowListModel);
 				}

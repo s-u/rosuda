@@ -5,12 +5,19 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.border.BevelBorder;
 
 import org.rosuda.JGR.util.ErrorMsg;
 
 public class SingletonDJList extends DJList{
 
+	public SingletonDJList(){
+		super();
+		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+	}
+	
 	public void drop(DropTargetDropEvent dtde) {
 		try{	
 			dtde.acceptDrop(DnDConstants.ACTION_MOVE);
