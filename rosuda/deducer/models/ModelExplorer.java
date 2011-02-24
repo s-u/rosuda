@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,7 +24,7 @@ import org.rosuda.deducer.toolkit.OkayCancelPanel;
 public class ModelExplorer extends JFrame {
 	protected JPanel topPanel;
 	protected JPanel bottomPanel;
-	protected JTextArea preview;
+	protected JEditorPane preview;
 	protected JPanel generalTab;
 	protected JButton plots;
 	protected JButton postHoc;
@@ -40,6 +41,8 @@ public class ModelExplorer extends JFrame {
 	protected JPanel previewPanel;
 	protected JPanel middlePanel;
 	protected ActionListener generalListener = new ModelListener();
+	
+	private static PreviewComponentFactory previewFactory;
 	
 	public ModelExplorer() {
 		super();
@@ -94,10 +97,11 @@ public class ModelExplorer extends JFrame {
 									previewScroller = new JScrollPane();
 									previewPanel.add(previewScroller, BorderLayout.CENTER);
 									{
-										preview = new JTextArea();
+										if(getPreviewFactory()==null)
+											setPreviewFactory(new PreviewComponentFactory());
+										preview = getPreviewFactory().makePreviewComponent();
 										previewScroller.setViewportView(preview);
-										preview.setFont(new java.awt.Font("Monospaced",0,12));
-										preview.setEditable(false);
+										
 									}
 								}
 							}
@@ -218,6 +222,14 @@ public class ModelExplorer extends JFrame {
 		this.dispose();
 	}
 	
+	public static void setPreviewFactory(PreviewComponentFactory previewFactory) {
+		ModelExplorer.previewFactory = previewFactory;
+	}
+
+	public static PreviewComponentFactory getPreviewFactory() {
+		return previewFactory;
+	}
+
 	class ModelListener implements ActionListener{
 
 		public void actionPerformed(ActionEvent arg0) {
