@@ -13,7 +13,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 
@@ -382,7 +384,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
 		gfx.setColor(getBackground());
 		gfx.fillRect(OFFSET + clipRect.x, clipRect.y, clipRect.width, clipRect.height);
-
+		((Graphics2D)gfx).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		// We don't use yToLine() here because that method doesn't
 		// return lines past the end of the document
 		int height = fm.getHeight();
