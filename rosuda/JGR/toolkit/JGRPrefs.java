@@ -6,6 +6,7 @@ package org.rosuda.JGR.toolkit;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -192,6 +193,7 @@ public class JGRPrefs {
 	 * Initialize settings from .JGRPrefsrc.
 	 */
 	public static void initialize() {
+		FontSize = JGRPrefs.isWindows ? 10 : 12;
 		readPrefs();
 		DefaultFont = new Font(FontName, FontStyle, FontSize);
 		StyleConstants.setFontSize(SIZE, FontSize);
@@ -277,6 +279,9 @@ public class JGRPrefs {
 		FontName = prefs.get("FontName", FontName);
 		defaultPackages = prefs.get("DefaultPackages", null);
 		FontSize = prefs.getInt("FontSize", FontSize);
+		int screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
+	    double fs = ((double)prefs.getInt("FontSize", FontSize)) * (screenRes / 72.0);
+	    FontSize = (int) Math.round(fs);
 		maxHelpTabs = prefs.getInt("MaxHelpTabs", maxHelpTabs);
 		useHelpAgent = prefs.getBoolean("UseHelpAgent", true);
 		useHelpAgentConsole = prefs.getBoolean("UseHelpAgentConsole",
@@ -360,7 +365,9 @@ public class JGRPrefs {
 		prefs.putBoolean("AskForSavingWorkspace",askForSavingWorkspace);
 		prefs.putInt("PrefsVersion", prefsVersion);
 		prefs.put("FontName", FontName); // String
-		prefs.putInt("FontSize", FontSize); // int
+		int screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
+	    double fs = ((double)FontSize) * ( 72.0 / screenRes);
+		prefs.putInt("FontSize",(int) Math.round(fs)); // int
 		prefs.putInt("MaxHelpTabs", maxHelpTabs);
 		prefs.putBoolean("UseHelpAgent", useHelpAgent);
 		prefs.putBoolean("UseHelpAgentConsole", useHelpAgentConsole);

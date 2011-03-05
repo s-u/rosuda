@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -65,9 +66,9 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private JComboBox sizeComboBox;
 	private JComboBox fontComboBox;
 
-	private final String[] sizes = { "2", "4", "6", "8", "9", "10", 
-									"11", "12", "14", "16", "18", "20",
-									"22", "24" };
+	private final String[] sizes = { "1","2","3", "4","5", "6","7", "8", "9", "10", 
+									"11", "12","13", "14","15", "16","17", "18","19", "20",
+									"21","22","23", "24" };
 	private JButton brackets;
 	private JLabel bracketLabel;
 	private JCheckBox autotab;
@@ -657,7 +658,9 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		setColor(errors, JGRPrefs.ERRORColor);
 		monospaced.setSelected(true);
 		fontComboBox.setSelectedItem(JGRPrefs.FontName);
-		sizeComboBox.setSelectedItem("" + JGRPrefs.FontSize);
+		int screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
+	    int fs = (int) Math.round(((double)JGRPrefs.FontSize) * ( 72.0 / screenRes));
+		sizeComboBox.setSelectedItem("" + fs);
 		style.setSelectedItem(" ");
 		tabwidth.setValue(new Integer(JGRPrefs.tabWidth));
 		lineNumbers.setSelected(JGRPrefs.LINE_NUMBERS);
@@ -702,7 +705,8 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		setColor(errors, Color.red);
 		monospaced.setSelected(true);
 		fontComboBox.setSelectedItem("Monospaced");
-		sizeComboBox.setSelectedItem("" + 12);
+		int defaultFontSize = JGRPrefs.isWindows ? 10 : 12;
+		sizeComboBox.setSelectedItem("" + defaultFontSize);
 		tabwidth.setValue(new Integer(4));
 		lineNumbers.setSelected(true);
 		highlight.setSelected(true);
@@ -722,7 +726,10 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		int tmp1 = JGRPrefs.tabWidth;
 		int tmp2 = JGRPrefs.maxHelpTabs;
 		try {
-			JGRPrefs.FontSize = Integer.parseInt((String) sizeComboBox.getSelectedItem());
+			int fonts = Integer.parseInt((String) sizeComboBox.getSelectedItem());
+			int screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
+		    double fs = ((double)fonts) * (  screenRes /72.0);
+			JGRPrefs.FontSize = (int) Math.round(fs);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Invalid Font Size");
 			return false;
