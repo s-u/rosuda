@@ -21,7 +21,7 @@ public class SaveData  {
 	public SaveData(String dataName) {
 		JFileChooser chooser = null;
 		FileFilter extFilter = null;
-		FileSelector fileDialog = new FileSelector(null, "Save Data", FileSelector.SAVE);
+		FileSelector fileDialog = new FileSelector(null, "Save Data", FileSelector.SAVE,null,true);
 		if (fileDialog.isSwing()) {
 			chooser = fileDialog.getJFileChooser();
 			for (int i = 0; i < extensionDescription.length; i++) {
