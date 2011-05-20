@@ -93,6 +93,10 @@ public class RFunctionListChooserWidget extends ParamWidget implements ActionLis
 		}
 
 	}
+	
+	public Param getModel(){
+		return model;
+	}
 
 	public void updateModel() {
 		Vector v = new Vector();

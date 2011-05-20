@@ -9,6 +9,8 @@ import org.rosuda.deducer.widgets.param.ParamColor;
 import org.rosuda.deducer.widgets.param.ParamLogical;
 import org.rosuda.deducer.widgets.param.ParamNumeric;
 import org.rosuda.deducer.widgets.param.ParamVector;
+import org.rosuda.deducer.widgets.param.RFunction;
+import org.rosuda.deducer.widgets.param.RFunctionList;
 
 public class ParamFactory {
 
@@ -41,10 +43,65 @@ public class ParamFactory {
 		}else if(name=="outlier.size"){
 			
 		}else if(name=="arrow"){
-			ParamLogical pl = new ParamLogical("arrow");
-			pl.setDefaultValue(new Boolean(false));	
-			pl.setValue(new Boolean(false));	
-			p=pl;
+			RFunctionList arrowList = new RFunctionList("arrow");
+			RFunction arrow = new RFunction("arrow");
+			arrow.setTitle("arrow");
+			
+			ParamNumeric rfpn = new ParamNumeric();
+			rfpn.setName("angle");
+			rfpn.setTitle("angle");
+			rfpn.setViewType(Param.VIEW_ENTER);
+			rfpn.setValue(new Double(30));
+			rfpn.setDefaultValue(new Double(30));
+			rfpn.setLowerBound(new Double(0));
+			arrow.add(rfpn);
+			
+			RFunctionList rfl = new RFunctionList("length");
+			RFunction rf = new RFunction();
+			rf.setName("unit");
+			rf.setTitle("unit");
+			Param rfp;
+			rfpn = new ParamNumeric();
+			rfpn.setName("x");
+			rfpn.setTitle("size");
+			rfpn.setViewType(Param.VIEW_ENTER);
+			rfpn.setValue(new Double(.1));
+			rfpn.setDefaultValue(new Double(0));
+			rfpn.setLowerBound(new Double(0));
+			rf.add(rfpn);		
+			rfp = new ParamCharacter("units");
+			rfp.setName("units");
+			rfp.setTitle("units");
+			rfp.setViewType(Param.VIEW_EDITABLE_COMBO);
+			rfp.setOptions(new String[] {"npc", "cm", "inches", "mm",
+					"points", "picas", "bigpts" ,"dida", "cicero", 
+					"scaledpts", "lines", "char", "native", "snpc", 
+					"strwidth" ,"strheight","grobwidth","grobheight"});
+			rfp.setDefaultValue("inches");
+			rfp.setValue("cm");
+			rf.add(rfp);	
+			rfl.addRFunction("unit", rf);
+			arrow.add(rfl);
+			
+			rfp = new ParamCharacter("ends");
+			rfp.setName("ends");
+			rfp.setTitle("ends");
+			rfp.setViewType(Param.VIEW_COMBO);
+			rfp.setOptions(new String[] {"last","first","both"});
+			rfp.setDefaultValue("last");
+			rfp.setValue("last");			
+			arrow.add(rfp);
+			
+			rfp = new ParamCharacter("type");
+			rfp.setName("type");
+			rfp.setTitle("type");
+			rfp.setViewType(Param.VIEW_COMBO);
+			rfp.setOptions(new String[] {"open","closed"});
+			rfp.setDefaultValue("open");
+			rfp.setValue("open");			
+			arrow.add(rfp);
+			arrowList.addRFunction("arrow", arrow);
+			p=arrowList;
 		}else if(name == "bins"){
 			ParamNumeric pn = new ParamNumeric("bins");
 			pn.setViewType(Param.VIEW_ENTER);

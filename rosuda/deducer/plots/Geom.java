@@ -1175,7 +1175,15 @@ public class Geom {
 		g.defaultStat = "identity";
 		g.defaultPosition = "identity";
 		
-		Aes aes = Aes.makeAes("colour");
+		Aes aes = Aes.makeAes("x");
+		aes.required=false;
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("y");
+		aes.required=false;
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("colour");
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
@@ -1209,10 +1217,12 @@ public class Geom {
 		
 		aes = Aes.makeAes("xend");
 		aes.required=true;
+		aes.defaultUseVariable = true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("yend");
 		aes.required=true;
+		aes.defaultUseVariable = true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("colour",Color.black,null);

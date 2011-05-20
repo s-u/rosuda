@@ -215,10 +215,6 @@ public class Aes {
 			a.dataType = DATA_NUMERIC;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type.equals("xend")){
-			a.dataType = DATA_NUMERIC;
-		}else if(type.equals("yend")){
-			a.dataType = DATA_NUMERIC;
 		}else if(type.equals("weight")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);
@@ -243,8 +239,10 @@ public class Aes {
 			a.preferCategorical=true;
 		}else if(type.equals("xend")){
 			a.dataType = DATA_ANY;
+			a.defaultUseVariable = true;
 		}else if(type.equals("yend")){
 			a.dataType = DATA_ANY;
+			a.defaultUseVariable = true;
 		}else if(type.equals("group")){
 			a.dataType = DATA_NONE;
 		}else

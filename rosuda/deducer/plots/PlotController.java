@@ -21,7 +21,7 @@ public class PlotController {
 			"line","series","bubble"};
 	protected static String[] geomNames = {"abline","area","bar","bin2d","blank","boxplot","contour","crossbar","density","density2d",
 			"errorbar","errorbarh","freqpoly","hex","histogram","hline","jitter","line","linerange",
-			"path","point","pointrange","polygon","quantile","rect","ribbon","smooth","step","text",
+			"path","point","pointrange","polygon","quantile","rect","ribbon","rug","segment","smooth","step","text",
 			"tile","vline"};
 	protected static String[] statNames = {"abline","bin","bin2d","binhex","boxplot","contour","density","density2d","function",
 			"hline","identity","qq","quantile","smooth","spoke","sum","summary","unique","vline"};
