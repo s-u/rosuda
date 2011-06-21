@@ -11,9 +11,9 @@ import org.w3c.dom.Node;
 
 public class RFunction extends Param{
 
-	private Vector params = new Vector();
+	protected Vector params = new Vector();
 
-	private String paramName = ""; 
+	protected String paramName = ""; 
 	
 	public static String VIEW_RFUNCTION = "org.rosuda.deducer.widgets.param.DefaultRFunctionView";
 	

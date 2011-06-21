@@ -38,7 +38,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 		init(dataName);
 	}
 	
-	private void init(String dataName){
+	protected void init(String dataName){
 		this.dataName = dataName;
 		comboBox = new JComboBox();
 		comboBox.addItem("Character");

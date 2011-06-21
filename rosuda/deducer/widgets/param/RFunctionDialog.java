@@ -19,12 +19,12 @@ import javax.swing.JPanel;
 
 
 public class RFunctionDialog extends javax.swing.JDialog implements ActionListener {
-	private JPanel panel;
-	private OkayCancelPanel okayCancel;
-	private HelpButton help;
-	private ParamWidget view;
-	private RFunction initialModel;
-	private RFunction model;
+	protected JPanel panel;
+	protected OkayCancelPanel okayCancel;
+	protected HelpButton help;
+	protected ParamWidget view;
+	protected RFunction initialModel;
+	protected RFunction model;
 	
 	private boolean isRun = true;
 	

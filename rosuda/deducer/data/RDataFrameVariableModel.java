@@ -41,7 +41,9 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	
 	public int getRowCount(){
 		try{
-			if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
+			REXP nExists = Deducer.eval("inherits(try(eval(parse(text=\""+Deducer.addSlashes(rDataName)+
+			"\")),silent=TRUE),'try-error')");
+			if(((REXPLogical)nExists).isTRUE()[0])
 				return 0;
 			if(rDataName!=null)
 				return Deducer.eval("ncol("+rDataName+")").asInteger()+numExtraColumns;
@@ -285,7 +287,9 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 		
 		public int getSize() { 
 			try {			
-				if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
+				REXP nExists = Deducer.eval("inherits(try(eval(parse(text=\""+Deducer.addSlashes(rDataName)+
+				"\")),silent=TRUE),'try-error')");
+				if(((REXPLogical)nExists).isTRUE()[0])
 					return 0;
 				return Deducer.eval("ncol("+rDataName+")").asInteger()+numExtraColumns;
 			} catch (REXPMismatchException e) {

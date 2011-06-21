@@ -6,8 +6,13 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,6 +24,8 @@ import javax.swing.JPanel;
 
 import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -42,13 +49,24 @@ public class DataViewerController {
 
 	private static boolean clearButton;
 	
+	private static Map datasets;
+	
+	private static HashSet dataTypes;
+	
+	private static Map typeShortNames;
+	
 	
 	public static void init(){
 		if(!started){
 			dataWindows = new ArrayList();
+			datasets = new LinkedHashMap();
+			dataTypes = new HashSet();
 			tabFactories = new LinkedHashMap();
-			addTabFactory("Data View", new DataViewFactory());
-			addTabFactory("Variable View", new VariableViewFactory());
+			typeShortNames = new LinkedHashMap();
+			
+			addDataType("data.frame","df");
+			addTabFactory("data.frame","Data View", new DataViewFactory());
+			addTabFactory("data.frame","Variable View", new VariableViewFactory());
 			
 			saveButton=true;
 			openButton=true;
@@ -95,6 +113,7 @@ public class DataViewerController {
 			panel.add(manButton, new GridBagConstraints(0, 3, 1,1,  0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 			started=true;
+			new Thread(new DataRefresher()).start();
 		}
 	}
 	
@@ -109,26 +128,32 @@ public class DataViewerController {
 	}
 	
 	
-	public static void addTabFactory(String name,DataViewerTabFactory t){
+	public static void addTabFactory(String dataClass, String name,DataViewerTabFactory t){
 		tabFactories.put(name, t);
+		if(!tabFactories.containsKey(dataClass))
+			tabFactories.put(dataClass, new LinkedHashMap());
+		Map map = (Map) tabFactories.get(dataClass);
+		map.put(name, t);
 		for(int i=0;i<dataWindows.size();i++){
 			DataViewer dv = (DataViewer)dataWindows.get(i);
-			String data = dv.getData();
+			DataObject data = dv.getData();
 			dv.reloadTabs(data);
 		}
 	}
 	
-	public static void removeTabFactory(String name){
-		tabFactories.remove(name);
+	public static void removeTabFactory(String dataClass, String name){
+		Map map = (Map) tabFactories.get(dataClass);
+		map.remove(name);
 		for(int i=0;i<dataWindows.size();i++){
 			DataViewer dv = (DataViewer)dataWindows.get(i);
-			String data = dv.getData();
+			DataObject data = dv.getData();
 			dv.reloadTabs(data);
 		}
 	}
 	
-	public static String[] getTabNames(){
-		Object[] o = tabFactories.keySet().toArray();
+	public static String[] getTabNames(String dataClass){
+		Map map = (Map) tabFactories.get(dataClass);
+		Object[] o = map.keySet().toArray();
 		String[] tn = new String[o.length];
 		for(int i=0; i<o.length;i++){
 			tn[i] = (String) o[i];
@@ -138,8 +163,9 @@ public class DataViewerController {
 	
 	
 	
-	public static DataViewerTab generateTab(String tabName,String dataName){
-		DataViewerTabFactory factory = (DataViewerTabFactory) tabFactories.get(tabName);
+	public static DataViewerTab generateTab(String dataClass, String tabName,String dataName){
+		Map map = (Map) tabFactories.get(dataClass);
+		DataViewerTabFactory factory = (DataViewerTabFactory) map.get(tabName);
 		if(factory==null){
 			new ErrorMsg("Unknown DataViewerTabFactory: " + tabName);
 			return null;
@@ -162,11 +188,70 @@ public class DataViewerController {
 	public static void setOpenDataVisible(boolean show){openButton = show;}
 	public static void setClearDataVisible(boolean show){clearButton = show;}
 	
+	public static void addDataType(String type,String shortName){
+		dataTypes.add(type);
+		typeShortNames.put(type, shortName);
+	}
+	
+	public static boolean removeDataType(String type,String shortName){
+		typeShortNames.remove(type);
+		return dataTypes.remove(type);
+	}
+	
+	public static synchronized void refreshData(){
+		Iterator it = dataTypes.iterator();
+		while(it.hasNext()){
+			String className = it.next().toString();
+			String shortName = (String) typeShortNames.get(className);
+			if(shortName==null)
+				shortName="";
+			REXP rexp = Deducer.idleEval("get.objects('" +className + "',includeInherited=FALSE)" );
+			if(rexp!=null && rexp.isString()){
+				String[] objs;
+				try {
+					objs = rexp.asStrings();
+					datasets.remove(className);
+					LinkedList lis = new LinkedList();
+					for(int i=0;i<objs.length;i++){
+						lis.add(new DataObject(objs[i],className,shortName));
+						
+					}
+					
+					datasets.put(className, lis);
+				} catch (REXPMismatchException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public static LinkedList getDataSets(){
+		Object[] types = datasets.keySet().toArray();
+		LinkedList l = new LinkedList();
+		for(int i=0;i<types.length;i++){
+			l.addAll((List)datasets.get((String)types[i]));
+		}
+		return l;
+	}
 	
 }
 
 
 
-
+ class DataRefresher implements Runnable {
+ 
+	public void run() {
+		boolean cont = true;
+		while(cont){
+			try {
+				Thread.sleep(5000);
+				DataViewerController.refreshData();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
+}
 
 

@@ -147,7 +147,7 @@ public class ParamRObject extends Param{
 	}
 	
 	public boolean hasValidEntry(){
-		return value!=null && value.length()>0 || defaultValue!=null;
+		return value!=null && value.length()>0 || !"".equals(defaultValue);
 	}
 
 	public void setRObjectClass(String rObjectClass) {

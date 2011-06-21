@@ -49,6 +49,7 @@ public class ParamVariable extends Param{
 		p.defaultVariable = this.defaultVariable;
 		p.view = this.view;
 		p.required = required;
+		p.format = format;
 		return p;
 	}
 	public Object getDefaultValue() {

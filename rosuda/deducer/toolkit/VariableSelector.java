@@ -3,7 +3,9 @@ package org.rosuda.deducer.toolkit;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
-
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,16 +30,12 @@ import javax.swing.JList;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
-import org.rosuda.JGR.robjects.*;
-import org.rosuda.JGR.util.*;
-import org.rosuda.REngine.REXP;
-import org.rosuda.REngine.REXPLogical;
-import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 
 
 public class VariableSelector extends JPanel implements ActionListener, KeyListener {
 	private JComboBox dataComboBox;
+	private VariableSource source;
 	private DefaultComboBoxModel dataComboBoxModel;
 	private DJList variableList;
 	private JTextField filter;
@@ -49,6 +47,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	private static String recentData ;
 	public VariableSelector() {
 		super();
+		setSource(new DefaultVariableSource());
 		initGUI();
 		try{
 			
@@ -57,15 +56,15 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			String dataName = (String)dataComboBox.getSelectedItem();
 			if(dataName!=null)
 				try {
-					variableList.setModel(new FilteringModel(Deducer.eval("names("+dataName+")").asStrings()));
+					variableList.setModel(new FilteringModel(getSource().getVariableNames(dataName)));
 				} catch (Exception e) {
 					new ErrorMsg(e);
 				}
 			else{
-				variableList.setModel( new DefaultListModel());
+				variableList.setModel( new FilteringModel());
 			}
 		}catch(Exception e1){
-			variableList.setModel( new DefaultListModel());
+			variableList.setModel( new FilteringModel());
 			dataComboBox.setModel(new DefaultComboBoxModel());
 			new ErrorMsg(e1);}
 
@@ -106,7 +105,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 
 			ListModel variableListModel = new FilteringModel(new String[] {"No Data."});
 			variableList = new VarDJList();
-			variableList.setModel(variableListModel);
+			variableList.setModel(new FilteringModel());
 			JScrollPane listScroller = new JScrollPane(variableList,
                     ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -123,12 +122,12 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	}
 	
 	public void refreshDataNames(){
-		Deducer.refreshData();
 		String dat = this.getSelectedData();
 		dataComboBox.removeActionListener(this);
 		dataComboBoxModel.removeAllElements();
-		for(int i=0;i<Deducer.getData().size();i++){
-			String dataName = ((RObject) Deducer.getData().elementAt(i)).getName();
+		String[] names = getSource().getDataObjects();
+		for(int i=0;i<names.length;i++){
+			String dataName = names[i];
 			boolean isValid = true;
 			if(!rDataFilter.equals("")){
 				REXP rIsValid = Deducer.eval(rDataFilter + "(" + dataName +")");
@@ -174,9 +173,8 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 					try {
 						if(this.getJComboBox().getSelectedItem() != null)
 							this.getJList().setModel(new FilteringModel(
-								Deducer.eval("names("+this.getJComboBox().getSelectedItem()
-										+")").asStrings()));
-					} catch (REXPMismatchException e) {
+									getSource().getVariableNames((String) this.getJComboBox().getSelectedItem())));
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				break;
@@ -254,8 +252,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		String dataName = (String)dataComboBox.getSelectedItem();
 		try {
 			if(dataName != null)
-				variableList.setModel(new FilteringModel(
-						Deducer.eval("names("+dataName+")").asStrings()));
+				variableList.setModel(new FilteringModel(getSource().getVariableNames(dataName)));
 			else
 				variableList.setModel(new FilteringModel(
 						new String[] {"No Data."}));
@@ -392,8 +389,8 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 				if (element.toString().toLowerCase().indexOf(search.toLowerCase(), 0) != -1) {
 					if(rFilter!=""){
 						org.rosuda.REngine.REXP tmp = new org.rosuda.REngine.REXP();
-						tmp = Deducer.eval(rFilter+"("+(String)dataComboBox.getSelectedItem()+
-								"$"+(String)element+")");
+						tmp = Deducer.eval(rFilter+"("+getSource().fix((String)dataComboBox.getSelectedItem(),
+								(String)element)+")");
 						
 						if(tmp.isLogical() &&((REXPLogical)tmp).isTRUE()[0]){
 							filteredList.add(element);
@@ -418,20 +415,18 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	public String getRDataFilter() {
 		return rDataFilter;
 	}
+	public void setSource(VariableSource source) {
+		this.source = source;
+		
+	}
+
+	public VariableSource getSource() {
+		return source;
+	}
 	private class VarDJList extends DJList{
 		public void drop(DropTargetDropEvent dtde) {
 			String dataName = (String)dataComboBox.getSelectedItem();
-			REXP rNames=null;
-			rNames = Deducer.eval("names("+dataName+")");
-			if(rNames==null){
-				dtde.rejectDrop();
-				return;
-			}
-			String[] names=null;
-			try {
-				names = rNames.asStrings();
-			} catch (REXPMismatchException e) {
-			}
+			String[] names = getSource().getVariableNames(dataName);
 			super.drop(dtde);
 			FilteringModel model =(FilteringModel) this.getModel();
 			int len = model.getUnfilteredSize();

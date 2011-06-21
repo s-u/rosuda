@@ -324,7 +324,9 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	 */
 	public boolean refresh(){
 		boolean changed = false;
-		REXP exist = Deducer.eval("exists('"+rDataName+"')");
+		REXP exist = Deducer.eval("!inherits(try(eval(parse(text=\""+Deducer.addSlashes(rDataName)+
+				"\")),silent=TRUE),'try-error')");
+			//Deducer.eval("exists('"+rDataName+"')");
 		if(exist!=null && ((REXPLogical)exist).isTRUE()[0]){
 			REXP ident =Deducer.eval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")"); 
 			if(ident!=null && ((REXPLogical)ident).isFALSE()[0]){
@@ -426,7 +428,8 @@ public class RDataFrameModel extends ExDefaultTableModel {
 				super.refresh();
 				return;
 			}
-			REXP exist = Deducer.eval("exists('"+rDataName+"')");
+			REXP exist = Deducer.eval("!inherits(try(eval(parse(text=\""+Deducer.addSlashes(rDataName)+
+				"\")),silent=TRUE),'try-error')");
 			if(exist==null || !((REXPLogical)exist).isTRUE()[0]){
 				rowNames = new String[]{};
 				super.refresh();
@@ -435,7 +438,8 @@ public class RDataFrameModel extends ExDefaultTableModel {
 			try {
 				rowNames = Deducer.eval("rownames("+rDataName+")").asStrings();
 			} catch (REXPMismatchException e) {
-				new ErrorMsg(e);
+				//new ErrorMsg(e);
+				rowNames = new String[]{};
 			}
 			int max = 0;
 			for(int i=0;i<rowNames.length;i++)

@@ -10,6 +10,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
@@ -32,7 +34,6 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
-import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
 import org.rosuda.deducer.Deducer;
@@ -51,7 +52,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 	private IconButton removeButton;
 	private JComboBox dataSelector;
 	private ArrayList tabs = new ArrayList();
-	private String dataName;
+	private DataObject dataObj;
 	
 	
 	
@@ -61,12 +62,12 @@ public class DataViewer extends TJFrame implements ActionListener{
 			DataViewerController.init();
 			initGUI();
 			DataViewerController.addViewerWindow(this);
-			RObject robj = (RObject)dataSelector.getSelectedItem();
+			DataObject robj = (DataObject)dataSelector.getSelectedItem();
 			String data = null;
 			if(robj != null)
 				data = robj.getName();
-			dataName = data;
-			reloadTabs(data);
+			dataObj=robj;
+			reloadTabs(dataObj);
 		}catch(Exception e){
 			reloadTabs(null);
 			e.printStackTrace();
@@ -78,7 +79,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 	private void initGUI() {
 		try {
 			this.setName("Data Viewer");
-			RController.refreshObjects();
+			DataViewerController.refreshData();
 			
 			BorderLayout thisLayout = new BorderLayout();
 			getContentPane().setLayout(thisLayout);
@@ -133,11 +134,11 @@ public class DataViewer extends TJFrame implements ActionListener{
 				}
 				{
 					DataFrameComboBoxModel dataSelectorModel = //new DataFrameComboBoxModel();
-						new DataFrameComboBoxModel(JGR.DATA);
+						new DataFrameComboBoxModel(DataViewerController.getDataSets());
 					BasicComboBoxRenderer dataSelectorRenderer = new BasicComboBoxRenderer(){
 						public Component getListCellRendererComponent(JList list, Object value, 
 								int index, boolean isSelected, boolean cellHasFocus){
-							return super.getListCellRendererComponent(list, value==null ? null : ((RObject)value).getName(), index, isSelected, cellHasFocus);
+							return super.getListCellRendererComponent(list, value==null ? null : ((DataObject)value).getName(), index, isSelected, cellHasFocus);
 						}
 					};
 					dataSelector = new JComboBox();
@@ -145,7 +146,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					dataSelector.setModel(dataSelectorModel);
-					dataSelector.setRenderer(dataSelectorRenderer);
+					//dataSelector.setRenderer(dataSelectorRenderer);
 					dataSelector.setPreferredSize(new java.awt.Dimension(149, 28));
 					dataSelector.addActionListener(this);
 				}
@@ -197,6 +198,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 			tabbedPane.addChangeListener(new ChangeListener(){
 				public void stateChanged(ChangeEvent changeEvent) {
 					Component comp = tabbedPane.getSelectedComponent();
+					//System.out.println(comp.getClass().toString());
 					if(comp instanceof org.rosuda.deducer.data.DataViewerTab){
 						DataViewerTab dvt = (DataViewerTab) comp;
 						setJMenuBar(dvt.generateMenuBar());
@@ -217,10 +219,10 @@ public class DataViewer extends TJFrame implements ActionListener{
 		}
 	}
 
-	public void reloadTabs(String data){
+	public void reloadTabs(DataObject data){
 		cleanUp();
 		if(data==null){
-			dataName=null;
+			dataObj=null;
 			JPanel p = DataViewerController.getDefaultPanel();
 			tabbedPane.removeAll();
 			tabs.clear();
@@ -228,12 +230,12 @@ public class DataViewer extends TJFrame implements ActionListener{
 			return;
 		}
 		try{
-			dataName=data;
-			String[] tabNames = DataViewerController.getTabNames();
+			dataObj = data;
+			String[] tabNames = DataViewerController.getTabNames(data.getType());
 			tabbedPane.removeAll();
 			tabs.clear();
 			for(int i=0; i<tabNames.length; i++){
-				DataViewerTab t = DataViewerController.generateTab(tabNames[i], data);
+				DataViewerTab t = DataViewerController.generateTab(data.getType(),tabNames[i], data.getName());
 				tabs.add(t);
 				tabbedPane.addTab(tabNames[i], t);
 			}
@@ -242,20 +244,24 @@ public class DataViewer extends TJFrame implements ActionListener{
 		}
 	}
 
-	public void setData(String data){
+	public void setData(DataObject data){
 		if(tabs.size()==0){
 			reloadTabs(data);
 			return;
 		}
-		dataName=data;
+		if(!data.getType().equals(dataObj.getType())){
+			reloadTabs(data);
+			return;
+		}
+		dataObj = data;
 		//System.out.println("Setting data: " +data);
 		for(int i=0; i < tabs.size(); i++){
 			DataViewerTab t = (DataViewerTab) tabs.get(i);
-			t.setData(data);
+			t.setData(data.getName());
 		}
 	}
 	
-	public String getData(){return dataName;}
+	public DataObject getData(){return dataObj;}
 
 	public void cleanUp(){
 		for(int i=0; i < tabs.size(); i++){
@@ -268,24 +274,24 @@ public class DataViewer extends TJFrame implements ActionListener{
 		try{
 			String cmd = e.getActionCommand();
 			if(cmd.equals("comboBoxChanged") ){
-				String data = ((RObject)dataSelector.getSelectedItem()).getName();
-				if(data == null || data == "")
+				DataObject data = ((DataObject)dataSelector.getSelectedItem());
+				if(data == null)
 					return;
-				if(!data.equals(dataName)){
+				if(!data.equals(dataObj)){
 					setData(data);
-					Deducer.setRecentData(dataName);
+					Deducer.setRecentData(data.getName());
 				}
 				
 			}else if(cmd=="Open Data"){
 				new LoadData();	
 			}else if(cmd=="Save Data"){
-				new SaveData(dataName);
+				new SaveData(dataObj.getName());
 			}else if(cmd=="Clear Data"){
 				if(dataSelector.getSelectedItem()==null){
 					JOptionPane.showMessageDialog(this, "Invalid selection: There is no data loaded.");
 					return;
 				}
-				String data = ((RObject)dataSelector.getSelectedItem()).getName();
+				String data = ((DataObject)dataSelector.getSelectedItem()).getName();
 				int confirm = JOptionPane.showConfirmDialog(null, "Remove Data Frame "+
 						data+" from enviornment?\n" +
 								"Unsaved changes will be lost.",
@@ -303,8 +309,8 @@ public class DataViewer extends TJFrame implements ActionListener{
 
 
 	public void refresh() {
-		((DataFrameComboBoxModel) dataSelector.getModel()).refresh(Deducer.getData());
-		if(((RObject)dataSelector.getSelectedItem()) == null && dataName!=null){
+		((DataFrameComboBoxModel) dataSelector.getModel()).refresh(DataViewerController.getDataSets());
+		if(((DataObject)dataSelector.getSelectedItem()) == null && dataObj!=null){
 			reloadTabs(null);
 			return;
 		}
@@ -345,7 +351,7 @@ class DataFrameComboBoxModel extends DefaultComboBoxModel{
 	}
 	
 	public String getNameAt(int index){
-		return ((RObject)items.elementAt(index)).getName();
+		return ((DataObject)items.elementAt(index)).getName();
 	}
 	
 	public void setSelectedItem(Object obj){
@@ -353,21 +359,23 @@ class DataFrameComboBoxModel extends DefaultComboBoxModel{
 	}
 	
 	
-	public DataFrameComboBoxModel(Vector v){
+	public DataFrameComboBoxModel(Collection v){
 		items = new Vector(v);
 	}
-	public void refresh(Vector v){
-		String dataName = null;
+	public void refresh(LinkedList v){
+		DataObject data = null;
 		int prevSize = items.size();
 		if(getSelectedItem()!=null)
-			dataName = ((RObject)getSelectedItem()).getName();	
+			data = ((DataObject)getSelectedItem());	
 		this.removeAllElements();			
 		items = new Vector(v);
 		selectedIndex=0;			
 		if(items.size()>0){
-			for(int i = 0;i<items.size();i++)
-				if(((RObject)items.elementAt(i)).getName().equals(dataName))
+			for(int i = 0;i<items.size();i++){
+				if(((DataObject)items.elementAt(i)).equals(data))
 					selectedIndex =i;
+				//System.out.println(items.elementAt(i).toString() + data + " " + i);
+			}
 			this.fireContentsChanged(this,0,prevSize);
 		}
 
