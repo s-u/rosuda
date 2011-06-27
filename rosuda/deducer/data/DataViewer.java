@@ -293,7 +293,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 				}
 				String data = ((DataObject)dataSelector.getSelectedItem()).getName();
 				int confirm = JOptionPane.showConfirmDialog(null, "Remove Data Frame "+
-						data+" from enviornment?\n" +
+						data+" from environment?\n" +
 								"Unsaved changes will be lost.",
 						"Clear Data Frame", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE);

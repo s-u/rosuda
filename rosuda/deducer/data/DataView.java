@@ -112,7 +112,7 @@ public class DataView extends DataViewerTab implements ActionListener {
 					return;
 				}
 				int confirm = JOptionPane.showConfirmDialog(null, "Remove Data Frame "+
-						dataName+" from enviornment?\n" +
+						dataName+" from environment?\n" +
 								"Unsaved changes will be lost.",
 						"Clear Data Frame", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE);
