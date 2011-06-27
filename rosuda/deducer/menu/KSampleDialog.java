@@ -435,7 +435,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 			}else if(pairwiseMethod == "t-test (equal variance)"){
 				for(int i=0;i<variables.size();i++)
 					cmd += "pairwise.t.test(" +subn + "$" + variables.get(i).toString() + "," + 
-										subn + "$" + factor + "pool.sd = TRUE" +
+										subn + "$" + factor + ", pool.sd = TRUE" +
 										", p.adjust.method = '" + model.pairwiseCorrection +"')\n";
 			}else if(pairwiseMethod == "wilcoxon"){
 				for(int i=0;i<variables.size();i++)
