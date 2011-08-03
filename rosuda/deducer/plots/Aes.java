@@ -177,7 +177,7 @@ public class Aes {
 			a.defaultValue = new Double(.5);
 			a.defaultUseVariable = false;
 		}else if(type.equals("vjust")){
-			a.name = "hjust";
+			a.name = "vjust";
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);
 			a.upperBound = new Double(1.0);
