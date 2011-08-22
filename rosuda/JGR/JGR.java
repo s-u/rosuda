@@ -254,8 +254,13 @@ public class JGR {
 		// redefine Java Output streams to be written to JGR console
 		System.setOut(MAINRCONSOLE.getStdOutPrintStream());
 		//System.setErr(MAINRCONSOLE.getStdErrPrintStream());
-		new Refresher().run();
 		
+		//kludge to fix infinite recursion crash on mac os x
+		//get rid of this when bug is fixed
+		if (System.getProperty("os.name").startsWith("Mac"))
+			try{JGR.eval("options(expressions=1000)");}catch(Exception e){}
+		
+		new Refresher().run();
 	}
 
 	public static REXP idleEval(String cmd) throws REngineException, REXPMismatchException {

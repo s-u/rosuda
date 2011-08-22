@@ -27,10 +27,10 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 	 */
 	private static final long serialVersionUID = -7945677424441713542L;
 	private static String extensions[][] = new String[][] { { "rda", "rdata" }, { "robj" }, { "csv" }, { "txt" }, { "sav" }, { "xpt" }, { "dbf" },
-			{ "dta" }, { "syd", "sys" }, { "arff" }, { "rec" }, { "mtp" }, { "s3" } };
+			{ "dta" }, { "syd", "sys" }, { "arff" }, { "rec" }, { "mtp" }, { "s3" }, { "xls", "xlsx" }  };
 	private static String extensionDescription[] = new String[] { "R (*.rda *.rdata)", "R dput() (*.robj)", "Comma seperated (*.csv)",
 			"Text file (*.txt)", "SPSS (*.sav)", "SAS export (*.xpt)", "DBase (*.dbf)", "Stata (*.dta)", "Systat (*.sys *.syd)", "ARFF (*.arff)",
-			"Epiinfo (*.rec)", "Minitab (*.mtp)", "S data dump (*.s3)" };
+			"Epiinfo (*.rec)", "Minitab (*.mtp)", "S data dump (*.s3)", "Excel (*.xls *.xlsx)" };
 	private JTextField rDataNameField;
 	private String rName;
 	private FileSelector fileDialog;
@@ -97,7 +97,11 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 					execute(var + " <- read.systat('" + (directory ).replace('\\', '/')+ fileName + "')", true);
 				else if (fileName.toLowerCase().endsWith(".dbf"))
 					execute(var + " <- read.dbf('" + (directory ).replace('\\', '/')+ fileName + "')", true);
-				else {
+				else if (fileName.toLowerCase().endsWith(".xls")||fileName.toLowerCase().endsWith(".xlsx")){
+					RController.loadPackage("XLConnect");
+					String sheet = JOptionPane.showInputDialog("Which worksheet should be loaded?", "1");
+					JGR.MAINRCONSOLE.executeLater("library(XLConnect)\n" + var + " <- readWorksheet(loadWorkbook('" + (directory ).replace('\\', '/')+ fileName + "'),sheet="+sheet+")", true);
+				}else {
 					int opt = JOptionPane.showConfirmDialog(this, "Unknown File Type.\nWould you like to try to open it as a text data file?");
 					if (opt == JOptionPane.OK_OPTION)
 						loadTxtFile(fileName, directory, var);
