@@ -19,10 +19,10 @@ import javax.swing.JTextArea;
 
 
 public class SubsetPanel extends JPanel implements ActionListener {
-	private JScrollPane subsetScroller;
-	private JTextArea subset;
-	private JComboBox subsetHistory;
-	private JComboBox dataComboBox;
+	protected JScrollPane subsetScroller;
+	protected JTextArea subset;
+	protected JComboBox subsetHistory;
+	protected JComboBox dataComboBox;
 
 	
 	public SubsetPanel(JComboBox dataSelect) {
@@ -73,6 +73,15 @@ public class SubsetPanel extends JPanel implements ActionListener {
 	
 	public void setText(String text){
 		subset.setText(text);
+	}
+	
+	public void refreshComboBox(){
+		String select = (String) dataComboBox.getSelectedItem();
+		if(select!=null){
+			DefaultComboBoxModel model = SubsetDialog.getRecent( select);
+			if(model!=null)
+				subsetHistory.setModel(model);
+		}
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
