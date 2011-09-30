@@ -315,8 +315,8 @@ class GDRaster extends GDObject {
 	atrans.rotate(-rot / 180 * Math.PI, 0, y);
 	atrans.scale(sx, sy);
 
-	System.out.println("GDRaster(["+img.length+": "+img_w+" x "+img_h+", ("+x+","+y+") - ("+w+","+h+"), "+rot+", "+interpolate);
-	System.out.println(" - at = "+atrans);
+	//System.out.println("GDRaster(["+img.length+": "+img_w+" x "+img_h+", ("+x+","+y+") - ("+w+","+h+"), "+rot+", "+interpolate);
+	//System.out.println(" - at = "+atrans);
 
 	DataBuffer dbuf = new DataBufferByte(img, img_w * img_h, 0);
 	int comp_off[]  = { 0, 1, 2, 3 };
@@ -325,7 +325,7 @@ class GDRaster extends GDObject {
 	ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB), // FIXME: does R use sRGB or linear RGB?
 						true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
 	image = new BufferedImage(cm, raster, false, null);
-	System.out.println(" - image = "+image);
+	//System.out.println(" - image = "+image);
     }
 
     public void paint(Component c, GDState gs, Graphics g) {
