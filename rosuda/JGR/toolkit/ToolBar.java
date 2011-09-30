@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 /**
@@ -82,7 +83,7 @@ public class ToolBar extends JPanel {
 	 */
 	public ToolBar(ActionListener al, boolean useStopButton, ProgressLabel progress) {
 		this.setLayout(new BorderLayout());
-
+		Dimension bSize = new Dimension(30,30);
 		JPanel b = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		undoMgr = new InsertRemoveUndoManager(al);
@@ -99,22 +100,77 @@ public class ToolBar extends JPanel {
 			stopButton = new IconButton("/icons/stop.png", "Stop", al, "stop");
 		helpButton = new IconButton("/icons/help.png", "Help", al, "help");
 
+		newButton.setMaximumSize(bSize);
+		openButton.setMaximumSize(bSize);
+		saveButton.setMaximumSize(bSize);
+		undoButton.setMaximumSize(bSize);
+		redoButton.setMaximumSize(bSize);
+		cutButton.setMaximumSize(bSize);
+		copyButton.setMaximumSize(bSize);
+		pasteButton.setMaximumSize(bSize);
+		findButton.setMaximumSize(bSize);
+		helpButton.setMaximumSize(bSize);
+		
+		newButton.setPreferredSize(bSize);
+		openButton.setPreferredSize(bSize);
+		saveButton.setPreferredSize(bSize);
+		undoButton.setPreferredSize(bSize);
+		redoButton.setPreferredSize(bSize);
+		cutButton.setPreferredSize(bSize);
+		copyButton.setPreferredSize(bSize);
+		pasteButton.setPreferredSize(bSize);
+		findButton.setPreferredSize(bSize);
+		helpButton.setPreferredSize(bSize);
+		
+		newButton.setMinimumSize(bSize);
+		openButton.setMinimumSize(bSize);
+		saveButton.setMinimumSize(bSize);
+		undoButton.setMinimumSize(bSize);
+		redoButton.setMinimumSize(bSize);
+		cutButton.setMinimumSize(bSize);
+		copyButton.setMinimumSize(bSize);
+		pasteButton.setMinimumSize(bSize);
+		findButton.setMinimumSize(bSize);
+		helpButton.setMinimumSize(bSize);
+		
+		if(System.getProperty("os.name").startsWith("Window")){
+			newButton.setContentAreaFilled(false);
+			openButton.setContentAreaFilled(false);
+			saveButton.setContentAreaFilled(false);
+			undoButton.setContentAreaFilled(false);
+			redoButton.setContentAreaFilled(false);
+			cutButton.setContentAreaFilled(false);
+			copyButton.setContentAreaFilled(false);
+			pasteButton.setContentAreaFilled(false);
+			findButton.setContentAreaFilled(false);
+			helpButton.setContentAreaFilled(false);
+		}
+		
+		
+		if(useStopButton){
+			stopButton.setMaximumSize(bSize);
+			stopButton.setPreferredSize(bSize);
+			stopButton.setMinimumSize(bSize);
+			if(System.getProperty("os.name").startsWith("Window"))
+				stopButton.setContentAreaFilled(false);
+		}
+	
+		b.add(new Spacer(10));
 		b.add(newButton);
 		b.add(openButton);
 		b.add(saveButton);
-		b.add(new Spacer(10));
+		b.add(new Spacer(20));
 		b.add(undoButton);
 		b.add(redoButton);
-		b.add(new Spacer(10));
+		b.add(new Spacer(20));
 		b.add(cutButton);
 		b.add(copyButton);
 		b.add(pasteButton);
-		b.add(new Spacer(10));
-		b.add(findButton);
-		b.add(new Spacer(10));
+		b.add(new Spacer(20));
 		if (useStopButton)
 			b.add(stopButton);
-		b.add(new Spacer(10));
+		b.add(new Spacer(20));
+		b.add(findButton);
 		b.add(helpButton);
 		this.add(b, BorderLayout.WEST);
 		if (progress != null) {
