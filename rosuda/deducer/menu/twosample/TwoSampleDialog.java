@@ -9,6 +9,7 @@ import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.KSamplePlots;
 import org.rosuda.deducer.menu.SubsetDialog;
 import org.rosuda.deducer.menu.SubsetPanel;
+import org.rosuda.deducer.toolkit.AssumptionIcon;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -161,7 +162,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 						kmTest.setBounds(17, 19, 132, 18);
 					}
 					{
-						lrgSample4 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+						lrgSample4 = new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						distributionPanel.add(lrgSample4);
 						lrgSample4.setBounds(38, 60, 27, 27);
 					}
@@ -204,7 +205,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 						jButton1.setBounds(35, 40, 27, 27);
 					}
 					{
-						exchAssump = new IconButton("/icons/eqvar_assump.png","Exchangablility",null,"Exchangablility");
+						exchAssump = new AssumptionIcon("/icons/eqvar_assump.png","Exchangablility",null,"Exchangablility");
 						aucPanel.add(exchAssump);
 						exchAssump.setBounds(62, 40, 27, 27);
 					}
@@ -220,7 +221,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 						bmTest.setBounds(17, 88, 151, 18);
 					}
 					{
-						lrgAssump3 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+						lrgAssump3 = new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						aucPanel.add(lrgAssump3);
 						lrgAssump3.setBounds(35, 109, 27, 27);
 					}
@@ -247,7 +248,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 						ttest.setBounds(17, 19, 85, 18);
 					}
 					{
-						lrgAssump = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+						lrgAssump = new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						meanPanel.add(lrgAssump);
 						lrgAssump.setBounds(34, 40, 27, 27);
 					}
@@ -257,7 +258,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 						ttestOptions.setBounds(140, 15, 27, 27);
 					}
 					{
-						exchAssump2 = new IconButton("/icons/eqvar_assump.png","Equal Variance",null,"Equal Variance");
+						exchAssump2 = new AssumptionIcon("/icons/eqvar_assump.png","Equal Variance",null,"Equal Variance");
 						meanPanel.add(exchAssump2);
 						exchAssump2.setBounds(108, 40, 27, 27);
 					}
@@ -273,7 +274,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 						boot.setBounds(17, 91, 111, 18);
 					}
 					{
-						lrgAssump2 = new IconButton("/icons/N_or_exch_assump.png","Large Sample or exchangable",null,"Large Sample or exchangable");
+						lrgAssump2 = new AssumptionIcon("/icons/N_or_exch_assump.png","Large Sample or exchangable",null,"Large Sample or exchangable");
 						meanPanel.add(lrgAssump2);
 						lrgAssump2.setBounds(34, 112, 47, 27);
 					}
@@ -283,17 +284,17 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 						bootOptions.setBounds(140, 89, 27, 27);
 					}
 					{
-						outlierAssum = new IconButton("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
+						outlierAssum = new AssumptionIcon("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
 						meanPanel.add(outlierAssum);
 						outlierAssum.setBounds(81, 40, 27, 27);
 					}
 					{
-						outlierAssump1 =  new IconButton("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
+						outlierAssump1 =  new AssumptionIcon("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
 						meanPanel.add(outlierAssump1);
 						outlierAssump1.setBounds(81, 112, 27, 27);
 					}
 					{
-						approxAssump =  new IconButton("/icons/mcapprox_assump.png","Monte Carlo Approximation",
+						approxAssump =  new AssumptionIcon("/icons/mcapprox_assump.png","Monte Carlo Approximation",
 								this,"Monte Carlo Approximation");
 						meanPanel.add(approxAssump);
 						approxAssump.setBounds(108, 112, 27, 27);

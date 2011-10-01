@@ -94,21 +94,25 @@ public class DataViewerController {
 				}
 			};
 			JButton newButton = new IconButton("/icons/newdata_128.png","New Data Frame",lis,"New Data");
+			newButton.setContentAreaFilled(false);
 			newButton.setPreferredSize(new java.awt.Dimension(128,128));
 			panel.add(newButton, new GridBagConstraints(0, 0, 1,1,  0.0, 0.0, 
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 			
 			IconButton openButton = new IconButton("/icons/opendata_128.png","Open Data Frame",lis,"Open Data");
+			openButton.setContentAreaFilled(false);
 			openButton.setPreferredSize(new java.awt.Dimension(128,128));
 			panel.add(openButton, new GridBagConstraints(0, 1, 1,1,  0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 			
 			IconButton vidButton = new IconButton("/icons/video_128.png","Online Tutorial Video",lis,"tutorial");
+			vidButton.setContentAreaFilled(false);
 			vidButton.setPreferredSize(new java.awt.Dimension(128,128));
 			panel.add(vidButton, new GridBagConstraints(0, 2, 1,1,  0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 			
 			IconButton manButton = new IconButton("/icons/info_128.png","Online Manual",lis,"wiki");
+			manButton.setContentAreaFilled(false);
 			manButton.setPreferredSize(new java.awt.Dimension(128,128));
 			panel.add(manButton, new GridBagConstraints(0, 3, 1,1,  0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));

@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.twosample.TwoSampleModel;
 import org.rosuda.deducer.toolkit.AddButton;
+import org.rosuda.deducer.toolkit.AssumptionIcon;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -125,12 +126,12 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 					kwTest.setBounds(17, 27, 157, 19);
 				}
 				{
-					largeAssump2 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+					largeAssump2 = new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 					medianPanel.add(largeAssump2);
 					largeAssump2.setBounds(36, 46, 27, 27);
 				}
 				{
-					exchAssump = new IconButton("/icons/eqvar_assump.png","Exchangablility",null,"Exchangablility");
+					exchAssump = new AssumptionIcon("/icons/eqvar_assump.png","Exchangablility",null,"Exchangablility");
 					medianPanel.add(exchAssump);
 					exchAssump.setBounds(63, 46, 27, 27);
 				}
@@ -141,7 +142,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 					median.setBounds(17, 85, 157, 19);
 				}
 				{
-					largeAssump3 =new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+					largeAssump3 =new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 					medianPanel.add(largeAssump3);
 					largeAssump3.setBounds(36, 105, 27, 27);
 				}
@@ -164,12 +165,12 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 					welch.setBounds(17, 27, 211, 19);
 				}
 				{
-					largeAssump = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+					largeAssump = new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 					meanPanel.add(largeAssump);
 					largeAssump.setBounds(34, 46, 27, 27);
 				}
 				{
-					outlierAssump = new IconButton("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
+					outlierAssump = new AssumptionIcon("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
 					meanPanel.add(outlierAssump);
 					outlierAssump.setBounds(61, 46, 27, 27);
 				}
@@ -180,17 +181,17 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 					anova.setBounds(17, 85, 211, 19);
 				}
 				{
-					nOrNormAssump = new IconButton("/icons/N_or_norm_assump.png","Large Sample or Normal",this,"Large Sample or Normal");
+					nOrNormAssump = new AssumptionIcon("/icons/N_or_norm_assump.png","Large Sample or Normal",this,"Large Sample or Normal");
 					meanPanel.add(nOrNormAssump);
 					nOrNormAssump.setBounds(34, 105, 47, 27);
 				}
 				{
-					outliersAssump2 = new IconButton("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
+					outliersAssump2 = new AssumptionIcon("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
 					meanPanel.add(outliersAssump2);
 					outliersAssump2.setBounds(81, 105, 27, 27);
 				}
 				{
-					eqVarAssump = new IconButton("/icons/eqvar_assump.png","Equal Variances",null,"Equal Variances");
+					eqVarAssump = new AssumptionIcon("/icons/eqvar_assump.png","Equal Variances",null,"Equal Variances");
 					meanPanel.add(eqVarAssump);
 					eqVarAssump.setBounds(106, 105, 27, 27);
 				}

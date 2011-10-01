@@ -27,6 +27,7 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.toolkit.AssumptionIcon;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -159,14 +160,14 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 						ttestOptions.setBounds(171, 17, 27, 27);
 					}
 					{
-						assumpNOrNorm = new IconButton("/icons/N_or_norm_assump.png",
+						assumpNOrNorm = new AssumptionIcon("/icons/N_or_norm_assump.png",
 								"Large Sample or Normality",this,
 								"Large Sample or Normality");
 						testPanel.add(assumpNOrNorm);
 						assumpNOrNorm.setBounds(40, 40, 47, 27);
 					}
 					{
-						assumpOutlier = new IconButton("/icons/outlier_assump.png",
+						assumpOutlier = new AssumptionIcon("/icons/outlier_assump.png",
 								"No Outliers",this,
 								"No Outliers");
 						testPanel.add(assumpOutlier);
@@ -185,7 +186,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 						swLabel.setBounds(40, 93, 116, 14);
 					}
 					{
-						assumpN = new IconButton("/icons/N_assump.png","Large Sample",
+						assumpN = new AssumptionIcon("/icons/N_assump.png","Large Sample",
 								this,"Large Sample");
 						testPanel.add(assumpN);
 						assumpN.setBounds(40, 107, 27, 27);

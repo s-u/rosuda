@@ -96,6 +96,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 				dataSelectorPanel.setMinimumSize(new java.awt.Dimension(100, 100));
 				{
 					saveButton = new IconButton("/icons/kfloppy.png","Save Data",this,"Save Data");
+					saveButton.setContentAreaFilled(false);
 					if(DataViewerController.showSaveDataButton())
 						dataSelectorPanel.add(saveButton, new AnchorConstraint(12, 60, 805, 62, 
 										AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
@@ -152,6 +153,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 				}
 				{
 					openButton = new IconButton("/icons/opendata_24.png","Open Data",this,"Open Data");
+					openButton.setContentAreaFilled(false);
 					if(DataViewerController.showOpenDataButton())
 						dataSelectorPanel.add(openButton, new AnchorConstraint(12, 60, 805, 12, 
 							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
@@ -161,6 +163,7 @@ public class DataViewer extends TJFrame implements ActionListener{
 				{
 					removeButton = new IconButton("/icons/trashcan_remove_32.png","Remove from Workspace",
 							this,"Clear Data");
+					removeButton.setContentAreaFilled(false);
 					if(DataViewerController.showClearDataButton())
 						dataSelectorPanel.add(removeButton, new AnchorConstraint(144, 12, 971, 863, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, 

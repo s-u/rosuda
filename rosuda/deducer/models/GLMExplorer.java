@@ -10,6 +10,7 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.AssumptionIcon;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 
@@ -60,18 +61,18 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	
 	protected void initAssumptions(){
 		{
-			assumpN =  new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+			assumpN =  new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 			topPanel.add(assumpN);
 			assumpN.setBounds(12, 8, 27, 27);
 		}
 		{
-			assumpFunc = new IconButton("/icons/func_assump.png","Correct Functional Form",
+			assumpFunc = new AssumptionIcon("/icons/func_assump.png","Correct Functional Form",
 					null,"Correct Functional Form");
 			topPanel.add(assumpFunc);
 			assumpFunc.setBounds(44, 8, 27, 27);
 		}
 		{
-			assumpHomo = new IconButton("/icons/outlier_assump.png","No Outliers",null,"No Outliers");
+			assumpHomo = new AssumptionIcon("/icons/outlier_assump.png","No Outliers",null,"No Outliers");
 			topPanel.add(assumpHomo);
 			assumpHomo.setBounds(76, 8, 27, 27);
 		}

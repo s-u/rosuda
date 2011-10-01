@@ -25,6 +25,7 @@ import javax.swing.ListModel;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.AddButton;
+import org.rosuda.deducer.toolkit.AssumptionIcon;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -120,12 +121,12 @@ public class CorDialog extends JDialog implements ActionListener{
 					pearson.setBounds(17, 32, 160, 19);
 				}
 				{
-					largeSampleAssump =  new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+					largeSampleAssump =  new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 					typePanel.add(largeSampleAssump);
 					largeSampleAssump.setBounds(34, 51, 27, 27);
 				}
 				{
-					outlierAssump = new IconButton("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
+					outlierAssump = new AssumptionIcon("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
 					typePanel.add(outlierAssump);
 					outlierAssump.setBounds(60, 51, 27, 27);
 				}
@@ -141,12 +142,12 @@ public class CorDialog extends JDialog implements ActionListener{
 					kendall.setBounds(17, 102, 160, 19);
 				}
 				{
-					largeSampleAssump1 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+					largeSampleAssump1 = new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 					typePanel.add(largeSampleAssump1);
 					largeSampleAssump1.setBounds(34, 121, 27, 27);
 				}
 				{
-					monoAssump1 = new IconButton("/icons/func_assump.png","Monotonic",null,"Monotonic");
+					monoAssump1 = new AssumptionIcon("/icons/func_assump.png","Monotonic",null,"Monotonic");
 					typePanel.add(monoAssump1);
 					monoAssump1.setBounds(65, 121, 27, 27);
 				}
@@ -162,17 +163,17 @@ public class CorDialog extends JDialog implements ActionListener{
 					spearman.setBounds(17, 171, 160, 19);
 				}
 				{
-					largeSampeAssump2 =  new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+					largeSampeAssump2 =  new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
 					typePanel.add(largeSampeAssump2);
 					largeSampeAssump2.setBounds(34, 190, 27, 27);
 				}
 				{
-					monoAssump = new IconButton("/icons/func_assump.png","Monotonic",null,"Monotonic");
+					monoAssump = new AssumptionIcon("/icons/func_assump.png","Monotonic",null,"Monotonic");
 					typePanel.add(monoAssump);
 					monoAssump.setBounds(65, 190, 27, 27);
 				}
 				{
-					linearAssump = new IconButton("/icons/func_assump.png","Linear Relationship",
+					linearAssump = new AssumptionIcon("/icons/func_assump.png","Linear Relationship",
 													null,"Linear Relationship");
 					typePanel.add(linearAssump);
 					linearAssump.setBounds(87, 51, 27, 27);

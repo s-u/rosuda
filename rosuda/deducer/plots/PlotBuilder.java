@@ -106,7 +106,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 	
 	
 	private static Vector elementPopupMenuItems;
-
+	private boolean firstPlot = true;
 	
 	public PlotBuilder() {
 		this(lastModel==null ? new PlotBuilderModel() : (PlotBuilderModel)lastModel.clone());
@@ -300,6 +300,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				rightPanel.setPreferredSize(new java.awt.Dimension(160, 389));
 				{
 					removeButton = new IconButton("/icons/stop_16.png","Remove component",this,"remove");
+					removeButton.setContentAreaFilled(false);
 					rightPanel.add(removeButton, new AnchorConstraint(872, 921, 925, 540, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
@@ -307,6 +308,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				}
 				{
 					disableButton = new IconButton("/icons/reload_16.png","Toggle active",this,"active");
+					disableButton.setContentAreaFilled(false);
 					rightPanel.add(disableButton, new AnchorConstraint(872, 578, 913, 240, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
@@ -314,6 +316,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				}
 				{
 					editButton = new IconButton("/icons/edit_16.png","Edit component",this,"edit");
+					editButton.setContentAreaFilled(false);
 					rightPanel.add(editButton, new AnchorConstraint(872, 190, 904, 100, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
@@ -462,7 +465,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		background.validate();
 		background.repaint();
 	}
-	
+
 	public void plot(String cmd){
 		if(cmd ==null || cmd == "")
 			return;
@@ -487,19 +490,29 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		pane.setLayer(lab, 100);
 		pane.validate();
 		pane.repaint();
+		final boolean tfirstPlot=true;
 		new Thread(new Runnable(){
 			public void run() {
 				try{
 					DeviceInterface.plot(command,device);
 				}catch(Exception e){e.printStackTrace();}
 				SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
+                    
+
+					public void run() {
                     	pane.remove(lab);
         				okayCancel.getApproveButton().setEnabled(true);
-        				device.repaint();
         				pane.validate();
                     }
                 });
+				try {
+					//kludge to prevent plot missalignment
+					if(tfirstPlot){
+						Thread.sleep(2000);
+						firstPlot=false;
+					}
+				} catch (InterruptedException e) {}
+				device.initRefresh();
 				
 			}
 			
