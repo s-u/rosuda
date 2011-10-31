@@ -45,13 +45,13 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 			tabs.addTab("Diagnostics", diagnosticTab);
 			
 			call="par(mar=c(5,4,2,2))\n"+
-				"try(cr.plots("+pre.modelName+",one.page=T,ask=F,identify.points=F,col=1),silent=TRUE)";
+				"try(crPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
 			termTab = new ModelPlotPanel(call);
 			if(((REXPLogical)Deducer.eval("length(grep(\":\",c(attr(terms("+pre.modelName+"),\"term.labels\"))))==0")).isTRUE()[0])
 				tabs.addTab("Terms", termTab);
 			
 			call="par(mar=c(5,4,2,2))\n"+
-			"try(av.plots("+pre.modelName+",one.page=T,ask=F,identify.points=F,col=1),silent=TRUE)";
+			"try(avPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
 			addedTab = new ModelPlotPanel(call);
 			tabs.addTab("Added Variable", addedTab);
 		}catch(Exception e){

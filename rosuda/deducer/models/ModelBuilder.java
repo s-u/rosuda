@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.HelpButton;
@@ -142,6 +143,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 							modelTerms.setModel(modelTermsModel);
 							modelTerms.addKeyListener(this);
 							modelTerms.addMouseListener(this);
+							modelTerms.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						}
 						{
 

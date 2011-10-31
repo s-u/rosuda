@@ -510,9 +510,10 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 					if(tfirstPlot){
 						Thread.sleep(2000);
 						firstPlot=false;
+						device.initRefresh();
 					}
 				} catch (InterruptedException e) {}
-				device.initRefresh();
+				
 				
 			}
 			
