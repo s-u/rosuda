@@ -61,7 +61,7 @@ public class Deducer {
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	static int menuIndex=3;
 	static String recentActiveData = "";
-	static final String Version= "0.4-5";
+	static final String Version= "0.5-0";
 	public static String guiEnv = "gui.working.env";
 	public static boolean insideJGR;
 	public static boolean started;
@@ -151,6 +151,8 @@ public class Deducer {
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "One Sample Test", "onesample", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Sample Test", "two sample", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "K-Sample Test", "ksample", cListener);
+				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, analysisMenu).addSeparator();
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Paired Test", "pairedtest", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Correlation", "corr", cListener);
 				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, analysisMenu).addSeparator();
 
@@ -397,6 +399,8 @@ public class Deducer {
 			inst.setLocationRelativeTo(null);
 			inst.setVisible(true);
 			WindowTracker.addWindow(inst);
+		}else if(cmd.equals("pairedtest")){
+			Deducer.eval(".getDialog('Paired Test')$run()");
 		}else if(cmd.equals("onesample")){
 			needsRLocked=true;
 			OneSampleDialog inst = new OneSampleDialog(JGR.MAINRCONSOLE);
