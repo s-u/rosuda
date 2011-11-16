@@ -108,6 +108,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 	private static String index;
 
 	private static String server;
+            
+    private static String searchString;
 
 	public JGRHelp() {
 		this(null);
@@ -196,7 +198,26 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 			} catch (REXPMismatchException e) {
 				new ErrorMsg(e);
 			}
-		}
+        }
+            
+        
+        try {
+            REXP version = JGR.eval("version$minor");
+            if (Double.parseDouble(version.asString()) >= 14.0) {
+                searchString = "pattern";
+            } else {
+                searchString = "name";
+            }
+        } catch (REngineException e) {
+            e.printStackTrace();
+            new ErrorMsg(e);
+            searchString = "name";
+        } catch (REXPMismatchException e) {
+            new ErrorMsg(e);
+            e.printStackTrace();
+            searchString = "name";
+        }
+        
 		index = server + "/doc/html/packages.html";
 
 		search.setActionCommand("searchHelp");
@@ -333,7 +354,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 	public void search(String keyword) {
 		if (keyword == null)
 			return;
-		String url = server + "/doc/html/Search?name=" + keyword.trim();
+		String url = server + "/doc/html/Search?"+searchString+"=" + keyword.trim();
 
 		if (exactMatch.isSelected())
 			url += "&exact=1";
