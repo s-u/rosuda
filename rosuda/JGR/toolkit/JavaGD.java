@@ -161,7 +161,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 					}else if(sfx.equals("eps")){
 						JGR.eval(".jgr.save.JavaGD.as(useDevice=postscript, " + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
-								+ "\",onefile=FALSE, paper=\"special\")");
+								+ "\",onefile=FALSE, paper=\"special\",horizontal=FALSE)");
 					}else if(sfx.equals("png")){
 						JGR.eval(".jgr.save.JavaGD.as(useDevice=png, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
