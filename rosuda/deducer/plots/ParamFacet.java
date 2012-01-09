@@ -95,21 +95,21 @@ public class ParamFacet extends Param{
 		if(facetType.equals("grid")){
 			if(yVarsGrid.length==0 && xVarsGrid.length==0)
 				return new String[]{};
-			String rhs = "";
+			String lhs = "";
 			if(yVarsGrid.length==0)
-				rhs = ".";
+				lhs = ".";
 			for(int i=0;i<yVarsGrid.length;i++){
 				if(i!=0)
-					rhs+= " + ";
-				rhs+= yVarsGrid[i];
+					lhs+= " + ";
+				lhs+= yVarsGrid[i];
 			}
-			String lhs = "";
+			String rhs = "";
 			if(xVarsGrid.length==0)
-				lhs = ".";
+				rhs = ".";
 			for(int i=0;i<xVarsGrid.length;i++){
 				if(i!=0)
-					lhs+= " + ";
-				lhs+= xVarsGrid[i];
+					rhs+= " + ";
+				rhs+= xVarsGrid[i];
 			}
 			v.add("facets = " + lhs + " ~ " + rhs);
 			if(margins.booleanValue())
