@@ -8,7 +8,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.rosuda.deducer.toolkit.XMLHelper;
 import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamCharacter;
 import org.rosuda.deducer.widgets.param.ParamLogical;
+import org.rosuda.deducer.widgets.param.ParamNumeric;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -522,6 +524,63 @@ public class Geom {
 		
 		return point;
 	}	
+	
+	public static Geom makeDotPlot(){
+		Geom g = new Geom();
+		
+		g.name = "dotplot";
+		
+		g.defaultStat = "bindot";
+		
+		g.defaultPosition = "identity";
+			
+		
+		Aes aes = Aes.makeAes("x");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("y","","..count..");
+		aes.preferCategorical = true;
+		g.aess.add(aes);
+		
+		
+		aes = Aes.makeAes("shape");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("colour",Color.black,null);
+		g.aess.add(aes);
+		
+		//aes = Aes.makeAes("size",new Double(2.0),null);
+		//g.aess.add(aes);
+		
+		aes = Aes.makeAes("fill");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("alpha");
+		aes.preferNumeric=true;
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("group");
+		g.aess.add(aes);
+		
+		ParamCharacter pc = new ParamCharacter("stackdir");
+		pc.setOptions(new String[]{"up","down","center","centerwhole"});
+		pc.setViewType(ParamCharacter.VIEW_COMBO);
+		pc.setDefaultValue("up");
+		pc.setValue("up");
+		g.params.add(pc);
+		
+		ParamNumeric pn = new ParamNumeric("stackratio");
+		pn.setDefaultValue(1);
+		pn.setValue(1);
+		g.params.add(pn);
+		
+		pn = new ParamNumeric("dotsize");
+		pn.setDefaultValue(1);
+		pn.setValue(1);
+		g.params.add(pn);
+		
+		return g;
+	}
 	
 	public static Geom makeErrorbar(){
 		Geom g = new Geom();
@@ -1083,6 +1142,52 @@ public class Geom {
 		return g;
 	}
 	
+	public static Geom makeRaster(){
+		Geom g = new Geom();
+		
+		g.name = "raster";
+		g.defaultStat = "identity";
+		g.defaultPosition = "identity";
+			
+		
+		Aes aes = Aes.makeAes("x");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("y");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("fill",new Color(51,51,51),null);
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("size",new Double(0.1),null);
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("linetype");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("alpha");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("group");
+		g.aess.add(aes);
+		
+		ParamNumeric p = new ParamNumeric("hjust");
+		p.setLowerBound(new Double(0));
+		p.setUpperBound(new Double(1));
+		p.setDefaultValue(.5);
+		p.setValue(.5);
+		g.params.add(p);
+		
+		p = new ParamNumeric("vjust");
+		p.setLowerBound(new Double(0));
+		p.setUpperBound(new Double(1));
+		p.setDefaultValue(.5);
+		p.setValue(.5);
+		g.params.add(p);
+		
+		return g;
+	}
+	
 	public static Geom makeRect(){
 		Geom g = new Geom();
 		
@@ -1404,6 +1509,41 @@ public class Geom {
 		return g;
 	}
 	
+	public static Geom makeViolin(){
+		Geom g = new Geom();
+		
+		g.name = "violin";
+		g.defaultStat = "ydensity";
+		g.defaultPosition = "dodge";
+			
+		
+		Aes aes = Aes.makeAes("x");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("y");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("colour",new Color(51,51,51),null);
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("fill",Color.white,null);
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("size",new Double(.5),null);
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("linetype");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("alpha");
+		g.aess.add(aes);
+		
+		aes = Aes.makeAes("group");
+		g.aess.add(aes);
+		
+		return g;
+	}
+	
 	public static Geom makeVline(){
 		Geom g = new Geom();
 		
@@ -1452,6 +1592,8 @@ public class Geom {
 			return Geom.makeDensity();
 		else if(geomName=="density2d")
 			return Geom.makeDensity2d();
+		else if(geomName=="dotplot")
+			return Geom.makeDotPlot();
 		else if(geomName=="errorbar")
 			return Geom.makeErrorbar();
 		else if(geomName=="errorbarh")
@@ -1478,6 +1620,8 @@ public class Geom {
 			return Geom.makePolygon();
 		else if(geomName=="quantile")
 			return Geom.makeQuantile();
+		else if(geomName=="raster")
+			return Geom.makeRaster();
 		else if(geomName=="rect")
 			return Geom.makeRect();
 		else if(geomName=="ribbon")
@@ -1494,6 +1638,8 @@ public class Geom {
 			return Geom.makeText();
 		else if(geomName=="tile")
 			return Geom.makeTile();
+		else if(geomName=="violin")
+			return Geom.makeViolin();
 		else if(geomName=="vline")
 			return Geom.makeVline();
 		

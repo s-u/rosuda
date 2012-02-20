@@ -24,6 +24,20 @@ public class XMLHelper {
 		return result;
 	}
 	
+	public static void debugPrintChildren(Node node){
+		NodeList nl = node.getChildNodes();
+		System.out.println("-------------------");
+		for(int i=0;i<nl.getLength();i++){
+				System.out.println(nl.item(i).toString());
+				if(nl.item(i) instanceof Element){
+					System.out.println(((Element)nl.item(i)).getAttribute("className"));
+					System.out.println(((Element)nl.item(i)).getTagName());
+				}
+				System.out.println("---");
+		}
+
+	}
+	
 	public static void appendCollection(Node node, Collection c,String tag){
 		appendCollection(node,c.toArray(),tag);
 	}

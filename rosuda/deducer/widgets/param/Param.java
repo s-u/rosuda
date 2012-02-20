@@ -285,8 +285,8 @@ public abstract class Param implements Cloneable{
 		return p;
 	}
 
-	public void setRequired(boolean required) {
-		this.required = required;
+	public void setRequired(boolean req) {
+		required = req;
 	}
 
 	public boolean isRequired() {

@@ -16,6 +16,7 @@ import java.net.URL;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.xml.parsers.DocumentBuilder;
@@ -139,6 +140,9 @@ public class PlottingElement implements Transferable{
 				icon = new ImageIcon(url);	
 			}
 			
+		}
+		if(model == null){
+			//JOptionPane.showMessageDialog(null, "invalid PlottingElement: " + name);
 		}
 	}
 	

@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -105,6 +107,29 @@ public class PlotBuilderModel {
 				}
 			}
 		}
+	}
+	
+	public String[] getAes(){
+		TreeSet aess = new TreeSet();
+		for(int i=0;i<listModel.size();i++){
+			PlottingElement e = (PlottingElement) listModel.get(i);
+			ElementModel em = e.getModel();
+			if(em instanceof Layer){
+				Vector laess = ((Layer)em).aess;
+				for(int k=0;k<laess.size();k++){
+					Aes laes = (Aes) laess.get(k);
+					if(laes.variable!=null && laes.variable.length()>0)
+						aess.add(laes.name);
+				}
+			}
+		}
+		Object[] a = aess.toArray();;
+		String[] tmp = new String[a.length];
+		for(int i = 0;i<a.length;i++){
+			tmp[i] = (String) a[i];
+			//System.out.println(tmp[i]);
+		}
+		return tmp;
 	}
 	
 	

@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.WindowConstants;
 import javax.swing.JFrame;
@@ -18,18 +19,22 @@ import javax.swing.JTextField;
 import org.rosuda.deducer.data.ExDefaultTableModel;
 import org.rosuda.deducer.data.ExScrollableTable;
 import org.rosuda.deducer.data.ExTable;
+import org.rosuda.deducer.widgets.param.RFunctionListChooserWidget;
 
 
 public class LegendPanel extends JPanel implements ActionListener {
 	private JLabel nameLabel;
 	private ExScrollableTable tableScroller;
 	private JPanel tablePanel;
-	private JCheckBox showCheckBox;
+//	private JCheckBox showCheckBox;
 	private JTextField nameField;
 	private ExTable table;
 	private ExDefaultTableModel tableModel;
 	private JButton addButton;
-
+	private RFunctionListChooserWidget breaksWidget;
+	private RFunctionListChooserWidget labelsWidget;
+	private RFunctionListChooserWidget guideWidget;
+	
 	private boolean numeric = true;
 	
 	public LegendPanel() {
@@ -41,15 +46,17 @@ public class LegendPanel extends JPanel implements ActionListener {
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
-			this.setPreferredSize(new java.awt.Dimension(255, 255));
+			//this.setBorder(BorderFactory.createLoweredBevelBorder());
+			this.setPreferredSize(new java.awt.Dimension(255, 250));
+			int endTable = 110;
 			{
 				tablePanel = new JPanel();
 				BorderLayout tablePanelLayout = new BorderLayout();
 				tablePanel.setLayout(tablePanelLayout);
-				this.add(tablePanel, new AnchorConstraint(40, 0, 32, 0, 
+				this.add(tablePanel, new AnchorConstraint(65, 10, 220, 10, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
-						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
-				tablePanel.setPreferredSize(new java.awt.Dimension(125, 104));
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
+				tablePanel.setPreferredSize(new java.awt.Dimension(125, 109));
 				{
 					tableModel = new LegendTableModel();
 					tableModel.addColumn("Value");
@@ -63,7 +70,7 @@ public class LegendPanel extends JPanel implements ActionListener {
 					tablePanel.add(tableScroller, BorderLayout.CENTER);
 				}
 			}
-			{
+/*			{
 				showCheckBox = new JCheckBox();
 				this.add(showCheckBox, new AnchorConstraint(822, 0, 968, 0, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
@@ -72,16 +79,16 @@ public class LegendPanel extends JPanel implements ActionListener {
 				showCheckBox.setSelected(true);
 				showCheckBox.setPreferredSize(new java.awt.Dimension(133, 19));
 			}
-			{
+*/			{
 				nameField = new JTextField();
-				this.add(nameField, new AnchorConstraint(15, 0, 200, 0, 
+				this.add(nameField, new AnchorConstraint(40, 10, 200, 10, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 				nameField.setPreferredSize(new java.awt.Dimension(125, 22));
 			}
 			{
 				nameLabel = new JLabel();
-				this.add(nameLabel, new AnchorConstraint(0, 922, 90, 0, 
+				this.add(nameLabel, new AnchorConstraint(25, 922, 90, 10, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 				nameLabel.setText("Title");
@@ -89,11 +96,31 @@ public class LegendPanel extends JPanel implements ActionListener {
 			}
 			{
 				addButton = new JButton("+");
-				this.add(addButton, new AnchorConstraint(35, 0, 9, 0, 
-						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, 
-						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE));		
+				this.add(addButton, new AnchorConstraint(175, 10, 9, 10, 
+						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));		
 				addButton.setPreferredSize(new java.awt.Dimension(40, 22));
 				addButton.addActionListener(this);
+			}
+			if(numeric){
+				{
+					breaksWidget = new RFunctionListChooserWidget();
+					this.add(breaksWidget, new AnchorConstraint(210, 10, 9, 10, 
+							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
+							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
+				}
+				{
+					labelsWidget = new RFunctionListChooserWidget();
+					this.add(labelsWidget, new AnchorConstraint(240, 10, 9, 10, 
+							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
+							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
+				}
+			}
+			{
+				guideWidget = new RFunctionListChooserWidget();
+				this.add(guideWidget, new AnchorConstraint(270, 10, 9, 10, 
+						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -105,7 +132,26 @@ public class LegendPanel extends JPanel implements ActionListener {
 	}
 	
 	public void setNumeric(boolean num){
+		if(num && !numeric){
+			this.add(breaksWidget, new AnchorConstraint(210, 10, 9, 10, 
+					AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
+					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
+			this.add(labelsWidget, new AnchorConstraint(240, 10, 9, 10, 
+					AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
+					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));			
+			this.repaint();
+		}
+		if(!num && numeric){
+			this.remove(breaksWidget);
+			this.remove(labelsWidget);
+			this.repaint();
+		}
 		numeric = num;
+		
+	}
+	
+	public void showGuide(boolean show){
+		guideWidget.setVisible(show);
 	}
 	
 	public String getName(){
@@ -116,6 +162,18 @@ public class LegendPanel extends JPanel implements ActionListener {
 		nameField.setText(n);
 	}
 	
+	public RFunctionListChooserWidget getBreaksWidget(){
+		return breaksWidget;
+	}
+	public RFunctionListChooserWidget getLabelsWidget(){
+		return labelsWidget;
+	}
+	
+	public RFunctionListChooserWidget getGuideWidget(){
+		return guideWidget;
+	}
+	
+	
 	public ExDefaultTableModel getTableModel(){
 		return tableModel;
 	}
@@ -125,7 +183,7 @@ public class LegendPanel extends JPanel implements ActionListener {
 		table.setModel(tm);
 		tableScroller.getRowNamesModel().initHeaders(tableModel.getRowCount());
 	}
-	
+/*	
 	public boolean getShowLegend(){
 		return showCheckBox.isSelected();
 	}
@@ -133,7 +191,7 @@ public class LegendPanel extends JPanel implements ActionListener {
 	public void setShowLegend(boolean b){
 		showCheckBox.setSelected(b);
 	}
-	
+*/	
 
 	class LegendTableModel extends ExDefaultTableModel{
 	

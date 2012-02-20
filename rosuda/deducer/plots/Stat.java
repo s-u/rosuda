@@ -8,6 +8,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.rosuda.deducer.toolkit.XMLHelper;
 import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamCharacter;
+import org.rosuda.deducer.widgets.param.ParamLogical;
 import org.rosuda.deducer.widgets.param.ParamNumeric;
 import org.rosuda.deducer.widgets.param.RFunctionList;
 import org.rosuda.deducer.widgets.param.ParamVector;
@@ -160,6 +162,79 @@ public class Stat {
 		
 		return s;
 	}	
+	
+	public static Stat makeBinDot(){
+		Stat s = new Stat();
+		s.name = "bindot";
+		s.defaultGeom = "dotplot";
+		
+		Aes aes;
+		
+		aes = Aes.makeAes("x");
+		aes.required = true;
+		s.aess.add(aes);
+		
+		aes = Aes.makeAes("y");
+		aes.defaultVariable = "..count..";
+		aes.variable = "..count..";
+		s.aess.add(aes);
+		
+		Param p ;
+		ParamNumeric pn;
+		
+		ParamCharacter pc = new ParamCharacter("method");
+		pc.setOptions(new String[]{"dotdensity","histodot"});
+		pc.setViewType(ParamCharacter.VIEW_COMBO);
+		pc.setDefaultValue("dotdensity");
+		pc.setValue("dotdensity");
+		s.params.add(pc);
+		
+		pc = new ParamCharacter("binpositions");
+		pc.setOptions(new String[]{"bygroup","all"});
+		pc.setViewType(ParamCharacter.VIEW_COMBO);
+		pc.setDefaultValue("bygroup");
+		pc.setValue("bygroup");
+		s.params.add(pc);
+		
+		pc = new ParamCharacter("binaxis");
+		pc.setOptions(new String[]{"x","y"});
+		pc.setViewType(ParamCharacter.VIEW_COMBO);
+		pc.setDefaultValue("x");
+		pc.setValue("x");
+		s.params.add(pc);
+		
+		
+		p= ParamFactory.makeParam("binwidth");
+		s.params.add(p);
+		
+		p= ParamFactory.makeParam("origin");
+		s.params.add(p);
+		
+		p= ParamFactory.makeParam("breaks");
+		s.params.add(p);
+		
+		pn= (ParamNumeric) ParamFactory.makeParam("width");
+		pn.setDefaultValue(.9);
+		pn.setValue(.9);
+		s.params.add(pn);
+		
+		p= ParamFactory.makeParam("drop");
+		p.setDefaultValue(new Boolean(false));
+		p.setValue(new Boolean(false));
+		s.params.add(p);
+		
+		ParamLogical pl = new ParamLogical("right");
+		pl.setDefaultValue(true);
+		pl.setValue(true);
+		s.params.add(pl);
+		
+		p= ParamFactory.makeParam("na.rm");
+		s.params.add(p);
+		
+		s.generated.add("count");
+		
+		return s;
+	}
 	
 	public static Stat makeBoxplot(){
 		Stat s = new Stat();
@@ -612,6 +687,56 @@ public class Stat {
 		return s;
 	}
 	
+	public static Stat makeYDensity(){
+		Stat s = new Stat();
+		s.name = "ydensity";
+		s.defaultGeom = "violin";
+		
+		Aes aes;
+		
+		aes = Aes.makeAes("x");
+		aes.required = true;
+		s.aess.add(aes);
+		
+		aes = Aes.makeAes("y");
+		aes.required = true;
+		//aes.defaultVariable = "..density..";
+		//aes.variable = "..density..";
+		s.aess.add(aes);
+		
+		
+		aes = Aes.makeAes("group");
+		s.aess.add(aes);
+
+		Param p;
+		
+		ParamCharacter pc = new ParamCharacter("scale");
+		pc.setOptions(new String[]{"equal","count"});
+		pc.setViewType(ParamCharacter.VIEW_COMBO);
+		pc.setDefaultValue("equal");
+		pc.setValue("equal");
+		s.params.add(pc);
+		
+		p= ParamFactory.makeParam("adjust");
+		s.params.add(p);
+		
+		
+		p= ParamFactory.makeParam("kernel");
+		s.params.add(p);
+		
+		p= ParamFactory.makeParam("trim");
+		s.params.add(p);
+		
+		p= ParamFactory.makeParam("na.rm");
+		s.params.add(p);
+		
+		s.generated.add("density");
+		s.generated.add("count");
+		s.generated.add("scaled");
+		
+		return s;
+	}	
+	
 	public static Stat makeVline(){
 		Stat s = new Stat();
 		s.name = "vline";
@@ -637,6 +762,8 @@ public class Stat {
 			return Stat.makeBin();
 		else if(statName=="bin2d")
 			return Stat.makeBin2d();
+		else if(statName=="bindot")
+			return Stat.makeBinDot();
 		else if(statName=="binhex")
 			return Stat.makeBinhex();		
 		else if(statName=="boxplot")
@@ -665,6 +792,8 @@ public class Stat {
 			return Stat.makeSummary();
 		else if(statName=="unique")
 			return Stat.makeUnique();
+		else if(statName=="ydensity")
+			return Stat.makeYDensity();
 		else if(statName=="vline")
 			return Stat.makeVline();
 		return null;

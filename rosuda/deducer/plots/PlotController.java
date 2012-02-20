@@ -17,23 +17,27 @@ public class PlotController {
 	protected static Map coords;
 	protected static Map pos;
 	protected static Map menuElements;
-	protected static String[] templateNames = new String[]{"pie","histogram","bar","boxplot","scatter",
-			"line","series","bubble"};
+	protected static String[] templateNames = new String[]{};//"pie","histogram","bar","boxplot","scatter",
+			//"line","series","bubble"};
 	protected static String[] geomNames = {"abline","area","bar","bin2d","blank","boxplot","contour","crossbar","density","density2d",
-			"errorbar","errorbarh","freqpoly","hex","histogram","hline","jitter","line","linerange",
-			"path","point","pointrange","polygon","quantile","rect","ribbon","rug","segment","smooth","step","text",
-			"tile","vline"};
-	protected static String[] statNames = {"abline","bin","bin2d","binhex","boxplot","contour","density","density2d","function",
-			"hline","identity","qq","quantile","smooth","spoke","sum","summary","unique","vline"};
-	protected static String[] scaleNames = {"area","colour_brewer","fill_brewer","x_continuous","y_continuous","x_date","y_date",
-		"x_datetime","y_datetime","x_discrete","y_discrete","z_discrete","colour_gradient","fill_gradient","colour_gradient2",
-		"fill_gradient2","colour_gradientn","fill_gradientn","colour_grey","fill_grey", "colour_hue","fill_hue",
-		"colour_identity","fill_identity","linetype_identity","shape_identity","size_identity","linetype","colour_manual",
-		"fill_manual","linetype_manual","shape_manual","size_manual","shape","size","alpha"};
+			"dotplot","errorbar","errorbarh","freqpoly","hex","histogram","hline","jitter","line","linerange",
+			"path","point","pointrange","polygon","quantile","raster", "rect","ribbon","rug","segment","smooth","step","text",
+			"tile","violin","vline"};
+	protected static String[] statNames = {"abline","bin","bin2d","bindot","binhex","boxplot","contour","density","density2d","function",
+			"hline","identity","qq","quantile","smooth","spoke","sum","summary","unique","ydensity","vline"};
+	protected static String[] scaleNames = {"area","size","size_manual","size_identity",
+		"colour_gradient", "colour_hue","colour_brewer","colour_gradient2","colour_gradientn","colour_grey","colour_manual","colour_identity",
+		"fill_gradient","fill_hue","fill_brewer","fill_gradient2","fill_gradientn","fill_grey","fill_manual","fill_identity",
+		"x_continuous","x_discrete","x_date","x_datetime",
+		"y_continuous","y_discrete","y_date","y_datetime",
+		"z_continuous","z_discrete","z_date","z_datetime",
+		"linetype","linetype_identity","linetype_manual",
+		"shape","shape_identity","shape_manual",
+		"alpha"};
 	protected static String[] facetNames = {"grid","wrap"};
 	protected static String[] coordNames = {"cartesian","equal","flip","map","polar","trans"};
 	protected static String[] posNames = {"dodge","identity","jitter","stack"};
-	protected static String[] themeNames = { "grey","bw","opts"};	
+	protected static String[] themeNames = { "grey","bw","opts","xlab","ylab"};	
 	
 	
 	public static void init(){

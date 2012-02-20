@@ -3,6 +3,7 @@ package org.rosuda.deducer.plots;
 import java.awt.Dimension;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -34,16 +35,30 @@ public class ParamScaleWidget extends ParamWidget{
 			Boolean show = (Boolean) v.get(1);
 			ExDefaultTableModel tm = (ExDefaultTableModel) v.get(2);
 			legendPanel.setName(text);
-			legendPanel.setShowLegend(show.booleanValue());
-			legendPanel.setNumeric(((ParamScaleLegend)p).isNumeric());
+//			legendPanel.setShowLegend(show.booleanValue());
+			
 			legendPanel.setTableModel(tm);
 		}
+		legendPanel.setNumeric(((ParamScaleLegend)p).isNumeric());
+		legendPanel.getBreaksWidget().setModel(
+				((ParamScaleLegend)model).getBreaksModel());
+		legendPanel.getLabelsWidget().setModel(
+				((ParamScaleLegend)model).getLabelsModel());
+		legendPanel.getGuideWidget().setModel(
+				((ParamScaleLegend)model).getGuideModel());
+		String aes = ((ParamScaleLegend)model).getAes();
+		legendPanel.showGuide(aes!="y" && aes!="x");
+		if(aes=="y" || aes=="x"){
+			legendPanel.setBorder(BorderFactory.createTitledBorder(aes+"-axis"));
+			legendPanel.showGuide(false);
+		}else
+			legendPanel.setBorder(BorderFactory.createTitledBorder("Legend"));
 	}
 	
 	public void updateModel(){
 		Vector newValue = new Vector();
 		newValue.add(legendPanel.getName());
-		newValue.add(new Boolean(legendPanel.getShowLegend()));
+		newValue.add(new Boolean(true));
 		ExDefaultTableModel tm = legendPanel.getTableModel();
 		if(((ParamScaleLegend)model).isNumeric())
 			for(int j=0;j<tm.getRowCount();j++){
@@ -57,6 +72,9 @@ public class ParamScaleWidget extends ParamWidget{
 		legendPanel.setTableModel(tm);
 		newValue.add(tm);
 		model.setValue(newValue);
+		legendPanel.getBreaksWidget().updateModel();
+		legendPanel.getLabelsWidget().updateModel();
+		legendPanel.getGuideWidget().updateModel();
 	}
 	
 	public Param getModel(){
@@ -70,7 +88,7 @@ public class ParamScaleWidget extends ParamWidget{
 			this.setLayout(thisLayout);
 			this.setPreferredSize(new java.awt.Dimension(291, 166));
 			int labelWidth = leftPos-22; 
-			{
+			/*{
 				label = new JLabel();
 				this.add(label, new AnchorConstraint(202, 234, 689, 12, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
@@ -82,20 +100,20 @@ public class ParamScaleWidget extends ParamWidget{
 							model.getTitle());
 				}
 
-			}	
+			}	*/
 			{
 				int textPos = Math.max(labelWidth+22, leftPos);
 				legendPanel = new LegendPanel();
-				this.add(legendPanel, new AnchorConstraint(3, 750, 1003, textPos, 
-						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
-						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS));
+				this.add(legendPanel, new AnchorConstraint(15, 820, 1003, 180, 
+						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				legendPanel.setPreferredSize(new java.awt.Dimension(255, 255));
-				legendPanel.setMaximumSize(new java.awt.Dimension(255, 1000));
+				legendPanel.setMaximumSize(new java.awt.Dimension(255, 700));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		this.setPreferredSize(new Dimension(300,255));
-		this.setMaximumSize(new Dimension(500,400));
+		this.setPreferredSize(new Dimension(300,325));
+		this.setMaximumSize(new Dimension(500,325));
 	}
 }

@@ -16,7 +16,7 @@ public class RFunctionList extends Param{
 	
 	protected Vector active = new Vector();
 	protected Vector defaultActive = new Vector();
-	protected String[] required = new String[]{};
+	protected String[] requiredFuncs = new String[]{};
 	protected String[] assignTo = new String[]{};
 	protected String[] print = new String[]{};
 	protected String[] keep = new String[]{};
@@ -70,13 +70,15 @@ public class RFunctionList extends Param{
 			vNew.add(getDefaultActiveFunctions().get(i));
 		p.setDefaultActiveFunctions(vNew);
 		
-		p.required = new String[]{};
-		if(this.required!=null){
-			String[] v = new String[this.required.length];
-			for(int i=0;i<this.required.length;i++)
-				v[i] = this.required[i];
-			p.required = v;
+		p.requiredFuncs = new String[]{};
+		if(this.requiredFuncs!=null){
+			String[] v = new String[this.requiredFuncs.length];
+			for(int i=0;i<this.requiredFuncs.length;i++)
+				v[i] = this.requiredFuncs[i];
+			p.requiredFuncs = v;
 		}
+		
+		p.required = this.required;
 		
 		p.print = new String[]{};
 		if(this.print!=null){
@@ -262,12 +264,12 @@ public class RFunctionList extends Param{
 			setOptions(opts);
 			getFunctionMap().put(name, rf);
 			
-			l = required.length;
+			l = requiredFuncs.length;
 			String[] req = new String[l+1];
 			for(int i=0;i<l;i++)
-				req[i] = required[i];                      
+				req[i] = requiredFuncs[i];                      
 			req[l] = requireFunction ? "true" : "false";
-			required = req;
+			requiredFuncs = req;
 			
 			l = print.length;
 			req = new String[l+1];
@@ -305,7 +307,7 @@ public class RFunctionList extends Param{
 	
 	boolean isFunctionRequired(String name){
 		for(int i=0;i<options.length;i++){
-			if(options[i].equals(name) && required[i].equals("true"))
+			if(options[i].equals(name) && requiredFuncs[i].equals("true"))
 				return true;
 		}
 		return false;
@@ -320,7 +322,7 @@ public class RFunctionList extends Param{
 		Document doc = e.getOwnerDocument();
 		XMLHelper.appendCollection(e, active, "active");
 		XMLHelper.appendCollection(e, active, "defaultActive");
-		XMLHelper.appendCollection(e, required, "required");
+		XMLHelper.appendCollection(e, requiredFuncs, "requiredFuncs");
 		XMLHelper.appendCollection(e, print, "print");
 		XMLHelper.appendCollection(e, keep, "keep");
 		XMLHelper.appendCollection(e, assignTo, "assignTo");
@@ -387,7 +389,7 @@ public class RFunctionList extends Param{
 		for(int i=0;i<tmp.length;i++)
 			defaultActive.add(tmp[i]);
 		
-		required = XMLHelper.getChildCollection(node, "required");
+		requiredFuncs = XMLHelper.getChildCollection(node, "requiredFuncs");
 		print = XMLHelper.getChildCollection(node, "print");
 		keep = XMLHelper.getChildCollection(node, "keep");
 		assignTo = XMLHelper.getChildCollection(node, "assignTo");

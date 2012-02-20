@@ -262,7 +262,10 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 								JList list = new JList();
 								list.addMouseListener(ml);
 								list.setCellRenderer(new ElementListRenderer());
-								list.setVisibleRowCount(mod.getSize()/7);
+								if(name=="Scales")
+									list.setVisibleRowCount(2);
+								else
+									list.setVisibleRowCount(mod.getSize()/9);
 								list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 								list.setModel(mod);
 								list.setDragEnabled(true);
@@ -423,9 +426,37 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 	public void setModel(PlotBuilderModel m){
 		model = m;
 		elementsList.setModel(m.getListModel());
+		updateScaleList();
 	}
 	
 	public PlotBuilderModel getModel(){return model;}
+	
+	public void updateScaleList(){
+		/*int i=0;
+		boolean found = false;
+		for(;i<addElementTabNames.size();i++){
+			String name = addElementTabNames.get(i).toString();
+			if(name.equals("Scales")){				
+				found = true;
+				break;
+			}
+		}*/
+		Object[] items = 
+			PlotController.getScales().values().toArray();
+		DefaultListModel mod =(DefaultListModel) addElementListModels.get("Scales");	
+		mod.removeAllElements();
+		String[] aess = model.getAes();
+		for(int i=0;i<aess.length;i++){
+			String aes = aess[i];
+			for(int j=0;j<items.length;j++){
+				Scale sc = (Scale) ((PlottingElement)items[j]).getModel();
+				//System.out.println(sc.aesName+ " " + aes);
+				if(sc.aesName.equals(aes))
+					mod.addElement(items[j]);
+			}
+		}
+		
+	}
 
 	public void openLayerSheet(PlottingElement element){
 		closeLayerSheet();
@@ -510,7 +541,8 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 					if(tfirstPlot){
 						Thread.sleep(2000);
 						firstPlot=false;
-						device.initRefresh();
+						if(device!=null)
+							device.initRefresh();
 					}
 				} catch (InterruptedException e) {}
 				
@@ -525,6 +557,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 		String c = model.getCall();
 		if( c!=null && c!="ggplot()")
 			plot(c);
+		updateScaleList();
 	}
 	
 	public void addElement(PlottingElement pe){
@@ -658,19 +691,21 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 
 					public void run() {
 						ElementModel m = p.getModel();
+						boolean isLayer = false;
 						if(p.getModel() instanceof Layer){
 							Layer layer = (Layer) m;
 							model.tryToFillRequiredAess(layer);
+							isLayer = true;
 						}					
 						String s = m.checkValid();
-						if(s!=null){
+						if(s!=null || !isLayer){
 							PlottingElementDialog d = 
 								new PlottingElementDialog(PlotBuilder.this,p);
 							d.setModal(true);
 							d.setLocationRelativeTo(PlotBuilder.this);
 							d.setVisible(true);
 							s = p.getModel().checkValid();
-							if(s!=null)
+							if(s!=null || d.getExitType()<1)
 								return;
 						}
 				
@@ -737,9 +772,9 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 						SwingUtilities.invokeLater(new Runnable(){
 							public void run() {
 								if(ind<0)
-									mod.insertElementAt(p, 0);
+									mod.addElement(p);// .insertElementAt(p, 0);
 								else
-									mod.insertElementAt(p, ind);
+									mod.insertElementAt(p, ind+1);
 								updatePlot();								
 							}
 							
@@ -774,13 +809,13 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 			try {			
 				if(action != TransferHandler.MOVE)
 					return;
-				PlottingElement p;
+				//PlottingElement p;
 
-				p = (PlottingElement) t.getTransferData(
-						new DataFlavor(PlottingElement.class,"Plotting element"));
+				//p = (PlottingElement) t.getTransferData(
+				//		new DataFlavor(PlottingElement.class,"Plotting element"));
 	
-				JList list = (JList)c;
-				((DefaultListModel)list.getModel()).remove(lastIndex);
+				//JList list = (JList)c;
+				//((DefaultListModel)list.getModel()).remove(lastIndex);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
@@ -804,9 +839,9 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 
 		public void dragDropEnd(DragSourceDropEvent arg0) {
 			if(arg0.getDropSuccess()){
-				ElementTransferHandler th = (ElementTransferHandler) elementsList.getTransferHandler();
-				if(th.lastIndex>=0)
-					((DefaultListModel)elementsList.getModel()).remove(th.lastIndex);
+				//ElementTransferHandler th = (ElementTransferHandler) elementsList.getTransferHandler();
+				//if(th.lastIndex>=0)
+				//	((DefaultListModel)elementsList.getModel()).remove(th.lastIndex);
 			}
 		}
 
@@ -967,19 +1002,21 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 				PlottingElement pe =(PlottingElement) list.getModel().getElementAt(i);
 				PlottingElement p = (PlottingElement) pe.clone();
 				ElementModel m = p.getModel();
+				boolean isLayer = false;
 				if(p.getModel() instanceof Layer){
 					Layer layer = (Layer) m;
 					model.tryToFillRequiredAess(layer);
+					isLayer=true;
 				}					
 				String s = m.checkValid();
-				if(s!=null){
+				if(s!=null || !isLayer){
 					PlottingElementDialog d = 
 						new PlottingElementDialog(PlotBuilder.this,p);
 					d.setModal(true);
 					d.setLocationRelativeTo(PlotBuilder.this);
 					d.setVisible(true);
 					s = p.getModel().checkValid();
-					if(s!=null)
+					if(s!=null || d.getExitType()<1)
 						return;
 				}
 
@@ -1004,19 +1041,21 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 					public void actionPerformed(ActionEvent e) {
 						PlottingElement p = (PlottingElement) element.clone();
 						ElementModel m = p.getModel();
+						boolean isLayer = false;
 						if(p.getModel() instanceof Layer){
 							Layer layer = (Layer) m;
 							pBuilder.getModel().tryToFillRequiredAess(layer);
+							isLayer=true;
 						}					
 						String s = m.checkValid();
-						if(s!=null){
+						if(s!=null || !isLayer){
 							PlottingElementDialog d = 
 								new PlottingElementDialog(pBuilder,p);
 							d.setModal(true);
 							d.setLocationRelativeTo(pBuilder);
 							d.setVisible(true);
 							s = p.getModel().checkValid();
-							if(s!=null)
+							if(s!=null|| d.getExitType()<1)
 								return;
 						}
 						pBuilder.model.getListModel().addElement(p);

@@ -23,6 +23,8 @@ public class PlottingElementDialog extends javax.swing.JDialog implements Action
 	private ElementModel initialModel;
 	private PlottingElement element;
 	
+	private int exitType = -1;
+	
 	public PlottingElementDialog(JFrame frame,PlottingElement el) {
 		super(frame);
 		initGUI();
@@ -80,6 +82,9 @@ public class PlottingElementDialog extends javax.swing.JDialog implements Action
 	public void setToInitialModel(){
 		element.setModel(initialModel);
 	}
+	
+	public int getExitType(){return exitType;}
+	
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
 		if(cmd == "OK"){
@@ -88,9 +93,11 @@ public class PlottingElementDialog extends javax.swing.JDialog implements Action
 			if(s!=null){
 				JOptionPane.showMessageDialog(this, s);
 			}else{
+				exitType=1;
 				this.dispose();
 			}
 		}else if(cmd == "Cancel"){
+			exitType = 0;
 			setToInitialModel();
 			this.dispose();
 		}
