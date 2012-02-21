@@ -258,10 +258,11 @@ public class Scale implements ElementModel{
 		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 		
-		p = new ParamVector();
-		p.setName("limits");
-		p.setTitle("Included levels");
-		s.params.add(p);
+		ParamVector pv = new ParamVector();
+		pv.setName("limits");
+		pv.setNumeric(false);
+		pv.setTitle("Included levels");
+		s.params.add(pv);
 		
 		p = new ParamLogical();
 		p.setName("drop");
