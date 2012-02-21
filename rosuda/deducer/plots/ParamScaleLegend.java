@@ -166,7 +166,7 @@ public class ParamScaleLegend extends Param{
 				}
 				
 				Vector callVector = new Vector();			
-				if(aes!="x" && aes !="y"){
+				if(!aes.equals("x") && !aes.equals("y")){
 					String[] tmp = guideFunctionList.getParamCalls();
 					for(int i=0;i<tmp.length;i++)
 						callVector.add(tmp[i]);

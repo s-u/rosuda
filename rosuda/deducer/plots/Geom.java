@@ -542,15 +542,8 @@ public class Geom {
 		aes.preferCategorical = true;
 		g.aess.add(aes);
 		
-		
-		aes = Aes.makeAes("shape");
-		g.aess.add(aes);
-		
 		aes = Aes.makeAes("colour",Color.black,null);
 		g.aess.add(aes);
-		
-		//aes = Aes.makeAes("size",new Double(2.0),null);
-		//g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
 		g.aess.add(aes);

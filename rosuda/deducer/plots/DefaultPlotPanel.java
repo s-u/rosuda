@@ -21,14 +21,14 @@ public class DefaultPlotPanel extends javax.swing.JPanel implements ActionListen
 	private JLabel label;
 	private JButton histogram;
 	private JPanel buttonPanel;
-	private JButton boxplot;
+	private JButton barplot;
 	private JButton line;
-	private JButton scatterPlot;
-	private JButton pie;
-	private JButton time;
+	private JButton dotPlot;
+	private JButton mean;
+	private JButton densTwo;
 	private JLabel jLabel1;
 	private JLabel orLabel;
-	private JButton bar;
+	private JButton scatterPlot;
 	private JButton bubble;
 
 	PlotBuilder builder;
@@ -84,86 +84,88 @@ public class DefaultPlotPanel extends javax.swing.JPanel implements ActionListen
 				//buttonPanelLayout.setColumns(1);
 				buttonPanelLayout.setHgap(5);
 				buttonPanelLayout.setVgap(5);
-				buttonPanel.setPreferredSize(new java.awt.Dimension(300, 160));
-				buttonPanel.setMaximumSize(new java.awt.Dimension(300, 160));
+				buttonPanel.setPreferredSize(new java.awt.Dimension(400, 200));
+				buttonPanel.setMaximumSize(new java.awt.Dimension(400, 200));
 				this.add(buttonPanel);
 				buttonPanel.setLayout(buttonPanelLayout);
-
+				int butWid =80;
+				int butHt = 90;
 				{
 					histogram = new JButton();
 					buttonPanel.add(histogram);
-					histogram.setBounds(64, 125, 66, 80);
+					histogram.setPreferredSize(new java.awt.Dimension(butWid, butHt));
+					histogram.setBounds(64, 125, butWid, butHt);
 					p = PlottingElement.createElement("template","histogram").makeComponent();
 					p.setBorder(null);
 					histogram.add(p);
 					histogram.addActionListener(this);
 				}				
 				{
-					boxplot = new JButton();
-					buttonPanel.add(boxplot);
-					boxplot.setPreferredSize(new java.awt.Dimension(70, 80));
-					boxplot.setBounds(132, 126, 70, 80);
-					p = PlottingElement.createElement("template","boxplot").makeComponent();
-					p.setBorder(null);
-					boxplot.add(p);
-					boxplot.addActionListener(this);
-				}
-				{
-					pie = new JButton();
-					buttonPanel.add(pie);
-					pie.setPreferredSize(new java.awt.Dimension(70, 80));
-					pie.setBounds(202, 126, 70, 80);
-					p = PlottingElement.createElement("template","pie").makeComponent();
-					p.setBorder(null);
-					pie.add(p);
-					pie.addActionListener(this);
-				}
-				{
-					bar = new JButton();
-					buttonPanel.add(bar);
-					bar.setPreferredSize(new java.awt.Dimension(70, 80));
-					bar.setBounds(272, 126, 70, 80);
+					barplot = new JButton();
+					buttonPanel.add(barplot);
+					barplot.setPreferredSize(new java.awt.Dimension(butWid, butHt));
+					barplot.setBounds(132, 126, butWid, butHt);
 					p = PlottingElement.createElement("template","bar").makeComponent();
 					p.setBorder(null);
-					bar.add(p);
-					bar.addActionListener(this);
+					barplot.add(p);
+					barplot.addActionListener(this);
 				}
-
+				{
+					mean = new JButton();
+					buttonPanel.add(mean);
+					mean.setPreferredSize(new java.awt.Dimension(butWid,butHt));
+					mean.setBounds(202, 126, butWid, butHt);
+					p = PlottingElement.createElement("template","mean").makeComponent();
+					p.setBorder(null);
+					mean.add(p);
+					mean.addActionListener(this);
+				}
 				{
 					scatterPlot = new JButton();
 					buttonPanel.add(scatterPlot);
-					scatterPlot.setPreferredSize(new java.awt.Dimension(70, 80));
-					scatterPlot.setBounds(62, 206, 70, 80);
+					scatterPlot.setPreferredSize(new java.awt.Dimension(butWid, butHt));
+					scatterPlot.setBounds(272, 126, butWid, butHt);
 					p = PlottingElement.createElement("template","scatter").makeComponent();
 					p.setBorder(null);
 					scatterPlot.add(p);
 					scatterPlot.addActionListener(this);
 				}
+
+				{
+					dotPlot = new JButton();
+					buttonPanel.add(dotPlot);
+					dotPlot.setPreferredSize(new java.awt.Dimension(butWid, butHt));
+					dotPlot.setBounds(62, 206, butWid, butHt);
+					p = PlottingElement.createElement("template","grouped_dotplot").makeComponent();
+					p.setBorder(null);
+					dotPlot.add(p);
+					dotPlot.addActionListener(this);
+				}
 				{
 					line = new JButton();
 					buttonPanel.add(line);
-					line.setPreferredSize(new java.awt.Dimension(70, 80));
-					line.setBounds(132, 206, 70, 80);
-					p = PlottingElement.createElement("template","line").makeComponent();
+					line.setPreferredSize(new java.awt.Dimension(butWid, butHt));
+					line.setBounds(132, 206, butWid, butHt);
+					p = PlottingElement.createElement("template","grouped_line").makeComponent();
 					p.setBorder(null);
 					line.add(p);
 					line.addActionListener(this);
 				}
 				{
-					time = new JButton();
-					buttonPanel.add(time);
-					time.setPreferredSize(new java.awt.Dimension(70, 80));
-					time.setBounds(202, 206, 70, 80);
-					p = PlottingElement.createElement("template","series").makeComponent();
+					densTwo = new JButton();
+					buttonPanel.add(densTwo);
+					densTwo.setPreferredSize(new java.awt.Dimension(butWid, butHt));
+					densTwo.setBounds(202, 206, butWid, butHt);
+					p = PlottingElement.createElement("template","histogram_2d").makeComponent();
 					p.setBorder(null);
-					time.add(p);
-					time.addActionListener(this);
+					densTwo.add(p);
+					densTwo.addActionListener(this);
 				}				
 				{
 					bubble = new JButton();
 					buttonPanel.add(bubble);
-					bubble.setPreferredSize(new java.awt.Dimension(70, 80));
-					bubble.setBounds(272, 206, 70, 80);
+					bubble.setPreferredSize(new java.awt.Dimension(butWid, butHt));
+					bubble.setBounds(272, 206, butWid, butHt);
 					p = PlottingElement.createElement("template","bubble").makeComponent();
 					p.setBorder(null);
 					bubble.add(p);
@@ -180,18 +182,18 @@ public class DefaultPlotPanel extends javax.swing.JPanel implements ActionListen
 		PlottingElement p;
 		if(o == histogram)
 			p = (PlottingElement) PlotController.getTemplates().get("histogram");
-		else if(o == boxplot)
-			p = (PlottingElement) PlotController.getTemplates().get("boxplot");
-		else if(o == pie)
-			p = (PlottingElement) PlotController.getTemplates().get("pie");
-		else if(o == bar)
+		else if(o == barplot)
 			p = (PlottingElement) PlotController.getTemplates().get("bar");
-		else if(o == time)
-			p = (PlottingElement) PlotController.getTemplates().get("series");
+		else if(o == mean)
+			p = (PlottingElement) PlotController.getTemplates().get("mean");
 		else if(o == scatterPlot)
 			p = (PlottingElement) PlotController.getTemplates().get("scatter");
+		else if(o == densTwo)
+			p = (PlottingElement) PlotController.getTemplates().get("histogram_2d");
+		else if(o == dotPlot)
+			p = (PlottingElement) PlotController.getTemplates().get("grouped_dotplot");
 		else if(o == line)
-			p = (PlottingElement) PlotController.getTemplates().get("line");
+			p = (PlottingElement) PlotController.getTemplates().get("grouped_line");
 		else if(o == bubble)
 			p = (PlottingElement) PlotController.getTemplates().get("bubble");
 		else

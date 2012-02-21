@@ -47,8 +47,9 @@ public class ParamScaleWidget extends ParamWidget{
 		legendPanel.getGuideWidget().setModel(
 				((ParamScaleLegend)model).getGuideModel());
 		String aes = ((ParamScaleLegend)model).getAes();
-		legendPanel.showGuide(aes!="y" && aes!="x");
-		if(aes=="y" || aes=="x"){
+		legendPanel.showGuide(!aes.equals("y") && !aes.equals("x"));
+		//System.out.println(aes);
+		if(aes.equals("y") || aes.equals("x")){
 			legendPanel.setBorder(BorderFactory.createTitledBorder(aes+"-axis"));
 			legendPanel.showGuide(false);
 		}else

@@ -171,12 +171,11 @@ public class Deducer {
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open Plot", "Open plot", cListener);		
 		    JMenu sm = new JMenu("Templates");
 			sm.setMnemonic(KeyEvent.VK_S);
-			String[] labels = new String[] {"Histogram","Pie","Box-plot","Bar","Scatter","Line","Series","Bubble"};
-			String[] cmds = new String[] {"histogram","pie","boxplot","bar","scatter","line","series","bubble"};
+			String[] labels = PlotController.getTemplateNames();
 			for(int i = 0;i<labels.length;i++){
 				JMenuItem mi = new JMenuItem();
-				mi.setText(labels[i]);
-				mi.setActionCommand(cmds[i]);
+				mi.setText(labels[i].replace('_',' '));
+				mi.setActionCommand("template___"+labels[i]);
 				mi.addActionListener(cListener);
 				sm.add(mi);
 			}
@@ -187,7 +186,7 @@ public class Deducer {
 			sm = new JMenu("Interactive");
 			sm.setMnemonic(KeyEvent.VK_S);
 			labels = new String[] {"Scatter","Histogram","Bar","Box-plot (long)","Box-plot (wide)","Mosaic","Parallel Coordinate"};
-			cmds = new String[] {"iplot","ihist","ibar","iboxl","iboxw","imosaic","ipcp"};
+			String[] cmds = new String[] {"iplot","ihist","ibar","iboxl","iboxw","imosaic","ipcp"};
 			for(int i = 0;i<labels.length;i++){
 				JMenuItem mi = new JMenuItem();
 				mi.setText(labels[i]);
@@ -487,14 +486,12 @@ public class Deducer {
 					PlotController.addTemplate(el);
 				}
 			}
-		}else if(cmd.equals("histogram")||	cmd.equals("pie")		|| 
-				cmd.equals("bar") 		||	cmd.equals("boxplot")	||
-				cmd.equals("scatter")	||	cmd.equals("line")		||
-				cmd.equals("bubble") 	||	cmd.equals("series")
+		}else if(cmd.startsWith("template___")
 				){
 			try{
 				PlotController.init();
-				PlottingElementMenuDialog d = PlotController.getMenuDialog(cmd);
+				String tmp = cmd.split("___")[1];
+				PlottingElementMenuDialog d = PlotController.getMenuDialog(tmp);
 				d.setLocationRelativeTo(null);
 				d.setVisible(true);
 			}catch(Exception e){e.printStackTrace();}

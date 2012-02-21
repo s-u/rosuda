@@ -170,9 +170,13 @@ public class PlottingElement implements Transferable{
 		String[] s = nm.split("_");
 		if(s.length>1)
 			nm = s[s.length-1];
-		PlottingElement el = 
-			new PlottingElement("/icons/ggplot_icons/"+type+"_"+nm+".png",
+		PlottingElement el;
+		if(!type.equals("template"))
+			el = new PlottingElement("/icons/ggplot_icons/"+type+"_"+nm+".png",
 				type,name);
+		else
+			el = new PlottingElement("/icons/ggplot_icons/"+type+"_"+name+".png",
+					type,name);
 		return el;
 	}
 	
@@ -321,7 +325,7 @@ public class PlottingElement implements Transferable{
 			url = getClass().getResource("/icons/ggplot_icons/default.png");
 		else
 			url = getClass().getResource(iconUrl);
-		if(iconUrl!=null)
+		if(url!=null)
 			icon = new ImageIcon(url);
 		Element e = (Element) node.getElementsByTagName("ElementModel").item(0);
 		String className = e.getAttribute("className");

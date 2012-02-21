@@ -17,8 +17,11 @@ public class PlotController {
 	protected static Map coords;
 	protected static Map pos;
 	protected static Map menuElements;
-	protected static String[] templateNames = new String[]{};//"pie","histogram","bar","boxplot","scatter",
-			//"line","series","bubble"};
+	protected static String[] templateNames = new String[]{
+		"bar","grouped_bar","histogram","density","grouped_density",
+		"simple_dotplot","grouped_dotplot","mean","line","grouped_line",
+		"simple_boxplot","grouped_boxplot","scatter","scatter_smooth",
+		"histogram_2d","bubble"};
 	protected static String[] geomNames = {"abline","area","bar","bin2d","blank","boxplot","contour","crossbar","density","density2d",
 			"dotplot","errorbar","errorbarh","freqpoly","hex","histogram","hline","jitter","line","linerange",
 			"path","point","pointrange","polygon","quantile","raster", "rect","ribbon","rug","segment","smooth","step","text",

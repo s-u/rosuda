@@ -265,7 +265,7 @@ public class PlotBuilder extends TJFrame implements ActionListener, WindowListen
 								if(name=="Scales")
 									list.setVisibleRowCount(2);
 								else
-									list.setVisibleRowCount(mod.getSize()/9);
+									list.setVisibleRowCount(mod.getSize()/11 + Math.min(mod.getSize()%11,1));
 								list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 								list.setModel(mod);
 								list.setDragEnabled(true);

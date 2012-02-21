@@ -25,6 +25,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.plots.Template.MaskingAes;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -120,6 +121,12 @@ public class PlotBuilderModel {
 					Aes laes = (Aes) laess.get(k);
 					if(laes.variable!=null && laes.variable.length()>0)
 						aess.add(laes.name);
+				}
+			}else if(em instanceof Template){
+				Vector els = ((Template)em).getMAess();
+				for(int k=0;k<els.size();k++){
+					MaskingAes maes = (MaskingAes) els.get(k);
+					aess.add(maes.name);
 				}
 			}
 		}

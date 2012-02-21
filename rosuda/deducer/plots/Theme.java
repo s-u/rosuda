@@ -245,10 +245,12 @@ public class Theme implements ElementModel{
 		p.setUpperBound(new Double(1));
 		t.params.add(p);
 		
-		p = ParamFactory.makeParam("direction");
+		
+		p = new ParamCharacter("Direction");
 		p.setName("legend.direction");
-		p.setTitle("Direction");
-		t.params.add(pnone);
+		p.setViewType(Param.VIEW_COMBO);
+		p.setOptions(new String[] {"horizontal","vertical"});
+		t.params.add(p);
 		
 		pnone = new ParamNone("Panel");
 		pnone.setViewType(ParamNone.VIEW_SEPERATOR);
