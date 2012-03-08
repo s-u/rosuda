@@ -116,7 +116,7 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 		}
 	}
 
-	private HelpButton getHelpButton() {
+	public HelpButton getHelpButton() {
 		return help;
 	}
 
