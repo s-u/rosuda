@@ -146,7 +146,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd.equals("copyImg"))
-			org.rosuda.util.ImageSelection.copyComponent((java.awt.Component) c, false, true);
+			org.rosuda.util.ImageSelection.copyComponent((java.awt.Component) c, false, false);
 		
 		if(cmd.startsWith("save")){
 			String sfx = cmd.split("_")[1];
@@ -173,7 +173,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 					}else if(sfx.equals("bmp")){
 						JGR.eval(".jgr.save.JavaGD.as(useDevice=bmp, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
-								+ "\",units=\"in\",res=244)");
+								+ "\",units=\"in\",res=244,antialias=NULL)");
 					}else if(sfx.equals("tiff")){
 						JGR.eval(".jgr.save.JavaGD.as(useDevice=tiff, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
