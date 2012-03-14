@@ -228,19 +228,20 @@ public class Theme implements ElementModel{
 		t.params.add(pf);
 		
 		p = new ParamCharacter("Position");
-		p.setName("position");
+		p.setName("legend.position");
 		p.setViewType(Param.VIEW_COMBO);
 		p.setOptions(new String[] {"none","top","right","bottom","left"});
 		t.params.add(p);
 		
 		p = new ParamVector("Position");
-		p.setName("position");
+		p.setName("legend.position");
 		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		p.setLowerBound(new Double(0));
 		p.setUpperBound(new Double(1));
 		t.params.add(p);
 		
 		p = new ParamNumeric("Justification");
+		p.setName("legend.justification");
 		p.setLowerBound(new Double(0));
 		p.setUpperBound(new Double(1));
 		t.params.add(p);

@@ -39,7 +39,7 @@ public class PlotController {
 		"alpha"};
 	protected static String[] facetNames = {"grid","wrap"};
 	protected static String[] coordNames = {"cartesian","equal","flip","map","polar","trans"};
-	protected static String[] posNames = {"dodge","identity","jitter","stack"};
+	protected static String[] posNames = {"dodge","identity","jitter","stack","fill"};
 	protected static String[] themeNames = { "grey","bw","opts","xlab","ylab"};	
 	
 	
