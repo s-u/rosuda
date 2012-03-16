@@ -268,8 +268,8 @@ public class Scale implements ElementModel{
 		p.setName("drop");
 		p.setTitle("Drop unused levels");
 		p.setViewType(Param.VIEW_CHECK_BOX);
-		p.setValue(new Boolean(false));
-		p.setDefaultValue(new Boolean(false));
+		p.setValue(new Boolean(true));
+		p.setDefaultValue(new Boolean(true));
 		s.params.add(p);
 		
 		
@@ -651,8 +651,8 @@ public class Scale implements ElementModel{
 		p = new ParamLogical();
 		p.setName("drop");
 		p.setTitle("Drop unused levels");
-		p.setValue(new Boolean(false));
-		p.setDefaultValue(new Boolean(false));
+		p.setValue(new Boolean(true));
+		p.setDefaultValue(new Boolean(true));
 		s.params.add(p);
 		
 		
