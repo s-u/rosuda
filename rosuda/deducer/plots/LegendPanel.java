@@ -80,7 +80,7 @@ public class LegendPanel extends JPanel implements ActionListener {
 				showCheckBox.setPreferredSize(new java.awt.Dimension(133, 19));
 			}
 */			{
-				nameField = new JTextField();
+				nameField = new JTextField("");
 				this.add(nameField, new AnchorConstraint(40, 10, 200, 10, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
@@ -155,6 +155,8 @@ public class LegendPanel extends JPanel implements ActionListener {
 	}
 	
 	public String getName(){
+		if(nameField==null)
+			return "";
 		return nameField.getText();
 	}
 	

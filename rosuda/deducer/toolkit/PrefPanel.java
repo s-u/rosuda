@@ -82,6 +82,8 @@ public class PrefPanel extends PrefDialog.PJPanel implements ActionListener{
 					macChooser.setText("Native Look and Feel (quaqua)");
 					macChooser.setBounds(17, 32, 283, 19);
 				}
+				//NOTE: quaqua always disabled due to lion incompatability
+				macPanel.setVisible(false);
 			}
 			this.setName("Deducer");
 		} catch (Exception e) {
@@ -92,9 +94,9 @@ public class PrefPanel extends PrefDialog.PJPanel implements ActionListener{
 	public void saveAll(){
 		DeducerPrefs.SHOWANALYSIS = analysis.isSelected();
 		DeducerPrefs.SHOWDATA= data.isSelected();
-		DeducerPrefs.USEQUAQUACHOOSER = macChooser.isSelected();
-		if(DeducerPrefs.USEQUAQUACHOOSER)
-			Deducer.eval(".jChooserMacLAF()");
+		//DeducerPrefs.USEQUAQUACHOOSER = macChooser.isSelected();
+		//if(DeducerPrefs.USEQUAQUACHOOSER)
+		//	Deducer.eval(".jChooserMacLAF()");
 		DeducerPrefs.VIEWERATSTARTUP = dataViewerStartUp.isSelected();
 		DeducerPrefs.writePrefs();
 	}

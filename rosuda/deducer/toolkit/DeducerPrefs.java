@@ -87,7 +87,8 @@ public class DeducerPrefs {
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
-
+		//NOTE: quaqua always disabled due to lion incompatability
+		USEQUAQUACHOOSER = false;
 	}
 	
 	public static void writePrefs() {
