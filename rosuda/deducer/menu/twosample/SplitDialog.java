@@ -176,7 +176,7 @@ public class SplitDialog extends JDialog implements ActionListener, FocusListene
 			define.setSelected(true);
 			this.setTitle("Define Groups");
 			this.setResizable(false);
-			this.setSize(409, 311);
+			this.setSize(409, 295);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

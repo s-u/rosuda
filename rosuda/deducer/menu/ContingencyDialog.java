@@ -850,13 +850,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						mantelHaen = new JCheckBox();
 						nomByNomPanel.add(mantelHaen);
 						mantelHaen.setText("Mantel Haenszel");
-						mantelHaen.setBounds(17, 190, 132, 19);
+						mantelHaen.setBounds(17, 190, 172, 19);
 					}
 					{
 						fishers = new JCheckBox();
 						nomByNomPanel.add(fishers);
 						fishers.setText("Fisher's Exact");
-						fishers.setBounds(17, 131, 114, 19);
+						fishers.setBounds(17, 131, 174, 19);
 					}
 					{
 						chisqOptions = new IconButton("/icons/advanced_21.png","Chi-Squared Options",this,"Chi-Squared Options");
@@ -867,7 +867,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						chisq = new JCheckBox();
 						nomByNomPanel.add(chisq);
 						chisq.setText("Chi-Squared");
-						chisq.setBounds(17, 19, 110, 19);
+						chisq.setBounds(17, 19, 170, 19);
 					}
 					{
 						fishersOptions = new JButton();
@@ -983,7 +983,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						kruskal = new JCheckBox();
 						nomByOrdPanel.add(kruskal);
 						kruskal.setText("Kruskal-Wallis");
-						kruskal.setBounds(17, 20, 119, 19);
+						kruskal.setBounds(17, 20, 179, 19);
 					}
 					{
 						lrgAssump = new AssumptionIcon("/icons/N_assump.png","Large Sample",null,"Large Sample");
@@ -1140,7 +1140,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					}
 					{
 						asymptTest = new JCheckBox();
-						getContentPane().add(asymptTest, new AnchorConstraint(239, 570, 312, 256, AnchorConstraint.ANCHOR_REL,
+						getContentPane().add(asymptTest, new AnchorConstraint(239, 800, 312, 256, AnchorConstraint.ANCHOR_REL,
 								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						asymptTest.setText("Asymptotic");
 						asymptTest.setPreferredSize(new java.awt.Dimension(100, 19));

@@ -365,7 +365,9 @@ public class Deducer {
 			data = sel.getSelection();
 			if(data!=null){
 				name = data.getName();
-				execute(name+"<-as.data.frame(t("+name+"))");
+				String newDat = (String) JOptionPane.showInputDialog("New dataset name:");
+				newDat = Deducer.makeValidVariableName(newDat);
+				execute(newDat+"<-as.data.frame(t("+name+"))");
 				//DataFrameWindow.setTopDataWindow(name);
 			}
 		}else if(cmd.equals("subset")){

@@ -71,13 +71,13 @@ public class GLMExplorerOptions extends javax.swing.JDialog implements ActionLis
 						typeII = new JRadioButton();
 						modelInfPanel.add(typeII);
 						typeII.setText("II");
-						typeII.setBounds(76, 43, 34, 19);
+						typeII.setBounds(76, 43, 51, 19);
 					}
 					{
 						typeIII = new JRadioButton();
 						modelInfPanel.add(typeIII);
 						typeIII.setText("III");
-						typeIII.setBounds(123, 43, 51, 19);
+						typeIII.setBounds(127, 43, 51, 19);
 					}
 					{
 						summary = new JCheckBox();
@@ -96,19 +96,19 @@ public class GLMExplorerOptions extends javax.swing.JDialog implements ActionLis
 						testLR = new JRadioButton();
 						modelInfPanel.add(testLR);
 						testLR.setText("LR");
-						testLR.setBounds(76, 64, 41, 19);
+						testLR.setBounds(76, 64, 51, 19);
 					}
 					{
 						testWald = new JRadioButton();
 						modelInfPanel.add(testWald);
 						testWald.setText("Wald");
-						testWald.setBounds(123, 64, 58, 19);
+						testWald.setBounds(127, 64, 70, 19);
 					}
 					{
 						testF = new JRadioButton();
 						modelInfPanel.add(testF);
 						testF.setText("F");
-						testF.setBounds(181, 64, 40, 19);
+						testF.setBounds(195, 64, 40, 19);
 					}
 					{
 						cor = new JCheckBox();

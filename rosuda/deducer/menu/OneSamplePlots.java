@@ -55,26 +55,26 @@ public class OneSamplePlots extends javax.swing.JDialog implements ActionListene
 					boxPlot = new JCheckBox();
 					getContentPane().add(boxPlot);
 					boxPlot.setText("Box plot");
-					boxPlot.setBounds(135, 17, 121, 18);
+					boxPlot.setBounds(135, 17, 180, 18);
 				}
 				{
 					scale = new JCheckBox();
 					getContentPane().add(scale);
 					scale.setText("Scale variables");
-					scale.setBounds(134, 42, 121, 18);
+					scale.setBounds(134, 42, 180, 18);
 				}
 				{
 					alpha = new JSlider();
 					getContentPane().add(alpha);
-					alpha.setBounds(134, 83, 93, 16);
+					alpha.setBounds(134, 85, 140, 21);
 					alpha.setMinimum(1);
 					alpha.setMaximum(100);
 				}
 				{
 					alphaLabel = new JLabel();
 					getContentPane().add(alphaLabel);
-					alphaLabel.setText("Alpha");
-					alphaLabel.setBounds(134, 69, 93, 14);
+					alphaLabel.setText("Transparancy");
+					alphaLabel.setBounds(134, 69, 140, 14);
 					alphaLabel.setHorizontalAlignment(SwingConstants.CENTER);
 				}
 				{

@@ -57,32 +57,32 @@ public class KSamplePlots extends JDialog implements ActionListener {
 					boxPlot = new JCheckBox();
 					getContentPane().add(boxPlot);
 					boxPlot.setText("Show Box Plot");
-					boxPlot.setBounds(134, 10, 121, 18);
+					boxPlot.setBounds(134, 10, 141, 18);
 				}
 				{
 					points = new JCheckBox();
 					getContentPane().add(points);
 					points.setText("Show Points");
-					points.setBounds(134, 37, 121, 18);
+					points.setBounds(134, 37, 141, 18);
 				}
 				{
 					scale = new JCheckBox();
 					getContentPane().add(scale);
 					scale.setText("Scale variables");
-					scale.setBounds(134, 64, 121, 18);
+					scale.setBounds(134, 64, 141, 18);
 				}
 				{
 					alpha = new JSlider();
 					getContentPane().add(alpha);
-					alpha.setBounds(134, 112, 93, 16);
+					alpha.setBounds(134, 112, 140, 21);
 					alpha.setMinimum(1);
 					alpha.setMaximum(100);
 				}
 				{
 					alphaLabel = new JLabel();
 					getContentPane().add(alphaLabel);
-					alphaLabel.setText("Alpha");
-					alphaLabel.setBounds(134, 92, 93, 14);
+					alphaLabel.setText("Transparancy");
+					alphaLabel.setBounds(134, 92, 140, 14);
 					alphaLabel.setHorizontalAlignment(SwingConstants.CENTER);
 				}
 				{
@@ -101,7 +101,7 @@ public class KSamplePlots extends JDialog implements ActionListener {
 			bg.add(noPlot);
 			this.setTitle("Plots");
 			this.setResizable(false);
-			this.setSize(275, 269);
+			this.setSize(275, 245);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

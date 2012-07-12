@@ -268,7 +268,7 @@ public class CorPlots extends JDialog implements ActionListener{
 						new String[] { "Linear", "Loess","None" });
 			mLines = new JComboBox();
 			mLines.setModel(mLinesModel);
-			mLines.setBounds(221, 20, 134, 21);
+			mLines.setBounds(221, 20, 134, 25);
 		}
 		return mLines;
 	}
@@ -317,7 +317,7 @@ public class CorPlots extends JDialog implements ActionListener{
 		if(radiusLabel == null) {
 			radiusLabel = new JLabel();
 			radiusLabel.setText("Max Radius:");
-			radiusLabel.setBounds(112, 165, 92, 14);
+			radiusLabel.setBounds(112, 162, 92, 14);
 			radiusLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return radiusLabel;

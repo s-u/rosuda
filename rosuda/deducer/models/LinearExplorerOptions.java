@@ -71,13 +71,13 @@ public class LinearExplorerOptions extends javax.swing.JDialog implements Action
 						typeII = new JRadioButton();
 						modelInfPanel.add(typeII);
 						typeII.setText("II");
-						typeII.setBounds(76, 43, 34, 19);
+						typeII.setBounds(76, 43, 51, 19);
 					}
 					{
 						typeIII = new JRadioButton();
 						modelInfPanel.add(typeIII);
 						typeIII.setText("III");
-						typeIII.setBounds(123, 43, 51, 19);
+						typeIII.setBounds(125, 43, 51, 19);
 					}
 					{
 						summary = new JCheckBox();

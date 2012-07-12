@@ -290,7 +290,7 @@ public class Aes {
 				node.setAttribute("defaultValue", defaultValue.toString());
 			else if(defaultValue instanceof Double || defaultValue instanceof Integer)
 				node.setAttribute("defaultValue", defaultValue.toString());
-			else if(value instanceof Color)
+			else if(defaultValue instanceof Color)
 				node.setAttribute("defaultValue", "#"+ Integer.toHexString(((Color)defaultValue).getRGB()).substring(2));
 			
 			node.setAttribute("className", "Aes");

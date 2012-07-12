@@ -327,7 +327,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 					new java.awt.Component[] {doubleField1, 
 							 doubleField2, into2Field, addCode2Button}));
 			this.setTitle("Set Variable Codings");
-			this.setMinimumSize(new Dimension(600,400));
+			this.setMinimumSize(new Dimension(750,600));
 			this.setSize(647, 462);
 		} catch (Exception e) {
 			e.printStackTrace();

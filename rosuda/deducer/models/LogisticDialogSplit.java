@@ -75,12 +75,12 @@ public class LogisticDialogSplit extends JDialog implements ActionListener, Focu
 					cutDirection = new JComboBox();
 					getContentPane().add(cutDirection);
 					cutDirection.setModel(cutDirectionModel);
-					cutDirection.setBounds(100, 11, 50, 21);
+					cutDirection.setBounds(100, 11, 80, 25);
 				}
 				{
 					cutValue = new JTextField();
 					getContentPane().add(cutValue);
-					cutValue.setBounds(155, 11, 75, 21);
+					cutValue.setBounds(180, 11, 75, 21);
 					cutValue.addFocusListener(this);
 				}
 				{

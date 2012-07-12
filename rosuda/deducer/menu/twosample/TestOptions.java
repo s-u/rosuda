@@ -95,7 +95,7 @@ public class TestOptions extends JDialog implements ActionListener{
 				getContentPane().add(outputPanel);
 				getContentPane().add(getNavPanel());
 				outputPanel.setLayout(null);
-				outputPanel.setBounds(32, 148, 202, 70);
+				outputPanel.setBounds(32, 148, 202, 90);
 				outputPanel.setBorder(BorderFactory.createTitledBorder("Output"));
 				{
 					descriptives = new JCheckBox();
@@ -106,14 +106,14 @@ public class TestOptions extends JDialog implements ActionListener{
 				{
 					digitLabel = new JLabel();
 					outputPanel.add(digitLabel);
-					digitLabel.setText("Digits:");
-					digitLabel.setBounds(17, 45, 44, 15);
+					digitLabel.setText(" Digits:");
+					digitLabel.setBounds(17, 55, 60, 15);
 				}
 				{
 					digits = new JTextField();
 					outputPanel.add(digits);
 					digits.setText("<auto>");
-					digits.setBounds(67, 41, 68, 22);
+					digits.setBounds(67, 51, 68, 22);
 				}
 			}
 			getAlternative();
@@ -142,7 +142,7 @@ public class TestOptions extends JDialog implements ActionListener{
 	private JPanel getNavPanel() {
 		if(navPanel == null) {
 			navPanel = new OkayCancelPanel(false,false,this);
-			navPanel.setBounds(50, 224, 206, 50);
+			navPanel.setBounds(50, 244, 206, 50);
 		}
 		return navPanel;
 	}
