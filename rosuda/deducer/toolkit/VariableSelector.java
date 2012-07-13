@@ -130,7 +130,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			String dataName = names[i];
 			boolean isValid = true;
 			if(!rDataFilter.equals("")){
-				REXP rIsValid = Deducer.eval(rDataFilter + "(" + dataName +")");
+				REXP rIsValid = Deducer.timedEval(rDataFilter + "(" + dataName +")");
 				if(rIsValid!=null && !((REXPLogical)rIsValid).isTRUE()[0])
 					isValid=false;
 			}
@@ -389,7 +389,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 				if (element.toString().toLowerCase().indexOf(search.toLowerCase(), 0) != -1) {
 					if(rFilter!=""){
 						org.rosuda.REngine.REXP tmp = new org.rosuda.REngine.REXP();
-						tmp = Deducer.eval(rFilter+"("+getSource().fix((String)dataComboBox.getSelectedItem(),
+						tmp = Deducer.timedEval(rFilter+"("+getSource().fix((String)dataComboBox.getSelectedItem(),
 								(String)element)+")");
 						
 						if(tmp.isLogical() &&((REXPLogical)tmp).isTRUE()[0]){

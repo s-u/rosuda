@@ -13,6 +13,7 @@ import java.util.Vector;
 
 
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -115,7 +116,7 @@ public class Deducer {
 			DeducerPrefs.initialize();
 			
 			started=true;
-			eval(".javaGD.set.class.path(\"org/rosuda/JGR/JavaGD\")");
+			timedEval(".javaGD.set.class.path(\"org/rosuda/JGR/JavaGD\")");
 			new Thread(new DataRefresher()).start();
 		}catch(Exception e){new ErrorMsg(e);}
 	}
@@ -401,7 +402,7 @@ public class Deducer {
 			inst.setVisible(true);
 			WindowTracker.addWindow(inst);
 		}else if(cmd.equals("pairedtest")){
-			Deducer.eval(".getDialog('Paired Test')$run()");
+			Deducer.timedEval(".getDialog('Paired Test')$run()");
 		}else if(cmd.equals("onesample")){
 			needsRLocked=true;
 			OneSampleDialog inst = new OneSampleDialog(JGR.MAINRCONSOLE);
@@ -415,6 +416,7 @@ public class Deducer {
 			inst.setVisible(true);	
 			WindowTracker.addWindow(inst);
 		}else if(cmd.equals("ksample")){
+			Deducer.timedEval("(function(x)while(TRUE)x<-x+1)(1)", 10, 1000, true);
 			needsRLocked=true;
 			KSampleDialog inst = new KSampleDialog(JGR.MAINRCONSOLE);
 			inst.setLocationRelativeTo(null);
@@ -498,19 +500,19 @@ public class Deducer {
 				d.setVisible(true);
 			}catch(Exception e){e.printStackTrace();}
 		}else if(cmd.equals("iplot")){
-			Deducer.eval(".getDialog('Interactive Scatter Plot')$run()");
+			Deducer.timedEval(".getDialog('Interactive Scatter Plot')$run()");
 		}else if(cmd.equals("ihist")){
-			Deducer.eval(".getDialog('Interactive Histogram')$run()");
+			Deducer.timedEval(".getDialog('Interactive Histogram')$run()");
 		}else if(cmd.equals("ibar")){
-			Deducer.eval(".getDialog('Interactive Bar Plot')$run()");
+			Deducer.timedEval(".getDialog('Interactive Bar Plot')$run()");
 		}else if(cmd.equals("iboxl")){
-			Deducer.eval(".getDialog('Interactive Box Plot Long')$run()");
+			Deducer.timedEval(".getDialog('Interactive Box Plot Long')$run()");
 		}else if(cmd.equals("iboxw")){
-			Deducer.eval(".getDialog('Interactive Box Plot Wide')$run()");
+			Deducer.timedEval(".getDialog('Interactive Box Plot Wide')$run()");
 		}else if(cmd.equals("imosaic")){
-			Deducer.eval(".getDialog('Interactive Mosaic Plot')$run()");
+			Deducer.timedEval(".getDialog('Interactive Mosaic Plot')$run()");
 		}else if(cmd.equals("ipcp")){
-			Deducer.eval(".getDialog('Interactive Parallel Coordinate Plot')$run()");
+			Deducer.timedEval(".getDialog('Interactive Parallel Coordinate Plot')$run()");
 		}
 		
 		if(needsRLocked && fromConsole && !isJGR()){
@@ -565,6 +567,75 @@ public class Deducer {
 	
 	public static REXP eval(String cmd){
 		return rConnection.eval(cmd);
+	}
+	
+
+	public static REXP timedEval(String cmd){
+		return timedEval(cmd,5,15000,true);
+	}
+	
+	public static REXP timedEval(String cmd,boolean ask){
+		return timedEval(cmd,5,15000,ask);
+	}
+	
+	public static REXP timedEval(String cmd,int checkInterval,int maxTime,boolean ask){
+		JDialog  dialog = null;
+		JOptionPane jopt = null;
+		RunnableEval re = new RunnableEval(cmd);
+		Thread t = new Thread(re);
+		boolean cancel = false;
+		t.start();
+
+		int totalTime = 0;
+		while(true){
+			try {
+				Thread.sleep(checkInterval);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+				return null;
+			}
+			if(re.isDone()){
+				if(dialog!=null)
+					dialog.dispose();
+				return re.getResult();
+			}
+			totalTime += checkInterval;
+			if(totalTime>=maxTime){
+				
+				if(ask){
+					if(dialog==null){
+						jopt = new JOptionPane(
+								"This R process is taking some time.\n\nWould you like to cancel it?",
+								 JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
+						dialog = jopt.createDialog(null,"Cancel current operation");
+					}
+					if(!dialog.isShowing() | !dialog.isVisible()){
+						dialog.setLocationRelativeTo(null);
+						dialog.setVisible(true);
+					}
+					//System.out.println(jopt.getValue());
+					if(jopt!=null && jopt.getValue()!=null && jopt.getValue().equals(new Integer(0)))
+						cancel=true;
+				}else
+					cancel=true;
+				totalTime=0;
+			}
+			
+			if(cancel){
+				new Thread(new Runnable() {
+					public void run(){
+						try{	
+							((org.rosuda.REngine.JRI.JRIEngine) rConnection.getREngine())
+									.getRni().rniStop(0);
+						}catch(Exception e){
+							e.printStackTrace();
+						}	
+				}
+				}).start();		
+				return null;
+			}
+			
+		}
 	}
 	
 	public static REXP idleEval(String cmd){
@@ -814,4 +885,30 @@ public class Deducer {
 				}
 		}
 	}
+}
+
+
+final class RunnableEval implements Runnable{
+	REXP result;
+	boolean done;
+	String cmd;
+	
+	public RunnableEval(String command){
+		cmd=command;
+		done = false;
+	}
+
+	public void setCommand(String command){
+		cmd = command;
+	}
+	public void run() {
+		result = Deducer.eval(cmd);
+		done = true;
+	}
+	
+	public REXP getResult(){
+		return result;
+	}
+	
+	public boolean isDone(){return done;}
 }

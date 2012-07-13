@@ -182,7 +182,7 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 							selLis.addElement(var);
 					}
 				} catch (Exception e) {
-					new ErrorMsg(e);
+					e.printStackTrace();
 				}
 			
 			

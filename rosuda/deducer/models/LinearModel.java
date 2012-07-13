@@ -26,9 +26,9 @@ public class LinearModel extends GLMModel {
 	public RModel run(boolean preview,RModel prevModel){
 		RModel rModel = new RModel();
 		String cmd = "";
-		boolean envDefined = ((REXPLogical)Deducer.eval("'"+Deducer.guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
+		boolean envDefined = ((REXPLogical)Deducer.timedEval("'"+Deducer.guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
 		if(!envDefined){
-			Deducer.eval(Deducer.guiEnv+"<-new.env(parent=emptyenv())");
+			Deducer.timedEval(Deducer.guiEnv+"<-new.env(parent=emptyenv())");
 		}
 		
 		String modelName ;
@@ -62,8 +62,8 @@ public class LinearModel extends GLMModel {
 		ArrayList tmp = new ArrayList();
 		String[] out = new String[]{};	
 		if(preview){
-			Deducer.eval(dataName+"<-"+data);
-			Deducer.eval(cmd);
+			Deducer.timedEval(dataName+"<-"+data);
+			Deducer.timedEval(cmd);
 			tmp.add("\n>"+cmd);
 		}
 		
@@ -94,7 +94,9 @@ public class LinearModel extends GLMModel {
 				String anovaCall = "Anova("+modelName+",type='"+options.type+"'"+
 					(hccm? ",white.adjust='hc3')" : ")");
 				if(preview){
-					out = Deducer.eval("capture.output(try("+anovaCall+"))").asStrings();
+					try{
+					out = Deducer.timedEval("capture.output(try("+anovaCall+"))").asStrings();
+					}catch(Exception e){out = new String[]{};}
 					tmp.add("\n>"+anovaCall+"\n");
 					for(int i=0;i<out.length;i++)
 						tmp.add(out[i]);
@@ -106,7 +108,9 @@ public class LinearModel extends GLMModel {
 				String summaryCall = "summary("+modelName+(options.paramCor ?",correlation=TRUE":"")+
 											(hccm? ",white.adjust='hc3'":"")+")";
 				if(preview){
-					out = Deducer.eval("capture.output(print(try("+summaryCall+")))").asStrings();
+					try{
+					out = Deducer.timedEval("capture.output(print(try("+summaryCall+")))").asStrings();
+					}catch(Exception e){out = new String[]{};}
 					tmp.add("\n>"+summaryCall+"\n");
 					for(int i=0;i<out.length;i++)
 						tmp.add(out[i]);
@@ -118,7 +122,9 @@ public class LinearModel extends GLMModel {
 			if(this.options.vif){
 				String vifCall = "vif("+modelName+")";
 				if(preview){
-					out = Deducer.eval("capture.output("+vifCall+")").asStrings();
+					try{
+					out = Deducer.timedEval("capture.output("+vifCall+")").asStrings();
+					}catch(Exception e){out = new String[]{};}
 					tmp.add("\n>"+vifCall+"\n");
 					for(int i=0;i<out.length;i++)
 						tmp.add(out[i]);
@@ -130,7 +136,9 @@ public class LinearModel extends GLMModel {
 			if(this.options.influence){
 				String infCall = "summary(influence.measures("+modelName+"))";
 				if(preview){
-					out = Deducer.eval("capture.output("+infCall+")").asStrings();
+					try{
+					out = Deducer.timedEval("capture.output("+infCall+")").asStrings();
+					}catch(Exception e){out = new String[]{};}
 					tmp.add("\n>"+infCall+"\n");
 					for(int i=0;i<out.length;i++)
 						tmp.add(out[i]);
@@ -163,7 +171,7 @@ public class LinearModel extends GLMModel {
 							"),test="+cor+")";
 				if(preview){
 					try {
-						out = Deducer.eval("capture.output("+postCall+")").asStrings();
+						out = Deducer.timedEval("capture.output("+postCall+")").asStrings();
 					} catch (Exception e) {
 						out = new String[]{""};
 						posthoc = new PostHoc();
@@ -182,7 +190,7 @@ public class LinearModel extends GLMModel {
 					"))";
 					if(preview){
 						try {
-							out = Deducer.eval("capture.output("+postCall+")").asStrings();
+							out = Deducer.timedEval("capture.output("+postCall+")").asStrings();
 						} catch (Exception e) {
 							out = new String[]{""};
 						}
@@ -206,10 +214,10 @@ public class LinearModel extends GLMModel {
 			String[] t = new String[1];
 			try{
 				if(prevModel!=null){
-					t=Deducer.eval("names(coef("+prevModel.modelName+
+					t=Deducer.timedEval("names(coef("+prevModel.modelName+
 										"))").asStrings();
 				}else if(preview){
-					t=Deducer.eval("names(coef("+modelName+
+					t=Deducer.timedEval("names(coef("+modelName+
 										"))").asStrings();
 				}
 			}catch (Exception e) {
@@ -255,7 +263,7 @@ public class LinearModel extends GLMModel {
 				String testCall;
 				for(int i=0;i<testCalls.size();i++){
 					testCall=(String)testCalls.get(i);
-					REXP r =Deducer.eval("capture.output("+testCall.replaceAll("\n", "").replaceAll("\t", "")+")");
+					REXP r =Deducer.timedEval("capture.output("+testCall.replaceAll("\n", "").replaceAll("\t", "")+")");
 					if(r!=null)
 						try {
 							out = r.asStrings();

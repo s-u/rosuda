@@ -221,7 +221,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 					if(!exists){
 						transformVariableList.setModel(new DefaultListModel());
 						variableSelector.getJList().setModel(variableSelector.new FilteringModel(
-								Deducer.eval("names("+variableSelector.getJComboBox().getSelectedItem()
+								Deducer.timedEval("names("+variableSelector.getJComboBox().getSelectedItem()
 										+")").asStrings()));
 						break;
 					}
@@ -278,7 +278,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 		}
 		for(int i=0;i<vars.size();i++){
 			REXP ev;
-			ev = Deducer.eval("is.numeric(" + data+"$"+ (String) vars.get(i)+")");
+			ev = Deducer.timedEval("is.numeric(" + data+"$"+ (String) vars.get(i)+")");
 			if(ev==null || !ev.isLogical() || ((REXPLogical)ev).isFALSE()[0]){
 				JOptionPane.showMessageDialog(this, vars.get(i).toString() + " is not a numeric variable.");
 				return;				
@@ -355,7 +355,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 		
 		for(int i=0;i<vars.size();i++){
 			REXP ev;
-			ev = Deducer.eval("is.numeric(" + data+"$"+ (String) vars.get(i)+")");
+			ev = Deducer.timedEval("is.numeric(" + data+"$"+ (String) vars.get(i)+")");
 			if(ev==null || !ev.isLogical() || ((REXPLogical)ev).isFALSE()[0]){
 				JOptionPane.showMessageDialog(this, vars.get(i).toString() + " is not a numeric variable.");
 				return null;				
@@ -375,7 +375,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 		if(isBoxCox || typeComboBox.getSelectedIndex()==8){
 			for(int i=0;i<vars.size();i++){
 				REXP ev;
-				ev = Deducer.eval("all(" + data+"$"+ (String) vars.get(i)+">0)");
+				ev = Deducer.timedEval("all(" + data+"$"+ (String) vars.get(i)+">0)");
 				if(ev==null || !ev.isLogical() || ((REXPLogical)ev).isFALSE()[0]){
 					int opt = JOptionPane.showOptionDialog(this, vars.get(i).toString() + 
 							" Has values <=0, which is not valid for this tranformation.\n" +
@@ -390,7 +390,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 		if(typeComboBox.getSelectedIndex()==9){
 			for(int i=0;i<vars.size();i++){
 				REXP ev;
-				ev = Deducer.eval("all(" + data+"$"+ (String) vars.get(i)+">(-1))");
+				ev = Deducer.timedEval("all(" + data+"$"+ (String) vars.get(i)+">(-1))");
 				if(ev==null || !ev.isLogical() || ((REXPLogical)ev).isFALSE()[0]){
 					int opt = JOptionPane.showOptionDialog(this, vars.get(i).toString() + 
 							" Has values <= -1, which is not valid for this tranformation.\n" +
@@ -405,7 +405,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 		if(typeComboBox.getSelectedIndex()==15){
 			for(int i=0;i<vars.size();i++){
 				REXP ev;
-				ev = Deducer.eval("all(" + data+"$"+ (String) vars.get(i)+">=0) && all(" + data+"$"+ (String) vars.get(i)+"<=1)");
+				ev = Deducer.timedEval("all(" + data+"$"+ (String) vars.get(i)+">=0) && all(" + data+"$"+ (String) vars.get(i)+"<=1)");
 				if(ev==null || !ev.isLogical() || ((REXPLogical)ev).isFALSE()[0]){
 					int opt = JOptionPane.showOptionDialog(this, vars.get(i).toString() + 
 							" Has values outside of [0 1], which is not valid for this tranformation.\n" +
@@ -428,7 +428,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 		
 		if(isCustom){
 			func = "function(x) " + typeComboBox.getSelectedItem().toString();
-			REXP tmp = Deducer.eval("is.function(try(" + func + ",silent=TRUE))");
+			REXP tmp = Deducer.timedEval("is.function(try(" + func + ",silent=TRUE))");
 			if( tmp==null || !tmp.isLogical() || ((REXPLogical) tmp).isFALSE()[0] ){	
 				JOptionPane.showMessageDialog(this, func + " is not a valid function.");
 				return null;			

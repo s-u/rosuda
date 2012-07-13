@@ -590,13 +590,13 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	public void setVariable(String var){
 		String data = variableSelector.getSelectedData();
 		if(model.preferNumeric){
-			REXP exp = Deducer.eval("is.discrete(" + data + "$" + var+")");
+			REXP exp = Deducer.timedEval("is.discrete(" + data + "$" + var+")");
 			if(exp!=null && exp.isLogical()){
 				if(((REXPLogical)exp).isTRUE()[0])
 					var = "as.numeric("+var + ")";
 			}
 		}else if(model.preferCategorical){
-			REXP exp = Deducer.eval("is.discrete(" + data + "$" + var+")");
+			REXP exp = Deducer.timedEval("is.discrete(" + data + "$" + var+")");
 			//System.out.println(exp.toDebugString());
 			if(exp!=null && exp.isLogical()){
 				if(((REXPLogical)exp).isFALSE()[0])
@@ -646,7 +646,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			Object o = variable.getSelectedItem();
 			String data = variableSelector.getSelectedData();
 			if(o!=null && !o.toString().startsWith("..")){
-				boolean exists = ((REXPLogical)Deducer.eval("'" +o.toString()+"' %in% names("+data+")")).isTRUE()[0];
+				boolean exists = ((REXPLogical)Deducer.timedEval("'" +o.toString()+"' %in% names("+data+")")).isTRUE()[0];
 				if(!exists)
 					variable.setSelectedItem(null);
 				refreshAddRemoveButton();

@@ -172,7 +172,7 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 			if(selector!=null && selector.getSelectedData()!=null)
 				try {
 					Vector rNames = new Vector();
-					String[] names = Deducer.eval("names("+selector.getSelectedData()+")").asStrings();
+					String[] names = Deducer.timedEval("names("+selector.getSelectedData()+")").asStrings();
 					for(int i=0;i<names.length;i++)
 						rNames.add(names[i]);
 					DefaultListModel selLis = (DefaultListModel) selector.getJList().getModel();
@@ -183,7 +183,7 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 							selLis.addElement(var);
 					}
 				} catch (Exception e) {
-					new ErrorMsg(e);
+					e.printStackTrace();
 				}
 			
 			if(mod==null)

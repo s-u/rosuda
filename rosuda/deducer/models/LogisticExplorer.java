@@ -27,9 +27,10 @@ public class LogisticExplorer extends GLMExplorer {
 			call="par(mar=c(5,4,2,2))\n"+
 					"try(crPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
 			termTab = new ModelPlotPanel(call);
-			if(((REXPLogical)Deducer.eval("length(grep(\":\",c(attr(terms("+pre.modelName+"),\"term.labels\"))))==0")).isTRUE()[0])
-				tabs.addTab("Terms", termTab);
-			
+			try{
+				if(((REXPLogical)Deducer.timedEval("length(grep(\":\",c(attr(terms("+pre.modelName+"),\"term.labels\"))))==0")).isTRUE()[0])
+					tabs.addTab("Terms", termTab);
+			}catch(Exception e){};
 			call="par(mar=c(5,4,2,2))\n"+
 					"try(avPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
 			addedTab = new ModelPlotPanel(call);
@@ -69,6 +70,6 @@ public class LogisticExplorer extends GLMExplorer {
 		model.run(false,pre);
 		this.dispose();
 		LogisticDialog.setLastModel(model);
-		Deducer.eval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
+		Deducer.timedEval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
 	}
 }

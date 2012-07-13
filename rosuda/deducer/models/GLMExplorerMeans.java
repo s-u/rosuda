@@ -128,10 +128,11 @@ public class GLMExplorerMeans extends javax.swing.JDialog implements ActionListe
 		try{
 			model = mod;
 			DefaultListModel termModel = new DefaultListModel();
-			String[] t = Deducer.eval("attr(terms("+rmod.modelName+
+			String[] t = Deducer.timedEval("attr(terms("+rmod.modelName+
 										"),\"term.labels\")").asStrings();
-			for(int j=0;j<t.length;j++)
-				termModel.addElement(t[j]);
+			if(t!=null)
+				for(int j=0;j<t.length;j++)
+					termModel.addElement(t[j]);
 			terms.setModel(termModel);
 			for(int i=0;i<model.effects.effects.getSize();i++)
 				if(termModel.contains(model.effects.effects.elementAt(i))){
@@ -141,7 +142,6 @@ public class GLMExplorerMeans extends javax.swing.JDialog implements ActionListe
 			confInt.setSelected(model.effects.confInt);
 		}catch (Exception e) {
 			e.printStackTrace();
-			new ErrorMsg(e);
 		}
 	}
 	

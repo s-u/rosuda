@@ -228,7 +228,7 @@ public class PlotBuilderModel {
 						fileCall.replace('\\','/');
 					String call = "save(list="+dat+",file=\""+Deducer.addSlashes(fileCall)+"\")";
 					//System.out.println(call);
-					Deducer.eval(call);
+					Deducer.timedEval(call);
 				}
 			}
 			
@@ -304,7 +304,7 @@ public class PlotBuilderModel {
 					fileCall.replace('\\','/');
 				String call = "load(\"" +Deducer.addSlashes(fileCall) + "\"" +")";
 				System.out.println("\nNote: loading data from " + f.getName() + "\n");
-				Deducer.eval(call);
+				Deducer.timedEval(call);
 				dataFile.delete();
 			}
 			

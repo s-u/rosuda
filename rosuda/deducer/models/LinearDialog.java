@@ -65,10 +65,9 @@ public class LinearDialog extends GLMDialog {
 		String dat = variableSelector.getSelectedData();
 		boolean isNumeric = true;
 		try{
-			isNumeric = ((REXPLogical)Deducer.eval("is.numeric("+dat+"$"+out+")")).isTRUE()[0];
+			isNumeric = ((REXPLogical)Deducer.timedEval("is.numeric("+dat+"$"+out+")")).isTRUE()[0];
 		}catch (Exception e) {
 			e.printStackTrace();
-			new ErrorMsg(e);
 		}
 		if(!isNumeric){
 			JOptionPane.showMessageDialog(this, "Outcome variable is not numeric. Please select a numeric variable");

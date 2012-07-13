@@ -33,18 +33,18 @@ public class GDPreviewJPanel extends GDInterface{
     }
 	
 	public static void plot(String call){
-		Deducer.eval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/deducer/GDPreviewJPanel\")");
-		Deducer.eval("JavaGD()");
+		Deducer.timedEval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/deducer/GDPreviewJPanel\")");
+		Deducer.timedEval("JavaGD()");
 		try {
-			mostRecentDevNumber = new Integer(Deducer.eval("as.integer(dev.cur())").asInteger());
+			mostRecentDevNumber = new Integer(Deducer.timedEval("as.integer(dev.cur())").asInteger());
 		} catch (REXPMismatchException e) {
 			new ErrorMsg(e);
 		}
 		
 		String[] lines = call.split("\n");
 		for(int i=0;i<lines.length;i++)
-			Deducer.eval(lines[i]);
-		Deducer.eval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/JGR/toolkit/JavaGD\")");
+			Deducer.timedEval(lines[i]);
+		Deducer.timedEval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/JGR/toolkit/JavaGD\")");
 		
 	}
 	

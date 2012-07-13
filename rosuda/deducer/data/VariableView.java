@@ -67,7 +67,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 		    		String varName = (String)extab.getModel().getValueAt(row, 0);
 		    		String datName = VariableView.this.dataName;
 		    		REXPLogical tmp;
-					tmp = (REXPLogical) Deducer.eval("is.factor("+datName+"$"+varName+")");
+					tmp = (REXPLogical) Deducer.timedEval("is.factor("+datName+"$"+varName+")");
 		    		if(tmp!=null && tmp.isTRUE()[0]){
 		    			FactorDialog fact = new FactorDialog(null,datName+"$"+varName);
 		    			fact.setLocationRelativeTo(ex);
@@ -164,7 +164,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 						JOptionPane.QUESTION_MESSAGE);
 				if(confirm == JOptionPane.NO_OPTION)
 					return;
-				Deducer.eval("rm("+dataName + ")");
+				Deducer.timedEval("rm("+dataName + ")");
 				RController.refreshObjects();
 			}else if (cmd == "about")
 				new AboutDialog(null);
@@ -186,7 +186,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
 				inputValue = Deducer.getUniqueName(inputValue);
 				if(inputValue!=null){
-					Deducer.eval(inputValue.trim()+"<-data.frame(Var1=NA)");
+					Deducer.timedEval(inputValue.trim()+"<-data.frame(Var1=NA)");
 					RController.refreshObjects();
 				}
 			}else if (cmd == "loaddata"){

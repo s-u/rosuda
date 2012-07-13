@@ -123,7 +123,7 @@ public class ObjectChooserWidget extends JPanel implements DeducerWidget, Window
 		try {
 			String call = "get.objects("+getClassFilter()+",includeInherited="+
 					(isIncludeInherited()? "TRUE":"FALSE")+")";
-			objs = Deducer.eval(call).asStrings();
+			objs = Deducer.timedEval(call).asStrings();
 		} catch (Exception e) {
 			//e.printStackTrace();
 			objs = new String[]{};

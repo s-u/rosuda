@@ -129,9 +129,9 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 			String state = getWidgetStatesAsString();
 			REXP rCheck = null;
 			if(rCheckFunc!=null)
-				rCheck = Deducer.eval(rCheckFunc + "(" + state + ")");
+				rCheck = Deducer.timedEval(rCheckFunc + "(" + state + ")");
 			else if(checkRef!=null){
-				REXP st = Deducer.eval(state);
+				REXP st = Deducer.timedEval(state);
 				try {
 					rCheck = checkRef.getEngine().eval(new REXPLanguage(new RList(new REXP[] { checkRef , st
 					})), null, false);
@@ -155,9 +155,9 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 				
 				try {
 					if(rRunFunc!=null)
-						Deducer.eval(rRunFunc + "(" + state + ")");
+						Deducer.timedEval(rRunFunc + "(" + state + ")");
 					else if(runRef!=null){
-						REXP st = Deducer.eval(state);
+						REXP st = Deducer.timedEval(state);
 						runRef.getEngine().eval(new REXPLanguage(new RList(new REXP[] { runRef , st
 						})), null, false);
 					}

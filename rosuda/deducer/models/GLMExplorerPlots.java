@@ -205,11 +205,12 @@ public class GLMExplorerPlots extends javax.swing.JDialog implements ActionListe
 		DefaultListModel termModel = new DefaultListModel();
 		String[] t = new String[]{};
 		try {
-			t = Deducer.eval("attr(terms("+rmod.modelName+
+			t = Deducer.timedEval("attr(terms("+rmod.modelName+
 										"),\"term.labels\")").asStrings();
-		} catch (REXPMismatchException e) {
-			new ErrorMsg(e);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
 		for(int j=0;j<t.length;j++)
 			termModel.addElement(t[j]);
 		terms.setModel(termModel);

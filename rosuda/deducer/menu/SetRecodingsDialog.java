@@ -456,16 +456,16 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 			String[] output;
 			REXP num;
 			try {
-				num = Deducer.eval("is.numeric("+var+")");
-				REXP cha = Deducer.eval("is.character("+var+")");
-				REXP fact = Deducer.eval("is.factor("+var+")");
+				num = Deducer.timedEval("is.numeric("+var+")");
+				REXP cha = Deducer.timedEval("is.character("+var+")");
+				REXP fact = Deducer.timedEval("is.factor("+var+")");
 				if(num.isLogical() && ((REXPLogical)num).isTRUE()[0]){
-					output = Deducer.eval("capture.output(data.frame(percentiles=quantile("+var+",seq(0,1,.1),na.rm=T)))").asStrings();
+					output = Deducer.timedEval("capture.output(data.frame(percentiles=quantile("+var+",seq(0,1,.1),na.rm=T)))").asStrings();
 				}else if((cha.isLogical() && ((REXPLogical)cha).isTRUE()[0]) || 
 						(fact.isLogical() && ((REXPLogical)fact).isTRUE()[0]) ){
-					output = Deducer.eval("capture.output(data.frame(xtabs(~"+var+")))").asStrings();
+					output = Deducer.timedEval("capture.output(data.frame(xtabs(~"+var+")))").asStrings();
 				}else
-					output = Deducer.eval("capture.output(summary("+var+"))").asStrings();
+					output = Deducer.timedEval("capture.output(summary("+var+"))").asStrings();
 				if(output!=null){
 					String temp="";
 					

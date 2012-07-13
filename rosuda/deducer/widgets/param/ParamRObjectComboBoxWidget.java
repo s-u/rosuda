@@ -28,7 +28,7 @@ public class ParamRObjectComboBoxWidget extends ParamComboBoxWidget{
 			call = "get.objects()";
 		String[] objs;
 		try {
-			objs = Deducer.eval(call).asStrings();
+			objs = Deducer.timedEval(call).asStrings();
 		} catch (REXPMismatchException e) {
 			objs = new String[]{};
 		}

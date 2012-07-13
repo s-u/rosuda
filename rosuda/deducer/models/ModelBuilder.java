@@ -302,7 +302,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 				tmp="`"+mod.numericVars.getElementAt(i)+"`";
 			}else
 				tmp=(String)mod.numericVars.getElementAt(i);
-			if(((REXPLogical)Deducer.eval("is.numeric("+mod.data+"$"+tmp+")")).isFALSE()[0])
+			if(((REXPLogical)Deducer.timedEval("is.numeric("+mod.data+"$"+tmp+")")).isFALSE()[0])
 				tmp="as.numeric("+tmp+")";
 			varModel.addElement(tmp);
 		}
@@ -312,7 +312,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 				tmp="`"+mod.factorVars.getElementAt(i)+"`";
 			}else
 				tmp=(String)mod.factorVars.getElementAt(i);
-			if(((REXPLogical)Deducer.eval("is.factor("+mod.data+"$"+tmp+")")).isFALSE()[0])
+			if(((REXPLogical)Deducer.timedEval("is.factor("+mod.data+"$"+tmp+")")).isFALSE()[0])
 				tmp="as.factor("+tmp+")";
 			varModel.addElement(tmp);
 		}

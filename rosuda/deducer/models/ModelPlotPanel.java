@@ -32,7 +32,7 @@ public class ModelPlotPanel extends javax.swing.JPanel implements ActionListener
 		devNum = GDPreviewJPanel.mostRecentDevNumber;
 		plotPanel = GDPreviewJPanel.mostRecent;
 		if(plotPanel==null){
-			Deducer.eval("cat('null canvas')");
+			Deducer.timedEval("cat('null canvas')");
 			plotPanel = new JPanel();
 		}
 		this.add(plotPanel, new AnchorConstraint(1, 1001, 901, 1, AnchorConstraint.ANCHOR_REL, 
@@ -61,14 +61,14 @@ public class ModelPlotPanel extends javax.swing.JPanel implements ActionListener
 	public JPanel getPlot(){return plotPanel;}
 	
 	public void executeDevOff(){
-		Deducer.eval("dev.off("+devNum+")");
+		Deducer.timedEval("dev.off("+devNum+")");
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
-		Deducer.eval("dev.new()");
+		Deducer.timedEval("dev.new()");
 		String[] lines = plotCall.split("\n");
 		for(int i=0;i<lines.length;i++)
-			Deducer.eval(lines[i]);
+			Deducer.timedEval(lines[i]);
 	}
 	
 }

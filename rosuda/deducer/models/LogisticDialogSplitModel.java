@@ -21,16 +21,16 @@ public class LogisticDialogSplitModel {
 	public LogisticDialogSplitModel(String s){
 		variable = s;
 		try{
-			String[] levs = Deducer.eval("levels(factor("+s+"))").asStrings();
+			String[] levs = Deducer.timedEval("levels(factor("+s+"))").asStrings();
 			if(levs.length<50){
 				for(int i=0;i<levs.length;i++)
 					levels.addElement(levs[i]);
 			}
 			
-			isNumeric = ((REXPLogical)Deducer.eval("is.numeric("+s+")")).isTRUE()[0];
+			isNumeric = ((REXPLogical)Deducer.timedEval("is.numeric("+s+")")).isTRUE()[0];
 		
 			if(isNumeric){
-				cutValue = Deducer.eval("median("+s+",na.rm=TRUE)").asDouble()+"";
+				cutValue = Deducer.timedEval("median("+s+",na.rm=TRUE)").asDouble()+"";
 				which=1;
 			}else{
 				suc.addElement(levels.lastElement());
@@ -38,16 +38,17 @@ public class LogisticDialogSplitModel {
 				which=2;
 			}
 		}catch (Exception e) {
-			e.printStackTrace();
-			new ErrorMsg(e);			
+			e.printStackTrace();	
 		}
 	}
 	public String getLHS(){
 		if(which==1){
 			return variable.substring(variable.indexOf("$")+1)+cutDirection+cutValue;
 		}if(which==2){
-			boolean isChar = ((REXPLogical)Deducer.eval("is.character("+variable+")")).isTRUE()[0];
-			boolean isFactor = ((REXPLogical)Deducer.eval("is.factor("+variable+")")).isTRUE()[0];
+			try{
+			boolean isChar = ((REXPLogical)Deducer.timedEval("is.character("+variable+")")).isTRUE()[0];
+			boolean isFactor = ((REXPLogical)Deducer.timedEval("is.factor("+variable+")")).isTRUE()[0];
+
 			if(isChar || isFactor){
 				if(suc.size()==1)
 					return variable.substring(variable.indexOf("$")+1)+ "=='"+suc.get(0)+"'";
@@ -61,6 +62,7 @@ public class LogisticDialogSplitModel {
 					return variable.substring(variable.indexOf("$")+1)+" %in% "+
 						RController.makeRVector(suc);
 			}
+			}catch(Exception e){return "";}
 		}else if(which==3){
 			return expr;
 		}

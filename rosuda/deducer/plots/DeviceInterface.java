@@ -30,19 +30,19 @@ public class DeviceInterface extends GDInterface{
 	public static void plot(String call,PlotBuilder.PlotPanel pl){
 		try{
 			cont = pl;
-			Deducer.eval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/deducer/plots/DeviceInterface\")");
+			Deducer.timedEval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/deducer/plots/DeviceInterface\")");
 			if(pl.devNr==-1){
-				Deducer.eval("JavaGD()");
+				Deducer.timedEval("JavaGD()");
 			}else{
-				Deducer.eval("dev.set(" + (pl.devNr+1) + ")");
+				Deducer.timedEval("dev.set(" + (pl.devNr+1) + ")");
 			}
 			
 			String cmd = "";
 			cmd = call.replace('\n', ' ');
 			cmd = cmd.replace('\t', ' ');
 			//System.out.println(cmd);
-			Deducer.eval("print(" + cmd +")");
-			Deducer.eval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/JGR/toolkit/JavaGD\")");
+			Deducer.timedEval("print(" + cmd +")");
+			Deducer.timedEval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/JGR/toolkit/JavaGD\")");
 		}catch(Exception e){e.printStackTrace();}
 		
 	}

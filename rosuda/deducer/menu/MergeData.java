@@ -85,9 +85,9 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			boolean findPairs=false;
 			boolean sameData = dataName1.equals(lastDataName1) && dataName2.equals(lastDataName2);
 			Vector data1vars = new Vector();
-			data1vars.copyInto(Deducer.eval("colnames("+dataName1+")").asStrings());
+			data1vars.copyInto(Deducer.timedEval("colnames("+dataName1+")").asStrings());
 			Vector data2vars = new Vector();
-			data2vars.copyInto(Deducer.eval("colnames("+dataName2+")").asStrings());			
+			data2vars.copyInto(Deducer.timedEval("colnames("+dataName2+")").asStrings());			
 			if(sameData){
 				if(!data1vars.equals(lastVarNames1))
 					sameData=false;
@@ -246,7 +246,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				{
 					
 					if(dataList1Model==null || !sameData){
-						String[] data1Names = Deducer.eval("colnames("+dataName1+")").asStrings();
+						String[] data1Names = Deducer.timedEval("colnames("+dataName1+")").asStrings();
 						dataList1Model = new DefaultComboBoxModel(data1Names);
 						findPairs=true;
 					}
@@ -268,7 +268,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				varPanel2.setLayout(jPanel1Layout);
 				{
 					if(dataList2Model==null || !sameData){
-						String[] data2Names = Deducer.eval("colnames("+dataName2+")").asStrings();
+						String[] data2Names = Deducer.timedEval("colnames("+dataName2+")").asStrings();
 						dataList2Model = new DefaultComboBoxModel(data2Names);
 						findPairs=true;
 					}
@@ -445,9 +445,9 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				}
 				byX+=")";
 				byY+=")";	
-				String[] data1Unique = Deducer.eval("as.character(rownames(na.omit("+lastDataName1+"["+byX+"]"+
+				String[] data1Unique = Deducer.timedEval("as.character(rownames(na.omit("+lastDataName1+"["+byX+"]"+
 											"))[duplicated(na.omit("+lastDataName1+"["+byX+"]))])").asStrings();
-				String[] data2Unique = Deducer.eval("as.character(rownames(na.omit("+lastDataName2+"["+byY+"]"+
+				String[] data2Unique = Deducer.timedEval("as.character(rownames(na.omit("+lastDataName2+"["+byY+"]"+
 											"))[duplicated(na.omit("+lastDataName2+"["+byY+"]))])").asStrings();
 				if(data1Unique.length>0 && data2Unique.length>0){
 					int choice =JOptionPane.showOptionDialog(this,"Niether data frame has unique case identifiers.\n" +
@@ -456,17 +456,17 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 							JOptionPane.WARNING_MESSAGE,null,null,null);
 					if(choice==JOptionPane.NO_OPTION)
 						return false;
-					Deducer.eval("cat('\\n')");
-					Deducer.eval("cat('\\nDuplicate Identifiers in "+lastDataName1+": "+"\\n')");
+					Deducer.timedEval("cat('\\n')");
+					Deducer.timedEval("cat('\\nDuplicate Identifiers in "+lastDataName1+": "+"\\n')");
 					String temp1="";
 					for(int i=0;i<data1Unique.length;i++)
 						temp1+=" "+data1Unique[i];
-					Deducer.eval("cat('"+temp1+"\\n')");
-					Deducer.eval("cat('\\nDuplicate Identifiers in "+lastDataName2+": "+"\\n')");
+					Deducer.timedEval("cat('"+temp1+"\\n')");
+					Deducer.timedEval("cat('\\nDuplicate Identifiers in "+lastDataName2+": "+"\\n')");
 					temp1="";
 					for(int i=0;i<data2Unique.length;i++)
 						temp1+=" "+data2Unique[i];
-					Deducer.eval("cat('"+temp1+"\\n')");
+					Deducer.timedEval("cat('"+temp1+"\\n')");
 					Deducer.execute("",false);
 				}
 			}else{

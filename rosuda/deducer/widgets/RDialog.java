@@ -285,7 +285,7 @@ public class RDialog extends JDialog {
 	 * @return an r list of widget states
 	 */
 	public REXP getWidgetStates(){
-		return Deducer.eval(getWidgetStatesAsString());
+		return Deducer.timedEval(getWidgetStatesAsString());
 	}
 	
 	public void add(Component comp,int top,int right, int bottom, int left, String topType,

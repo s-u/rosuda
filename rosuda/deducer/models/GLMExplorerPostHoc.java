@@ -175,19 +175,20 @@ public class GLMExplorerPostHoc extends javax.swing.JDialog implements ActionLis
 		model = mod;
 		rmodel = rmod;
 		try{
-			String[] mainEffects = Deducer.eval("labels(terms("+rmod.modelName+"))[!grepl(\":\",labels(terms("+
+			String[] mainEffects = Deducer.timedEval("labels(terms("+rmod.modelName+"))[!grepl(\":\",labels(terms("+
 					rmod.modelName+")))]").asStrings();
 			
-			if(mainEffects.length>0){
+			if(mainEffects!=null && mainEffects.length>0){
 				String tmpForm = "~"+mainEffects[0];
 				for(int i=1;i<(mainEffects.length);i++)
 					tmpForm+="+"+mainEffects[i];
-				int[] isFactor = Deducer.eval("as.integer(sapply(model.frame("+tmpForm+
+				int[] isFactor = Deducer.timedEval("as.integer(sapply(model.frame("+tmpForm+
 										",data="+rmod.data+",na.action=na.omit),is.factor))").asIntegers();
-				for(int i=0;i<mainEffects.length;i++){
-					if(isFactor[i]==1)
-						((DefaultListModel)factors.getModel()).addElement(mainEffects[i]);
-				}
+				if(isFactor!=null)
+					for(int i=0;i<mainEffects.length;i++){
+						if(isFactor[i]==1)
+							((DefaultListModel)factors.getModel()).addElement(mainEffects[i]);
+					}
 			}
 			DefaultListModel factModel = ((DefaultListModel)factors.getModel());
 			for(int i=0;i<model.posthoc.posthoc.getSize();i++)

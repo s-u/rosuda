@@ -25,9 +25,9 @@ public class GLMModel extends ModelModel {
 	public RModel run(boolean preview,RModel prevModel){
 		RModel rModel = new RModel();
 		String cmd = "";
-		boolean envDefined = ((REXPLogical)Deducer.eval("'"+Deducer.guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
+		boolean envDefined = ((REXPLogical)Deducer.timedEval("'"+Deducer.guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
 		if(!envDefined){
-			Deducer.eval(Deducer.guiEnv+"<-new.env(parent=emptyenv())");
+			Deducer.timedEval(Deducer.guiEnv+"<-new.env(parent=emptyenv())");
 		}
 		
 		String modelName ;
@@ -61,8 +61,8 @@ public class GLMModel extends ModelModel {
 		ArrayList tmp = new ArrayList();
 		String[] out = new String[]{};	
 		if(preview){
-			Deducer.eval(dataName+"<-"+data);
-			Deducer.eval(cmd);
+			Deducer.timedEval(dataName+"<-"+data);
+			Deducer.timedEval(cmd);
 			tmp.add("\n>"+cmd);
 		}
 		
@@ -92,7 +92,11 @@ public class GLMModel extends ModelModel {
 			if(this.options.anova){
 				String anovaCall = "Anova("+modelName+",type='"+options.type+"',test.statistic='"+options.test+"')";
 				if(preview){
-					out = Deducer.eval("capture.output("+anovaCall+")").asStrings();
+					try{
+						out = Deducer.timedEval("capture.output("+anovaCall+")").asStrings();
+					}catch(Exception e){
+						out = new String[]{};
+					}
 					tmp.add("\n>"+anovaCall+"\n");
 					for(int i=0;i<out.length;i++)
 						tmp.add(out[i]);
@@ -103,7 +107,11 @@ public class GLMModel extends ModelModel {
 			if(this.options.summary){
 				String summaryCall = "summary("+modelName+(options.paramCor ?",correlation=TRUE":"")+")";
 				if(preview){
-					out = Deducer.eval("capture.output("+summaryCall+")").asStrings();
+					try{
+					out = Deducer.timedEval("capture.output("+summaryCall+")").asStrings();
+					}catch(Exception e){
+						out = new String[]{};
+					}
 					tmp.add("\n>"+summaryCall+"\n");
 					for(int i=0;i<out.length;i++)
 						tmp.add(out[i]);
@@ -115,7 +123,11 @@ public class GLMModel extends ModelModel {
 			if(this.options.vif){
 				String vifCall = "vif("+modelName+")";
 				if(preview){
-					out = Deducer.eval("capture.output("+vifCall+")").asStrings();
+					try{
+					out = Deducer.timedEval("capture.output("+vifCall+")").asStrings();
+					}catch(Exception e){
+						out = new String[]{};
+					}
 					tmp.add("\n>"+vifCall+"\n");
 					for(int i=0;i<out.length;i++)
 						tmp.add(out[i]);
@@ -127,7 +139,11 @@ public class GLMModel extends ModelModel {
 			if(this.options.influence){
 				String infCall = "summary(influence.measures("+modelName+"))";
 				if(preview){
-					out = Deducer.eval("capture.output("+infCall+")").asStrings();
+					try{
+					out = Deducer.timedEval("capture.output("+infCall+")").asStrings();
+					}catch(Exception e){
+						out = new String[]{};
+					}
 					tmp.add("\n>"+infCall+"\n");
 					for(int i=0;i<out.length;i++)
 						tmp.add(out[i]);
@@ -155,7 +171,7 @@ public class GLMModel extends ModelModel {
 							"'=\""+posthoc.type+"\")),test="+cor+")";
 				if(preview){
 					try {
-						out = Deducer.eval("capture.output("+postCall+")").asStrings();
+						out = Deducer.timedEval("capture.output("+postCall+")").asStrings();
 					} catch (Exception e) {
 						out = new String[]{""};
 						posthoc = new PostHoc();
@@ -172,7 +188,7 @@ public class GLMModel extends ModelModel {
 					"'=\""+posthoc.type+"\")))";
 					if(preview){
 						try {
-							out = Deducer.eval("capture.output("+postCall+")").asStrings();
+							out = Deducer.timedEval("capture.output("+postCall+")").asStrings();
 						} catch (Exception e) {
 							out = new String[]{""};
 						}
@@ -195,12 +211,13 @@ public class GLMModel extends ModelModel {
 			if(effects.effects.size()>0){
 				String[] t = new String[1];
 				if(prevModel!=null){
-					t=Deducer.eval("attr(terms("+prevModel.modelName+
+					t=Deducer.timedEval("attr(terms("+prevModel.modelName+
 										"),\"term.labels\")").asStrings();
 				}
 				Vector ter = new Vector();
-				for(int i=0;i<t.length;i++)
-					ter.add(t[i]);
+				if(t!=null)
+					for(int i=0;i<t.length;i++)
+						ter.add(t[i]);
 				Vector terms = new Vector();
 				for(int i=0;i<effects.effects.size();i++){
 					if(prevModel==null || ter.contains(effects.effects.get(i)))
@@ -217,7 +234,9 @@ public class GLMModel extends ModelModel {
 					String effectCall;
 					for(int i=0;i<effectCalls.size();i++){
 						effectCall=(String)effectCalls.get(i);
-						out = Deducer.eval("capture.output("+effectCall+")").asStrings();
+						try{
+						out = Deducer.timedEval("capture.output("+effectCall+")").asStrings();
+						}catch(Exception e){out = new String[]{};}
 						tmp.add("\n>"+effectCall+"\n");
 						for(int j=0;j<out.length;j++)
 							tmp.add(out[j]);
@@ -244,8 +263,10 @@ public class GLMModel extends ModelModel {
 			if(plots.effects.size()>0){
 				String[] t = new String[1];
 				if(prevModel!=null){
+					try{
 					t=Deducer.eval("attr(terms("+prevModel.modelName+
 										"),\"term.labels\")").asStrings();
+					}catch(Exception e){t = new String[]{""};}
 				}
 				Vector ter = new Vector();
 				for(int i=0;i<t.length;i++)
@@ -290,13 +311,15 @@ public class GLMModel extends ModelModel {
 			String[] out = new String[]{};
 			if(tests.size()>0){
 				String[] t = new String[1];
-				if(prevModel!=null){
-					t=Deducer.eval("names(coef("+prevModel.modelName+
-										"))").asStrings();
-				}else if(preview){
-					t=Deducer.eval("names(coef("+modelName+
-										"))").asStrings();
-				}
+				try{
+					if(prevModel!=null){
+						t=Deducer.timedEval("names(coef("+prevModel.modelName+
+											"))").asStrings();
+					}else if(preview){
+						t=Deducer.timedEval("names(coef("+modelName+
+											"))").asStrings();
+					}
+				}catch(Exception e){t = new String[]{};}
 				Vector testCalls = new Vector();
 				String matrixName;
 				if(preview)
@@ -336,7 +359,7 @@ public class GLMModel extends ModelModel {
 					String testCall;
 					for(int i=0;i<testCalls.size();i++){
 						testCall=(String)testCalls.get(i);
-						REXP r =Deducer.eval("capture.output("+testCall.replaceAll("\n", "").replaceAll("\t", "")+")");
+						REXP r =Deducer.timedEval("capture.output("+testCall.replaceAll("\n", "").replaceAll("\t", "")+")");
 						if(r!=null)
 							out = r.asStrings();
 						else
@@ -372,42 +395,42 @@ public class GLMModel extends ModelModel {
 				if(export.cooks){
 					anyExport=true;
 					cmd+="\n"+temp+"<-cooks.distance("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"cooks\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(export.resid){
 					anyExport=true;
 					cmd+="\n"+temp+"<-residuals("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"Residuals\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(export.sdresid){
 					anyExport=true;
 					cmd+="\n"+temp+"<-rstandard("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"resid.standardized\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(export.stresid){
 					anyExport=true;
 					cmd+="\n"+temp+"<-rstudent("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"resid.studentized\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(export.pred && !isLm){
 					anyExport=true;
 					cmd+="\n"+temp+"<-predict("+modelName+",type='response')";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"predicted\")))[1]").asString()+"\"]<-"+temp;
 				}else if(export.pred){
 					anyExport=true;
 					cmd+="\n"+temp+"<-predict("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"predicted\")))[1]").asString()+"\"]<-"+temp;				
 				}
 				if(export.linearPred && !isLm){
 					anyExport=true;
 					cmd+="\n"+temp+"<-predict("+modelName+",type='link')";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"linear.pred\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(export.dfbeta){
@@ -417,19 +440,19 @@ public class GLMModel extends ModelModel {
 				if(export.dffits){
 					anyExport=true;
 					cmd+="\n"+temp+"<-dffits("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"dffits\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(export.hats){
 					anyExport=true;
 					cmd+="\n"+temp+"<-hatvalues("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"hats\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(export.covratio){
 					anyExport=true;
 					cmd+="\n"+temp+"<-covratio("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"cov.ratio\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(anyExport)

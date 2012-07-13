@@ -96,7 +96,7 @@ public class PrefPanel extends PrefDialog.PJPanel implements ActionListener{
 		DeducerPrefs.SHOWDATA= data.isSelected();
 		//DeducerPrefs.USEQUAQUACHOOSER = macChooser.isSelected();
 		//if(DeducerPrefs.USEQUAQUACHOOSER)
-		//	Deducer.eval(".jChooserMacLAF()");
+		//	Deducer.timedEval(".jChooserMacLAF()");
 		DeducerPrefs.VIEWERATSTARTUP = dataViewerStartUp.isSelected();
 		DeducerPrefs.writePrefs();
 	}

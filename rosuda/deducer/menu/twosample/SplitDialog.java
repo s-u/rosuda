@@ -195,7 +195,7 @@ public class SplitDialog extends JDialog implements ActionListener, FocusListene
 		if(data!=null && factor!=null){
 			String[] levs=null;
 			try {
-				levs = Deducer.eval("levels(as.factor("+data+"[[\""+factor+"\"]]))").asStrings();
+				levs = Deducer.timedEval("levels(as.factor("+data+"[[\""+factor+"\"]]))").asStrings();
 			} catch (REXPMismatchException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

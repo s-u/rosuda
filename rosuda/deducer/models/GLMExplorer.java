@@ -47,7 +47,13 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 			call="par(mar=c(5,4,2,2))\n"+
 				"try(crPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
 			termTab = new ModelPlotPanel(call);
-			if(((REXPLogical)Deducer.eval("length(grep(\":\",c(attr(terms("+pre.modelName+"),\"term.labels\"))))==0")).isTRUE()[0])
+			boolean st = false;
+			try{
+				st = ((REXPLogical)Deducer.timedEval(
+					"length(grep(\":\",c(attr(terms("+
+					pre.modelName+"),\"term.labels\"))))==0")).isTRUE()[0];
+			}catch(Exception e){}
+			if(st)
 				tabs.addTab("Terms", termTab);
 			
 			call="par(mar=c(5,4,2,2))\n"+
@@ -91,7 +97,7 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 		model.run(false,pre);
 		this.dispose();
 		GLMDialog.setLastModel(model);
-		Deducer.eval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
+		Deducer.timedEval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
 	}
 	
 	public void updateClicked(){
@@ -140,11 +146,10 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 		
 		String[] s = new String[]{};
 		try{
-			s =Deducer.eval("names(coef("+pre.modelName+
+			s =Deducer.timedEval("names(coef("+pre.modelName+
 					"))").asStrings();
 		}catch(Exception e){
 			e.printStackTrace();
-			new ErrorMsg(e);
 		}
 		Vector trms = new Vector();
 		for(int i=0;i<s.length;i++)

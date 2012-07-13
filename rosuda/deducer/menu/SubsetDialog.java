@@ -421,7 +421,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 			return false;
 		
 		REXP valid=null;
-		valid = Deducer.eval("(function(x,subset){"+
+		valid = Deducer.timedEval("(function(x,subset){"+
 										"result<-try(e <- substitute(subset),silent=TRUE)\n"+
 										"if(class(result)==\"try-error\")\n"+
 										"	return(FALSE)\n"+
