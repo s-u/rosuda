@@ -6,6 +6,7 @@ package org.rosuda.deducer.data;
 
 import javax.swing.JOptionPane;
 
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
@@ -20,19 +21,93 @@ import org.rosuda.deducer.Deducer;
  */
 class RDataFrameVariableModel extends ExDefaultTableModel {
 	
+	private static String guiEnv = Deducer.guiEnv;
 	
-	String rDataName=null;
+	private String rDataName=null;
+	
+	private String tempDataName = null;
+	
 	
 	private VariableNumberListModel rowNamesModel;
 	
 	private final int numExtraColumns = 1;
 	
 	
+	String[] varNames = new String[]{};
+	String[] classes = new String[]{};
+	String[] factorLevels = new String[]{};
+	
+	
 	public RDataFrameVariableModel(){}
 	
 	public RDataFrameVariableModel(String name){
-		rDataName = name;
+		boolean envDefined = ((REXPLogical)Deducer.eval("'"+guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
 		
+		if(!envDefined){
+			Deducer.eval(guiEnv+"<-new.env(parent=emptyenv())");
+		}
+		if(tempDataName!=null)
+			removeCachedData();
+		rDataName = name;
+		if(rDataName!=null){
+			tempDataName = Deducer.getUniqueName(rDataName + Math.random(),guiEnv);
+			try {
+				Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+			} catch (Exception e) {
+				new ErrorMsg(e);
+			}
+			populateArrays();
+		}
+	}
+	
+	public void populateArrays(){
+		try {
+			varNames = Deducer.timedEval("colnames("+rDataName+")").asStrings();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(varNames==null)
+			varNames = new String[]{};
+		int n = varNames.length;
+		classes = new String[n];
+		factorLevels = new String[n];
+		String[] tmpClasses = null;
+		try {
+			tmpClasses = Deducer.timedEval(
+					"sapply("+rDataName+",function(x){a <- class(x);return(a[length(a)])})").asStrings();
+		} catch (Exception e1) {}
+		
+		for(int i=0;i<varNames.length;i++){
+			String theClass = null;
+			if(tmpClasses!=null){
+				theClass = tmpClasses[i];	
+			}
+			if(theClass.equals("Date")) classes[i] = "Date";
+			else if(theClass.equals("POSIXt")) classes[i] = "Time";
+			else if (theClass.equals("NULL")) classes[i] = "NULL";
+			else if (theClass.equals("factor")) classes[i] = "Factor";
+			else if (theClass.equals("integer")) classes[i] = "Integer";
+			else if (theClass.equals("character")) classes[i] = "Character";
+			else if (theClass.equals("logical")) classes[i] = "Logical";
+			else if (theClass.equals("numeric")) classes[i] = "Double";
+			else classes[i] = "Other";
+			
+			factorLevels[i] = "";
+			try{
+				if(theClass.equals("factor")){
+					String[] levels = Deducer.eval("levels("+rDataName+"[,"+(i+1)+"])").asStrings();
+					String lev = "";
+					for(int j=0;j<Math.min(levels.length,10);j++){
+						lev=lev.concat("("+(j+1)+") ");
+						lev=lev.concat(levels[j]);	
+						lev=lev.concat("; ");
+					}
+					if(levels.length>10)
+						lev=lev.concat(" ...");
+					factorLevels[i] = lev;
+				}
+			}catch(Exception e){}
+		}
 	}
 	
 	public int getColumnCount( ){
@@ -40,16 +115,10 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	}
 	
 	public int getRowCount(){
-		try{
-			REXP nExists = Deducer.eval("inherits(try(eval(parse(text=\""+Deducer.addSlashes(rDataName)+
-			"\")),silent=TRUE),'try-error')");
-			if(((REXPLogical)nExists).isTRUE()[0])
-				return 0;
-			if(rDataName!=null)
-				return Deducer.eval("ncol("+rDataName+")").asInteger()+numExtraColumns;
-			else
-				return 0;
-		}catch(Exception e){return 0;}
+		if(varNames!=null)
+			return varNames.length + numExtraColumns;
+		else
+			return 0;
 	}
 	
 	public Object getValueAt(int row, int col){
@@ -57,42 +126,11 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			if(row>=(getRowCount()-numExtraColumns)){
 				return null;
 			}else if(col==0){
-				return Deducer.eval("colnames("+rDataName+")["+(row+1)+"]").asString();
+				return varNames[row];
 			}else if(col==1){
-				REXP var = Deducer.eval(rDataName+"[,"+(row+1)+"]");
-				if(var==null)
-					return "?";
-				REXP cls = var.getAttribute("class");
-				String[] classes = null;
-				String theClass = null;
-				if(cls!=null){
-					classes = cls.asStrings();
-					if(classes.length>0)
-						theClass = classes[classes.length-1];	
-				}
-				if(theClass!=null && theClass.equals("Date")) return "Date";
-				else if(theClass!=null && theClass.equals("POSIXt")) return "Time";
-				else if (var.isNull()) return "NULL";
-				else if (var.isFactor()) return "Factor";
-				else if (var.isInteger()) return "Integer";
-				else if (var.isString()) return "Character";
-				else if (var.isLogical()) return "Logical";
-				else if (var.isNumeric()) return "Double";
-				else return "Other";
-
+				return classes[row];
 			}else if(col==2){
-				REXP var = Deducer.eval(rDataName+"[,"+(row+1)+"]");
-				if(var.isFactor()){
-					String[] levels = Deducer.eval("levels("+rDataName+"[,"+(row+1)+"])").asStrings();
-					String lev = "";
-					for(int i=0;i<Math.min(levels.length,50);i++){
-						lev=lev.concat("("+(i+1)+") ");
-						lev=lev.concat(levels[i]);	
-						lev=lev.concat("; ");
-					}
-					return lev;
-				}else 
-					return "";
+				return factorLevels[row];
 			}else
 				return "";
 		}catch(Exception e){return "?";}
@@ -101,33 +139,55 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	public void setValueAt(Object value,int row, int col){
 		if(row>=(getRowCount()-numExtraColumns)){
 			if(col==0){
-				Deducer.eval(rDataName+"[,"+(row+1)+"]<-NA");	
-				Deducer.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
+				Deducer.timedEval(rDataName+"[,"+(row+1)+"]<-NA");	
+				Deducer.timedEval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
 				refresh();
 				rowNamesModel.refresh();
 			}else
 				return;
 		}else if(col==0){
-			Deducer.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
+			Deducer.eval("{rm(\"" +tempDataName+"\",envir="+guiEnv+");" + 
+					"colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"';" +
+					guiEnv+"$"+tempDataName+"<-"+rDataName + "}");
+			
+			//Deducer.eval("rm(\"" + guiEnv+"$"+tempDataName+"\")");
+			//Deducer.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
+			//Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+			varNames[row] = value.toString().trim();
+			this.fireTableCellUpdated(row, col);
+			
 		}else if(col==1){
 			String curClass = (String) getValueAt(row,col);
 			String type = value.toString().toLowerCase().trim();
-			if(type.equals("integer")) 
+			if(value.toString().equals(curClass))
+				return;
+			if(type.equals("integer")){ 
 				Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.integer("+rDataName+"[,"+(row+1)+"])");
-			else if(type.equals("factor")) 
+				classes[row] = "Integer";
+				this.fireTableCellUpdated(row, col);
+			}else if(type.equals("factor")){
 				Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.factor("+rDataName+"[,"+(row+1)+"])");
-			else if(type.equals("double")) 
+				classes[row] = "Factor";
+				this.fireTableCellUpdated(row, col);
+			}else if(type.equals("double")){ 
 				Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.double("+rDataName+"[,"+(row+1)+"])");
-			else if(type.equals("logical")) 
+				classes[row] = "Double";
+				this.fireTableCellUpdated(row, col);
+			}else if(type.equals("logical")){ 
 				Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.logical("+rDataName+"[,"+(row+1)+"])");
-			else if(type.equals("character")) 
+				classes[row] = "Logical";
+				this.fireTableCellUpdated(row, col);
+			}else if(type.equals("character")){ 
 				Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.character("+rDataName+"[,"+(row+1)+"])");
-			else if(type.equals("date")){
+				classes[row] = "Character";
+				this.fireTableCellUpdated(row, col);
+			}else if(type.equals("date")){
 				
 				if(curClass=="Date")
 					return;
 				if(curClass=="Time"){
 					Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.Date("+rDataName+"[,"+(row+1)+"])");
+					refresh();
 					return;
 				}
 				if(curClass!="Character" && curClass!="Factor"){
@@ -186,9 +246,13 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 						format = "%y-%m-%d";
 				}
 				Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.Date("+rDataName+"[,"+(row+1)+"], format= '"+format+"')");
+				classes[row] = "Date";
+				this.fireTableCellUpdated(row, col);
 			}else if(type.equals("time")){ 
 				if(curClass=="Date"){
 					Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.POSIXct("+rDataName+"[,"+(row+1)+"])");
+					classes[row] = "Time";
+					this.fireTableCellUpdated(row, col);
 					return;
 				}
 				if(curClass=="Time"){
@@ -249,13 +313,18 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 					else if(form == formats[11])
 						format = "%y-%m-%d %H:%M:%S";
 				}
-				if(curClass=="Character")
-					Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.POSIXct("+rDataName+"[,"+(row+1)+"], format='"+format+"')");			
-				else
+				if(curClass=="Character"){
+					Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.POSIXct("+rDataName+"[,"+(row+1)+"], format='"+format+"')");	
+					classes[row] = "Time";
+					this.fireTableCellUpdated(row, col);
+					return;
+				}else{
 					Deducer.execute(rDataName+"[,"+(row+1)+"]<-as.POSIXct(as.character("+rDataName+"[,"+(row+1)+"]), format='"+format+"')");
-				}else if(type.equals("other"))
-				JOptionPane.showMessageDialog(null, "Variables can not be changed to 'Other'");
-			return;					
+					classes[row] = "Time";
+					this.fireTableCellUpdated(row, col);
+					return;
+				}
+			}
 		}
 	}
 	
@@ -270,8 +339,35 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 		return "";
 	}
 	
-	public void refresh(){
-		this.fireTableDataChanged();
+	public boolean refresh(){
+		boolean changed = false;
+		REXP exist = Deducer.eval("!inherits(try(eval(parse(text=\""+Deducer.addSlashes(rDataName)+
+				"\")),silent=TRUE),'try-error')");
+			//Deducer.eval("exists('"+rDataName+"')");
+		if(exist!=null && ((REXPLogical)exist).isTRUE()[0]){
+			REXP ident =Deducer.eval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")"); 
+			if(ident!=null && ((REXPLogical)ident).isFALSE()[0]){
+				Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+				populateArrays();
+				this.fireTableDataChanged();			
+				changed=true;
+			}
+		}
+		return changed;
+	}
+	
+	public void removeCachedData(){
+		boolean envDefined = ((REXPLogical)Deducer.eval("'"+guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
+		
+		if(!envDefined){
+			Deducer.eval(guiEnv+"<-new.env(parent=emptyenv())");
+		}
+		boolean tempStillExists = false;
+		REXP tmp = Deducer.eval("exists('"+tempDataName+"',where="+guiEnv+",inherits=FALSE)");
+		if(tmp instanceof REXPLogical)
+			tempStillExists = ((REXPLogical)tmp).isTRUE()[0];
+		if(tempStillExists)
+			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");		
 	}
 	
 	
@@ -286,17 +382,10 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 		}
 		
 		public int getSize() { 
-			try {			
-				REXP nExists = Deducer.eval("inherits(try(eval(parse(text=\""+Deducer.addSlashes(rDataName)+
-				"\")),silent=TRUE),'try-error')");
-				if(((REXPLogical)nExists).isTRUE()[0])
-					return 0;
-				return Deducer.eval("ncol("+rDataName+")").asInteger()+numExtraColumns;
-			} catch (REXPMismatchException e) {
-				return 0;
-			}
+			return varNames.length;
 		}
 	}
 
+	
 
 }

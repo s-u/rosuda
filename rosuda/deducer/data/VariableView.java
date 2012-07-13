@@ -63,16 +63,22 @@ public class VariableView extends DataViewerTab implements ActionListener{
 		     public void mouseClicked(MouseEvent e){
 		    	 ExTable extab = (ExTable)e.getSource();
 		    	 if(extab.getSelectedColumn()==2){
-		    		int row = extab.getSelectedRow();
-		    		String varName = (String)extab.getModel().getValueAt(row, 0);
-		    		String datName = VariableView.this.dataName;
+		    		final int row = extab.getSelectedRow();
+		    		final String varName = (String)extab.getModel().getValueAt(row, 0);
+		    		final String datName = VariableView.this.dataName;
 		    		REXPLogical tmp;
 					tmp = (REXPLogical) Deducer.timedEval("is.factor("+datName+"$"+varName+")");
 		    		if(tmp!=null && tmp.isTRUE()[0]){
-		    			FactorDialog fact = new FactorDialog(null,datName+"$"+varName);
-		    			fact.setLocationRelativeTo(ex);
-		    			fact.setTitle("Factor Editor: "+varName);
-		    			fact.setVisible(true);
+		    			new Thread(new Runnable(){
+							public void run() {
+								FactorDialog fact = new FactorDialog(null,datName+"[,"+(row+1)+"]");
+				    			fact.setLocationRelativeTo(ex);
+				    			fact.setTitle("Factor Editor: "+varName);
+				    			fact.setVisible(true);
+							}
+		    				
+		    			}).start();
+		    			
 		    		}
 		    	 }
 		      }
@@ -97,7 +103,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 	}
 
 	public void refresh() {
-		int colStart = -1;
+/*		int colStart = -1;
 		int colEnd = -1;
 		int rowStart = -1;
 		int rowEnd=-1;
@@ -110,14 +116,16 @@ public class VariableView extends DataViewerTab implements ActionListener{
 		if(rows.length>0){
 			rowStart = rows[0];
 			rowEnd = rows[rows.length-1];
-		}
-		((RDataFrameVariableModel)variableScrollPane.getExTable().getModel()).refresh();
-		variableScrollPane.getRowNamesModel().refresh();
-		variableScrollPane.autoAdjustRowWidth();
-		
-		if(colStart != -1 && colEnd != -1 && rowStart != -1 && rowEnd != -1){
-			ex.changeSelection(rowStart, colStart, false, false);
-			ex.changeSelection(rowEnd, colEnd, false, true);
+		}*/
+		boolean changed =((RDataFrameVariableModel)variableScrollPane.getExTable().getModel()).refresh();
+		if(changed){
+			variableScrollPane.getRowNamesModel().refresh();
+			variableScrollPane.autoAdjustRowWidth();
+	/*		
+			if(colStart != -1 && colEnd != -1 && rowStart != -1 && rowEnd != -1){
+				ex.changeSelection(rowStart, colStart, false, false);
+				ex.changeSelection(rowEnd, colEnd, false, true);
+			}*/
 		}
 	}
 	

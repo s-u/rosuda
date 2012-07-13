@@ -87,33 +87,28 @@ public class ExTable extends JTable{
 	
 	public void selectColumn(int colIndex){
 
-		Point currentPnt=null;
-		if(parentPane!=null){
-			currentPnt = parentPane.getViewport().getViewPosition();
-		}
+
+		selectionModel.setValueIsAdjusting(true);
 		changeSelection(getRowCount()-1, colIndex, false, false);
 		if(Common.isMac())
 			changeSelection(0, colIndex, false, true);
 		else
 			changeSelection(0, colIndex, true, true);
-		if(parentPane!=null)
-			parentPane.getViewport().setViewPosition(currentPnt);
+
+		selectionModel.setValueIsAdjusting(false);
 		this.requestFocus();
 	}
 	
 	public void selectRow(int rowIndex){
-		Point currentPnt=null;
-		if(parentPane!=null){
-			currentPnt = parentPane.getViewport().getViewPosition();
-		}
 
+		selectionModel.setValueIsAdjusting(true);
 		changeSelection(rowIndex,getColumnCount()-1,  false, false);
 		if(Common.isMac())
 			changeSelection(rowIndex,0, false, true);
 		else
 			changeSelection(rowIndex,0,  true, true);
-		if(parentPane!=null)
-			parentPane.getViewport().setViewPosition(currentPnt);
+
+		selectionModel.setValueIsAdjusting(false);
 	}
 	
 	public CopyPasteAdapter getCopyPasteAdapter() { return excelCopyPaste;}
