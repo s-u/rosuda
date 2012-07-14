@@ -15,18 +15,16 @@ import org.rosuda.ibase.Common;
  * Adapter copies and pastes from the clipboard in tab delimited format.
  * Compatible with Excel
  * 
- * @author ifellows
- *
  */
 public class CopyPasteAdapter implements ActionListener{
 	private String rowstring,value;
 	private Clipboard system;
 	private StringSelection stsel;
-	private JTable jTable1 ;
+	private ExTable jTable1 ;
 	
 	
 
-	public CopyPasteAdapter(JTable myJTable)
+	public CopyPasteAdapter(ExTable myJTable)
 	{
 			KeyStroke copy,cut, paste;
 			jTable1 = myJTable;
@@ -46,8 +44,8 @@ public class CopyPasteAdapter implements ActionListener{
 	}
 	
 
-	public JTable getJTable() {return jTable1;}
-	public void setJTable(JTable jTable1) {this.jTable1=jTable1;}
+	public ExTable getJTable() {return jTable1;}
+	public void setJTable(ExTable jTable1) {this.jTable1=jTable1;}
 	
 	public void copyCut(boolean isCut){
 		StringBuffer sbf=new StringBuffer();
@@ -56,7 +54,9 @@ public class CopyPasteAdapter implements ActionListener{
 		int numcols=jTable1.getSelectedColumnCount();
 		int numrows=jTable1.getSelectedRowCount();
 		int[] rowsselected=jTable1.getSelectedRows();
+		
 		int[] colsselected=jTable1.getSelectedColumns();
+		
 		if (!((numrows-1==rowsselected[rowsselected.length-1]-rowsselected[0] &&
 				numrows==rowsselected.length) &&
 				(numcols-1==colsselected[colsselected.length-1]-colsselected[0] &&
@@ -66,17 +66,29 @@ public class CopyPasteAdapter implements ActionListener{
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		int rowStart = rowsselected[0];
+		int colStart = colsselected[0];
+		
 		try{jTable1.getCellEditor().cancelCellEditing();}catch(Exception e){}
-		for (int i=0;i<numrows;i++){
-			for (int j=0;j<numcols;j++){
-				Object temp =jTable1.getValueAt(rowsselected[i],colsselected[j]);
+		Object[][] values = ((ExDefaultTableModel)jTable1.getModel()).getRange(
+				rowStart,rowStart+numrows,colStart,colStart+numcols);
+		numcols = values.length;
+		if(values.length>0)
+			numrows = values[0].length;
+		else
+			numrows=0;
+		for (int j=0;j<numcols;j++){
+			for (int i=0;i<numrows;i++){
+				Object temp = values[j][i];
 				sbf.append((temp==null) ? "" : temp.toString());
-				if (j<numcols-1) sbf.append("\t");				
-				if(isCut){
-					jTable1.setValueAt(null,rowsselected[i],colsselected[j]);
-				}
+				if (i<numrows-1) sbf.append("\t");				
 			}
-			sbf.append("\n");
+			if(j<numcols-1)
+				sbf.append("\n");
+		}
+		if(isCut){
+			((ExDefaultTableModel)jTable1.getModel()).eraseRange(
+					rowStart,rowStart+numrows,colStart,colStart+numcols);
 		}
 		stsel  = new StringSelection(sbf.toString());
 		system = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -106,38 +118,50 @@ public class CopyPasteAdapter implements ActionListener{
 			else
 				st1=new StringTokenizer(trstring,"\n");
 			try{jTable1.getCellEditor().cancelCellEditing();}catch(Exception e){}
+			ArrayList rowList = new ArrayList();
 			for(int row=0;st1.hasMoreTokens();row++){
 				rowstring=st1.nextToken();
 				StringTokenizer st2=new StringTokenizer(rowstring,"\t",true);
 				int col=0;
 				String lastValue="";
+				ArrayList colList = new ArrayList();
 				for(int j=0;st2.hasMoreTokens();j++){
 					value=(String)st2.nextToken();
 					if(value.indexOf("\t")<0){
 						if (startRow+row< jTable1.getRowCount()  &&
 								startCol+col< jTable1.getColumnCount())
-							jTable1.setValueAt(value,startRow+row,startCol+col);
+							colList.add(value);
+							//jTable1.setValueAt(value,startRow+row,startCol+col);
 						col++;
 					}else if((lastValue.indexOf("\t")>=0) && (value.indexOf("\t")>=0)){
 						if (startRow+row< jTable1.getRowCount()  &&
 								startCol+col< jTable1.getColumnCount())
-							jTable1.setValueAt(null,startRow+row,startCol+col);
+							colList.add(null);
+							//jTable1.setValueAt(null,startRow+row,startCol+col);
 						col++;                	   
 					}
 					if(value.indexOf("\t")>=0 && !st2.hasMoreTokens()){
 						if (startRow+row< jTable1.getRowCount()  &&
 								startCol+col< jTable1.getColumnCount())
-							jTable1.setValueAt(null,startRow+row,startCol+col);
+							colList.add(null);
+							//jTable1.setValueAt(null,startRow+row,startCol+col);
 					}
 					if(j==0 && value.indexOf("\t")>=0){
 						if (startRow+row< jTable1.getRowCount()  &&
 								startCol+col< jTable1.getColumnCount())
-							jTable1.setValueAt(null,startRow+row,startCol+col);
+							colList.add(null);
+							//jTable1.setValueAt(null,startRow+row,startCol+col);
 						col++;
 					}
 					lastValue=value;
 				}
+				rowList.add(colList);
 			}
+			Object[][] values = new Object[rowList.size()][];
+			for(int i=0;i<rowList.size();i++){
+				values[i] = ((ArrayList)rowList.get(i)).toArray();
+			}
+			((ExDefaultTableModel)jTable1.getModel()).setRange(values, startRow, startCol);
 		}
 		catch(Exception ex){ex.printStackTrace();}
 	}

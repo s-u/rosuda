@@ -370,6 +370,11 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");		
 	}
 	
+	protected void finalize() throws Throwable {
+		removeCachedData();
+		super.finalize();
+	}
+	
 	
 	public class VariableNumberListModel extends RowNamesListModel{
 		

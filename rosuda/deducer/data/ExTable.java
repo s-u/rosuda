@@ -138,7 +138,7 @@ public class ExTable extends JTable{
 		try{
 			((ExDefaultTableModel) 	getModel()).insertNewColumn(colNumber);		
 		}catch(Exception e){
-			new ErrorMsg(e);
+			e.printStackTrace();
 		}
 
 	}
@@ -180,6 +180,10 @@ public class ExTable extends JTable{
 			}catch(Exception e){
 				new ErrorMsg(e);
 			}
+	}
+	
+	public Object getActualValueAt(int row,int col){
+		return ((ExDefaultTableModel) 	getModel()).getActualValueAt(row, col);
 	}
 	
 	

@@ -52,6 +52,7 @@ public class DataView extends DataViewerTab implements ActionListener {
 		dataScrollPane.getExTable().setDefaultRenderer(Object.class,
 				dataModel.new RCellRenderer());
 		table.setColumnListener(new DataViewColumnHeaderListener(table));
+		table.getTableHeader().setReorderingAllowed(false);
 		this.setLayout(new BorderLayout());
 		this.add(dataScrollPane);
 	}
@@ -220,6 +221,7 @@ public class DataView extends DataViewerTab implements ActionListener {
 				sortItem.addActionListener(this);
 				menu.add( sortItem );
 				menu.add( new JSeparator() );
+				
 				JMenuItem copyItem = new JMenuItem ("Copy");
 				copyItem.addActionListener(this);
 				menu.add( copyItem );
@@ -229,14 +231,18 @@ public class DataView extends DataViewerTab implements ActionListener {
 				JMenuItem pasteItem = new JMenuItem ("Paste");
 				pasteItem.addActionListener(this);
 				menu.add ( pasteItem );
-				menu.addSeparator();
-				JMenuItem insertItem = new JMenuItem ("Insert");
+				JMenuItem insertItem = new JMenuItem ("Paste into New");
 				insertItem.addActionListener(this);
 				menu.add( insertItem );
-				JMenuItem insertNewItem = new JMenuItem ("Insert New Column");
+				menu.addSeparator();
+				
+				JMenuItem insertNewItem = new JMenuItem ("Insert Empty");
 				insertNewItem.addActionListener(this);
 				menu.add( insertNewItem );
-				JMenuItem removeItem = new JMenuItem ("Remove Column");
+				JMenuItem dupNewItem = new JMenuItem ("Duplicate");
+				dupNewItem.addActionListener(this);
+				menu.add( dupNewItem );
+				JMenuItem removeItem = new JMenuItem ("Remove");
 				removeItem.addActionListener(this);
 				menu.add( removeItem );
 				
@@ -245,30 +251,46 @@ public class DataView extends DataViewerTab implements ActionListener {
 			
 			public void actionPerformed(ActionEvent e){
 				
-				JMenuItem source = (JMenuItem)(e.getSource());
-				if(source.getText()=="Copy"){
-					table.getCopyPasteAdapter().copy();
-				} else if(source.getText()=="Cut"){
-					table.cutColumn(vColIndex);
-				} else if(source.getText()=="Paste"){
-					table.getCopyPasteAdapter().paste();
-				} else if(source.getText()=="Insert"){
-					table.insertColumn(vColIndex);
-				} else if(source.getText()=="Insert New Column"){
-					table.insertNewColumn(vColIndex);
-				} else if(source.getText()=="Remove Column"){
-					table.removeColumn(vColIndex);
-				} else if(source.getText().equals("Sort (Increasing)")){
-					String cmd = dataName + " <- sort(" + dataName + ", by=~" +
-						table.getColumnName(vColIndex).trim() + ")";
-					Deducer.eval(cmd);
-					refresh();
-				} else if(source.getText().equals("Sort (Decreasing)")){
-					String cmd = dataName + " <- sort(" + dataName + ", by=~ -" +
-					table.getColumnName(vColIndex).trim() + ")";
-					Deducer.eval(cmd);
-					refresh();
-				}
+				final JMenuItem source = (JMenuItem)(e.getSource());
+				final int vind = vColIndex;
+				new Thread(new Runnable(){
+					public void run() {
+						if(source.getText()=="Copy"){
+							table.getCopyPasteAdapter().copy();
+						} else if(source.getText()=="Cut"){
+							table.cutColumn(vind);
+						} else if(source.getText()=="Paste"){
+							table.getCopyPasteAdapter().paste();
+						} else if(source.getText()=="Paste into New"){
+							table.insertColumn(vind);
+						} else if(source.getText()=="Insert Empty"){
+							table.insertNewColumn(vind);
+						} else if(source.getText()=="Remove"){
+							table.removeColumn(vind);
+						} else if(source.getText().equals("Sort (Increasing)")){
+							String cmd = dataName + " <- sort(" + dataName + ", by=~" +
+								table.getColumnName(vind).trim() + ")";
+							Deducer.eval(cmd);
+							refresh();
+						} else if(source.getText().equals("Sort (Decreasing)")){
+							String cmd = dataName + " <- sort(" + dataName + ", by=~ -" +
+							table.getColumnName(vind).trim() + ")";
+							Deducer.eval(cmd);
+							refresh();
+						} else if(source.getText().equals("Duplicate")){
+							int ind = vind+1;
+							String cmd = dataName + " <- cbind(" + dataName +"[,1:"+ind+"]," +
+								dataName +"[,"+ind+"]," + 
+								dataName +"[,"+ind+":ncol(" + dataName +")])";
+							Deducer.eval(cmd);
+							Deducer.eval("names("+dataName+")["+(ind+1)+"] <- " + 
+									"paste(names("+dataName+")["+ind+"],'1',sep='')");
+							refresh();
+						}
+					}
+					
+				}).start();
+
 				menu.setVisible(false);
 			}
 			

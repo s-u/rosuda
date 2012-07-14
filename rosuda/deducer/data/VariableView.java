@@ -59,6 +59,7 @@ public class VariableView extends DataViewerTab implements ActionListener{
 		ex.setColumnSelectionAllowed(true);
 		ex.setRowSelectionAllowed(true);		
 		ex.getTableHeader().removeMouseListener(ex.getColumnListener());
+		ex.getTableHeader().setReorderingAllowed(false);
 		ex.addMouseListener(new MouseAdapter(){
 		     public void mouseClicked(MouseEvent e){
 		    	 ExTable extab = (ExTable)e.getSource();
@@ -212,6 +213,6 @@ public class VariableView extends DataViewerTab implements ActionListener{
 	}
 	
 	public void cleanUp() {
-		
+		((RDataFrameVariableModel)ex.getModel()).removeCachedData();
 	}
 }
