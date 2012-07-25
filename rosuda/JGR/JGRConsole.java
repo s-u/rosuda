@@ -44,6 +44,7 @@ import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.undo.CannotUndoException;
 
+import org.rosuda.JGR.browser.BrowserWindow;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.editor.FindReplaceDialog;
 import org.rosuda.JGR.toolkit.AboutDialog;
@@ -346,14 +347,21 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			JGR.RHISTORY.add(cmd);
 		currentHistPosition = JGR.RHISTORY.size();
 
-		String[] cmdArray = cmd.split("\n");
+		final String[] cmdArray = cmd.split("\n");
 
-		String c = null;
-		for (int i = 0; i < cmdArray.length; i++) {
-			c = cmdArray[i];
-			if (isSupported(c))
-				JGR.rSync.triggerNotification(c.trim());
-		}
+		new Thread(new Runnable(){
+			public void run() {
+				String c = null;
+				for (int i = 0; i < cmdArray.length; i++) {
+					c = cmdArray[i];
+					if (isSupported(c)){
+						final String c1 = c;
+						JGR.rSync.triggerNotification(c1.trim());				
+					}
+				}
+			}
+		}).start();
+		
 	}
 
 	/**
@@ -830,9 +838,12 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		else if (cmd == "new")
 			new Editor();
 		// else if (cmd == "newwsp") newWorkSpace();
-		else if (cmd == "objectmgr")
-			execute("object.browser()", false);
-		else if (cmd == "packagemgr")
+		else if (cmd == "objectmgr"){
+			BrowserWindow win = new BrowserWindow();
+			win.setLocationRelativeTo(null);
+			win.setVisible(true);
+			//execute("object.browser()", false);
+		}else if (cmd == "packagemgr")
 			execute("JGR::package.manager()", false);
 		else if (cmd == "packageinst")
 			execute("installPackages()", false);
@@ -977,6 +988,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				input.setText("");
 				input.setCaretPosition(0);
 				input.requestFocus();
+				
 				execute(cmd);
 			}
 		if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V

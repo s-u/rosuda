@@ -978,7 +978,7 @@ public class RController {
 			// thats not really the best way to do this but the easiest
 			REXP x;
 			try {
-				x = JGR.eval("suppressWarnings(try(capture.output(" + o.getRName() + "),silent=TRUE))");
+				x = JGR.eval("suppressWarnings(try(paste(deparse("+o.getRName()+"),collapse=\"\n\"),silent=TRUE))");
 				String[] res;
 				if (x != null && !x.isNull() && (res = x.asStrings()) != null) {
 					StringBuffer sb = new StringBuffer();
@@ -987,8 +987,10 @@ public class RController {
 							sb.append(o.getRName() + " <- " + res[i] + "\n");
 						else
 							sb.append(res[i] + "\n");
-					if (sb.length() > 0)
-						new Editor().setText(sb);
+					if (sb.length() > 0){
+						Editor ed = new Editor();
+						ed.setText(sb);
+					}
 				}
 			} catch (REngineException e) {
 				e.printStackTrace();

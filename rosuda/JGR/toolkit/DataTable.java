@@ -6,6 +6,7 @@ package org.rosuda.JGR.toolkit;
 // distribution ---
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -23,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.EventObject;
 import java.util.Vector;
 
 import javax.swing.AbstractCellEditor;
@@ -39,6 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -89,9 +92,9 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 
 	private final JScrollPane scrollArea = new JScrollPane();
 
-	private final JTable dataTable = new JTable();
+	private final JTable dataTable;
 
-	private final JTableHeader tableHeader = dataTable.getTableHeader();
+	private final JTableHeader tableHeader;
 
 	private final JButton save = new JButton();
 
@@ -179,6 +182,35 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 				"gotoCase", "~Window", "+", "Help", "R Help", "rhelp", "~Preferences", "~About", "0" };
 		EzMenuSwing.getEzMenu(this, this, myMenu);
 
+		
+		dataTable = new JTable(){
+			/**
+			 * Overrides the editCellAt function to allow one click editing
+			 * as opposed to the appending of cell edits that is default in
+			 * JTable
+			 */
+			public boolean editCellAt(int row, int column, EventObject e){
+				boolean result = super.editCellAt(row, column, e);	
+				final Component editor = getEditorComponent();
+				if (editor != null && editor instanceof JTextComponent){
+					if (e == null || e.getClass().toString().endsWith("KeyEvent")){
+						((JTextComponent)editor).selectAll();
+					}
+					else
+					{
+						SwingUtilities.invokeLater(new Runnable(){
+							public void run(){
+								((JTextComponent)editor).selectAll();
+							}
+						});
+					}
+				}
+
+				return result;
+			}			
+		};
+		tableHeader = dataTable.getTableHeader();
+		
 		if (FontTracker.current == null)
 			FontTracker.current = new FontTracker();
 		FontTracker.current.add(dataTable);
@@ -192,6 +224,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		sorter = new TableSorter(tabModel = new DataTableModel(this));
 		dataTable.setModel(sorter);
 		sorter.setTableHeader(tableHeader);
+		dataTable.setDefaultRenderer(Object.class, new DataTableCellRenderer());
 		dataTable.setShowGrid(true);
 		dataTable.setRowHeight((int) (JGRPrefs.FontSize * 1.6));
 		dataTable.setColumnSelectionAllowed(true);
@@ -864,7 +897,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 			cell.getComponent().setFont(JGRPrefs.DefaultFont);
 			FontTracker.current.add((JTextComponent) cell.getComponent());
 			col.setCellEditor(cell);
-			col.setCellRenderer(new DefaultTableCellRenderer());
+			col.setCellRenderer(new DataTableCellRenderer());
 			if (col.getModelIndex() == 0)
 				col.setMaxWidth(40);
 			if (col.getHeaderValue().equals("row.names")) {
@@ -1022,36 +1055,36 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		}
 
 	}
+	
+	class DataTableCellRenderer extends DefaultTableCellRenderer
+	{
+		private Color whiteColor = new Color(254, 254, 254);
+		private Color alternateColor = new Color(237, 243, 254);
+		private Color selectedColor = new Color(61, 128, 223);
 
-	class DataTableCellRenderer extends JLabel implements TableCellRenderer {
+		public Component getTableCellRendererComponent(JTable table,
+						Object value, boolean selected, boolean focused,
+						int row, int column){
+			super.getTableCellRendererComponent(table, value,
+					selected, focused, row, column);
 
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 3439613828130597094L;
+			// Set the background color
+			Color bg;
+			if (!selected)
+				bg = (row % 2 == 0 ? alternateColor : whiteColor);
+			else
+				bg = selectedColor;
+			setBackground(bg);
 
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
-
-			if (isSelected) {
-			}
-
-			if (hasFocus) {
-			}
-			setText(value.toString());
+			// Set the foreground to white when selected
+			Color fg;
+			if (selected)
+				fg = Color.white;
+			else
+				fg = Color.black;
+			setForeground(fg);
 
 			return this;
-		}
-
-		public void validate() {
-		}
-
-		public void revalidate() {
-		}
-
-		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-		}
-
-		public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
 		}
 	}
 
