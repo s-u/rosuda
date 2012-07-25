@@ -26,6 +26,7 @@ import javax.swing.tree.TreeNode;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.JGRConsole;
+import org.rosuda.JGR.editor.Editor;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
@@ -266,8 +267,8 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 		ActionListener lis = new PopupListener();
 		JMenuItem item = new JMenuItem ("Edit");
 		item.addActionListener(lis);
-		//menu.add( item );
-		//menu.add(new JSeparator());
+		menu.add( item );
+		menu.add(new JSeparator());
 		item = new JMenuItem ("Print");
 		item.addActionListener(lis);
 		menu.add( item );
@@ -315,7 +316,19 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 	}
 	
 	public void editObject(){
-		
+		try {
+			REXP x = JGR.eval("suppressWarnings(try(paste(capture.output(dput("+ 
+					this.getExecuteableRObjectName()+")),collapse=\"\n\"),silent=TRUE))");
+			if(x!=null){
+				StringBuffer sb = new StringBuffer();
+				sb.append(this.getExecuteableRObjectName() + "<-");
+				sb.append(x.asString());
+				Editor ed = new Editor();
+				ed.setText(sb);
+			}
+		} catch (REngineException e) {
+		} catch (REXPMismatchException e) {
+		}
 	}
 	
 	public void printObject(){

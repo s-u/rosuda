@@ -18,6 +18,7 @@ public class BrowserController {
 			setFactory("integer",new NumericNode());
 			setFactory("factor",new FactorNode());
 			setFactory("character",new FactorNode());
+			setFactory("logical",new FactorNode());
 			setFactory("data.frame",new DataFrameNode());
 			setFactory("matrix",new MatrixNode());
 			setFactory("environment",new EnvironmentNode());

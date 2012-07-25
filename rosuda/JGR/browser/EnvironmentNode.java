@@ -54,7 +54,9 @@ public class EnvironmentNode extends DefaultBrowserNode {
 			return;
 		try {
 			String[] objectNames = JGR.eval("ls(envir="+getExecuteableRObjectName()+")").asStrings();
-			String[] objectClasses = JGR.eval("sapply(ls(envir="+getExecuteableRObjectName()+
+			String[] objectClasses = new String[]{};
+			if(objectNames.length>0)
+				objectClasses = JGR.eval("sapply(ls(envir="+getExecuteableRObjectName()+
 					"),function(a)class(get(a,envir="+getExecuteableRObjectName()+"))[1])").asStrings();
 			if(objectNames.length<children.size())
 				for(int i=children.size()-1;i>=objectNames.length;i--){

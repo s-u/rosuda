@@ -1,7 +1,9 @@
 package org.rosuda.JGR.browser;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
@@ -30,7 +32,32 @@ public class NumericNode extends DefaultBrowserNode {
 		JMenuItem item = new JMenuItem ("Edit");
 		item.addActionListener(lis);
 		menu.add( item );
+		
+		JMenu convertMenu = new JMenu("Convert");
+		ActionListener convertListener = new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				String cmd = e.getActionCommand();
+				JGR.MAINRCONSOLE.execute(getExecuteableRObjectName() + 
+						" <- as." + cmd + "(" + getExecuteableRObjectName() + ")" );
+			}
+			
+		};
+		item = new JMenuItem ("character");
+		item.addActionListener(convertListener);
+		convertMenu.add(item);	
+		item = new JMenuItem ("factor");
+		item.addActionListener(convertListener);
+		convertMenu.add(item);		
+		item = new JMenuItem ("integer");
+		item.addActionListener(convertListener);
+		convertMenu.add(item);		
+		item = new JMenuItem ("numeric");
+		item.addActionListener(convertListener);
+		convertMenu.add(item);
+		menu.add(convertMenu);
 		menu.add(new JSeparator());
+		
 		item = new JMenuItem ("Print");
 		item.addActionListener(lis);
 		menu.add( item );

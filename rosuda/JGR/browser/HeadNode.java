@@ -124,7 +124,10 @@ public class HeadNode implements BrowserNode {
 			return;
 		try {
 			String[] objectNames = JGR.eval("ls()").asStrings();
-			String[] objectClasses = JGR.eval("sapply(ls(),function(a)class(get(a,envir=globalenv()))[1])").asStrings();
+			
+			String[] objectClasses = new String[]{};
+			if(objectNames.length>0)
+				objectClasses = JGR.eval("sapply(ls(),function(a)class(get(a,envir=globalenv()))[1])").asStrings();
 			if(objectNames.length<children.size())
 				for(int i=children.size()-1;i>=objectNames.length;i--){
 					//System.out.println("remove 1");
