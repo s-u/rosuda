@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -284,6 +285,75 @@ public class JGR {
 		REXP x = getREngine().parseAndEval(cmd, null, true);
 		return x;
 	}
+	
+	public static REXP timedEval(String cmd){
+		return timedEval(cmd,5,15000,true);
+	}
+	
+	public static REXP timedEval(String cmd,boolean ask){
+		return timedEval(cmd,5,15000,ask);
+	}
+	
+	public static REXP timedEval(String cmd,int checkInterval,int maxTime,boolean ask){
+		JDialog  dialog = null;
+		JOptionPane jopt = null;
+		RunnableEval re = new RunnableEval(cmd);
+		Thread t = new Thread(re);
+		boolean cancel = false;
+		t.start();
+
+		int totalTime = 0;
+		while(true){
+			try {
+				Thread.sleep(checkInterval);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+				return null;
+			}
+			if(re.isDone()){
+				if(dialog!=null)
+					dialog.dispose();
+				return re.getResult();
+			}
+			totalTime += checkInterval;
+			if(totalTime>=maxTime){
+				
+				if(ask){
+					if(dialog==null){
+						jopt = new JOptionPane(
+								"This R process is taking some time.\n\nWould you like to cancel it?",
+								 JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
+						dialog = jopt.createDialog(null,"Cancel current operation");
+					}
+					if(!dialog.isShowing() | !dialog.isVisible()){
+						dialog.setLocationRelativeTo(null);
+						dialog.setVisible(true);
+					}
+					//System.out.println(jopt.getValue());
+					if(jopt!=null && jopt.getValue()!=null && jopt.getValue().equals(new Integer(0)))
+						cancel=true;
+				}else
+					cancel=true;
+				totalTime=0;
+			}
+			
+			if(cancel){
+				new Thread(new Runnable() {
+					public void run(){
+						try{	
+							((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine())
+									.getRni().rniStop(0);
+						}catch(Exception e){
+							e.printStackTrace();
+						}	
+				}
+				}).start();		
+				return null;
+			}
+			
+		}
+	}
+
 
 	public static REngine getREngine() {
 		return rEngine;
@@ -853,4 +923,35 @@ public class JGR {
 				}
 		}
 	}
+	
+	
 }
+
+final class RunnableEval implements Runnable{
+		REXP result;
+		volatile boolean done;
+		volatile String cmd;
+		
+		public RunnableEval(String command){
+			cmd=command;
+			done = false;
+		}
+
+		public void setCommand(String command){
+			cmd = command;
+		}
+		public void run() {
+			try {
+				result = JGR.eval(cmd);
+			} catch (Exception e) {
+				result = null;
+			} 
+			done = true;
+		}
+		
+		public REXP getResult(){
+			return result;
+		}
+		
+		public boolean isDone(){return done;}
+	}
