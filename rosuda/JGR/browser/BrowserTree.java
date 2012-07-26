@@ -111,7 +111,13 @@ public class BrowserTree extends JTree {
 		    }else if(e.getClickCount() == 2){
 		        int row = BrowserTree.this.getClosestRowForLocation(e.getX(), e.getY());
 		        BrowserTree.this.setSelectionRow(row);
-		        ((BrowserNode)BrowserTree.this.getSelectionPath().getLastPathComponent()).editObject();
+		        final BrowserNode node = ((BrowserNode)BrowserTree.this.getSelectionPath().getLastPathComponent());
+		        new Thread(new Runnable(){
+					public void run() {
+						node.editObject();
+					}
+		        }).start();
+		        
 		    }
 		}
 
@@ -147,7 +153,13 @@ class Refresher implements Runnable{
 			} catch (InterruptedException e) {
 				keepRunning=false;
 			}
-			((BrowserNode)model.getRoot()).update(model);
+			SwingUtilities.invokeLater(new Runnable(){
+
+				public void run() {
+					((BrowserNode)model.getRoot()).update(model);
+				}
+				
+			});
 		}
 	}
 	

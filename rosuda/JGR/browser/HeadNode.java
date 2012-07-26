@@ -15,6 +15,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.REngine.REXP;
 
 public class HeadNode implements BrowserNode {
 
@@ -120,14 +121,22 @@ public class HeadNode implements BrowserNode {
 	}
 
 	public void update(DefaultTreeModel mod) {
+		REXP rexp;
 		if(!expanded)
 			return;
 		try {
-			String[] objectNames = JGR.eval("ls()").asStrings();
+			rexp =JGR.idleEval("ls()");
+			if(rexp==null)
+				return;
+			String[] objectNames = rexp.asStrings();
 			
 			String[] objectClasses = new String[]{};
-			if(objectNames.length>0)
-				objectClasses = JGR.eval("sapply(ls(),function(a)class(get(a,envir=globalenv()))[1])").asStrings();
+			if(objectNames.length>0){
+				rexp = JGR.idleEval("sapply(ls(),function(a)class(get(a,envir=globalenv()))[1])");
+				if(rexp==null)
+					return;
+				objectClasses = rexp.asStrings();
+			}
 			if(objectNames.length<children.size())
 				for(int i=children.size()-1;i>=objectNames.length;i--){
 					//System.out.println("remove 1");

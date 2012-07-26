@@ -171,28 +171,39 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 	}
 	
 	synchronized public void update(DefaultTreeModel mod) {
-
+		REXP rexp;
 		String fullName = parent.getChildExecuteableRObjectName(this);
 		//System.out.println(fullName);
 		try {
-			isList = ((REXPLogical)JGR.eval("is.list(" + fullName + ")")).isTRUE()[0];
+			rexp = JGR.idleEval("is.list(" + fullName + ")");
+			if(rexp==null)
+				return;
+			isList = ((REXPLogical)rexp).isTRUE()[0];
 			if(!expanded){
 				this.children.clear();		
 				return;
 			}
 			if(isList){
-				boolean hasChildren = ((REXPLogical)JGR.eval("length(" + fullName + ")>0")).isTRUE()[0];
+				rexp = JGR.idleEval("length(" + fullName + ")>0");
+				if(rexp==null)
+					return;
+				boolean hasChildren = ((REXPLogical)rexp).isTRUE()[0];			
 				if(!hasChildren){
 					Object[] tmp = children.toArray();
 					for(int i=0;i<tmp.length;i++)
 						mod.removeNodeFromParent((MutableTreeNode) tmp[i]);
 					return;
 				}
-				REXP rexp = JGR.eval("names(" + fullName + ")");
-				String[] objectClasses = JGR.eval("sapply(" + fullName + ",function(a)class(a)[1])").asStrings();
+				REXP nrexp = JGR.idleEval("names(" + fullName + ")");
+				if(nrexp==null)
+					return;
+				rexp = JGR.idleEval("sapply(" + fullName + ",function(a)class(a)[1])");
+				if(rexp==null)
+					return;
+				String[] objectClasses = rexp.asStrings();
 				String[] names;
 				boolean[] isNA;
-				if(rexp==null || rexp.isNull()){
+				if(nrexp==null || nrexp.isNull()){
 					names = new String[objectClasses.length];
 					isNA = new boolean[objectClasses.length];
 					for(int i=0;i<objectClasses.length;i++){
@@ -200,8 +211,8 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 						isNA[i]=true;
 					}
 				}else{
-					names = rexp.asStrings();
-					isNA = rexp.isNA();
+					names = nrexp.asStrings();
+					isNA = nrexp.isNA();
 				}
 				if(names.length<children.size())
 					for(int i=children.size()-1;i>=names.length;i--)

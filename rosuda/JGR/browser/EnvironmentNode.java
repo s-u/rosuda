@@ -9,6 +9,7 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.REngine.REXP;
 
 public class EnvironmentNode extends DefaultBrowserNode {
 
@@ -52,12 +53,20 @@ public class EnvironmentNode extends DefaultBrowserNode {
 	public void update(DefaultTreeModel mod) {
 		if(!expanded)
 			return;
+		REXP rexp;
 		try {
-			String[] objectNames = JGR.eval("ls(envir="+getExecuteableRObjectName()+")").asStrings();
+			rexp = JGR.idleEval("ls(envir="+getExecuteableRObjectName()+")");
+			if(rexp==null)
+				return;
+			String[] objectNames = rexp.asStrings();
 			String[] objectClasses = new String[]{};
-			if(objectNames.length>0)
-				objectClasses = JGR.eval("sapply(ls(envir="+getExecuteableRObjectName()+
-					"),function(a)class(get(a,envir="+getExecuteableRObjectName()+"))[1])").asStrings();
+			if(objectNames.length>0){
+				rexp = JGR.idleEval("sapply(ls(envir="+getExecuteableRObjectName()+
+						"),function(a)class(get(a,envir="+getExecuteableRObjectName()+"))[1])");
+				if(rexp==null)
+					return;
+				objectClasses = rexp.asStrings();
+			}
 			if(objectNames.length<children.size())
 				for(int i=children.size()-1;i>=objectNames.length;i--){
 					//System.out.println("remove 1");
