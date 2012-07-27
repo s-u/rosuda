@@ -198,7 +198,10 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 				}else
 					newModel.addElement(mod.get(i));
 			}
-			varList.setModel(newModel);
+			DefaultListModel varModel = (DefaultListModel) varList.getModel();
+			varModel.clear();
+			for(int i=0;i<newModel.size();i++)
+				varModel.addElement(newModel.get(i));
 		}
 	}
 	

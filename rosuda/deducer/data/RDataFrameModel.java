@@ -43,7 +43,7 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	private static int numPageRows = 500;
 	private static int numPageCols = 10;
 	private static int maxPages = 10;
-	private static String NA_STRING = "*$_$_$_$$NA$$_$_$_$*";
+	public static String NA_STRING = "*$_$_$_$$NA$$_$_$_$*";
 	
 	private String rDataName=null;
 	
@@ -61,8 +61,8 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	int[] classes = new int[]{};
 	
 	
-	public static final int numExtensionRows = 50;
-	public static final int numExtensionColumns = 10; 
+	public static final int numExtensionRows = 15;
+	public static final int numExtensionColumns = 4; 
 	
 	public RDataFrameModel(){}
 	
@@ -378,7 +378,7 @@ public class RDataFrameModel extends ExDefaultTableModel {
 		if(col<classes.length)
 			colClass = classes[col];
 		boolean isLogical = value.equals("TRUE") || value.equals("FALSE");
-		boolean isNA = value.equals("NA");
+		boolean isNA = value.equals("NA") || value.equals("");
 		
 		Deducer.eval("rm(\"" +tempDataName+"\",envir="+guiEnv+");");
 		if(isNA){

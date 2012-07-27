@@ -29,7 +29,7 @@ public class ParamRObjectComboBoxWidget extends ParamComboBoxWidget{
 		String[] objs;
 		try {
 			objs = Deducer.timedEval(call).asStrings();
-		} catch (REXPMismatchException e) {
+		} catch (Exception e) {
 			objs = new String[]{};
 		}
 		if(objs == null)

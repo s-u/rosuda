@@ -54,6 +54,18 @@ public class ParamAny extends Param{
 		p.setDefaultValue(this.defaultValue);
 		p.setViewType(this.getViewType());
 		p.required = required;
+		if(this.getOptions()!=null){
+			String[] v = new String[this.getOptions().length];
+			for(int i=0;i<this.getOptions().length;i++)
+				v[i] = this.getOptions()[i];
+			p.setOptions(v);
+		}
+		if(this.getLabels()!=null){
+			String[] v = new String[this.getLabels().length];
+			for(int i=0;i<this.getLabels().length;i++)
+				v[i] = this.getLabels()[i];
+			p.setLabels(v);
+		}
 		return p;
 	}
 	

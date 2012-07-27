@@ -682,12 +682,16 @@ public class ParamFactory {
 			pv.setValue(new String[] {"0.25","0.5","0.75"});
 			p = pv;
 		}else if(name =="method"){
-			ParamCharacter pc = new ParamCharacter("method");
-			pc.setViewType(Param.VIEW_COMBO);
-			pc.setOptions(new String[] {"lm", "gam", "loess", "rlm"});
-			pc.setLabels(new String[] {"Linear model", "Generalized additive model",
-									"Smooth","Robust linear model"});
-			p = pc;
+			ParamAny pa = new ParamAny("method");
+			pa.setDefaultValue("");
+			pa.setValue("");
+			pa.setViewType(Param.VIEW_COMBO);
+			pa.setOptions(new String[] {"lm", "rlm", "gam", "loess", 
+					"glm, family=binomial","glm, family=poisson","glm, family=Gamma"});
+			pa.setLabels(new String[] {"Linear","Robust linear",  "Generalized additive",
+									"Smooth",
+									"Logistic", "Poisson", "Gamma"});
+			p = pa;
 		}else if(name =="formula"){
 			ParamCharacter pc = new ParamCharacter("formula");
 			pc.setViewType(Param.VIEW_EDITABLE_COMBO);

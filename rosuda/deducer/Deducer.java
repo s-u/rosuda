@@ -416,7 +416,6 @@ public class Deducer {
 			inst.setVisible(true);	
 			WindowTracker.addWindow(inst);
 		}else if(cmd.equals("ksample")){
-			Deducer.timedEval("(function(x)while(TRUE)x<-x+1)(1)", 10, 1000, true);
 			needsRLocked=true;
 			KSampleDialog inst = new KSampleDialog(JGR.MAINRCONSOLE);
 			inst.setLocationRelativeTo(null);
@@ -571,71 +570,15 @@ public class Deducer {
 	
 
 	public static REXP timedEval(String cmd){
-		return timedEval(cmd,5,15000,true);
+		return timedEval(cmd,15000,true);
 	}
 	
 	public static REXP timedEval(String cmd,boolean ask){
-		return timedEval(cmd,5,15000,ask);
+		return timedEval(cmd,15000,ask);
 	}
 	
-	public static REXP timedEval(String cmd,int checkInterval,int maxTime,boolean ask){
-		JDialog  dialog = null;
-		JOptionPane jopt = null;
-		RunnableEval re = new RunnableEval(cmd);
-		Thread t = new Thread(re);
-		boolean cancel = false;
-		t.start();
-
-		int totalTime = 0;
-		while(true){
-			try {
-				Thread.sleep(checkInterval);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-				return null;
-			}
-			if(re.isDone()){
-				if(dialog!=null)
-					dialog.dispose();
-				return re.getResult();
-			}
-			totalTime += checkInterval;
-			if(totalTime>=maxTime){
-				
-				if(ask){
-					if(dialog==null){
-						jopt = new JOptionPane(
-								"This R process is taking some time.\n\nWould you like to cancel it?",
-								 JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
-						dialog = jopt.createDialog(null,"Cancel current operation");
-					}
-					if(!dialog.isShowing() | !dialog.isVisible()){
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
-					}
-					//System.out.println(jopt.getValue());
-					if(jopt!=null && jopt.getValue()!=null && jopt.getValue().equals(new Integer(0)))
-						cancel=true;
-				}else
-					cancel=true;
-				totalTime=0;
-			}
-			
-			if(cancel){
-				new Thread(new Runnable() {
-					public void run(){
-						try{	
-							((org.rosuda.REngine.JRI.JRIEngine) rConnection.getREngine())
-									.getRni().rniStop(0);
-						}catch(Exception e){
-							e.printStackTrace();
-						}	
-				}
-				}).start();		
-				return null;
-			}
-			
-		}
+	public static REXP timedEval(String cmd,int interval,boolean ask){
+		return new MonitoredEval(interval,ask).run(cmd);
 	}
 	
 	public static REXP idleEval(String cmd){
@@ -888,27 +831,57 @@ public class Deducer {
 }
 
 
-final class RunnableEval implements Runnable{
-	REXP result;
-	boolean done;
-	String cmd;
+
+final class MonitoredEval{
+	volatile boolean done;
+	int interval;
+	boolean ask;
 	
-	public RunnableEval(String command){
-		cmd=command;
+	public MonitoredEval(int inter,boolean ak){
 		done = false;
+		interval = inter;
+		ask=ak;
 	}
 
-	public void setCommand(String command){
-		cmd = command;
+	public REXP run(String cmd) {
+		
+		new Thread(new Runnable(){
+
+			public void run() {
+				while(true){
+					try {
+						Thread.sleep(interval);
+					} catch (InterruptedException e) {
+						return;
+					}
+					if(done)
+						return;
+					int cancel;
+					if(ask)
+						cancel = JOptionPane.showConfirmDialog(null, 
+							"This R process is taking some time.\nWould you like to cancel it?",
+							"Cancel R Process",
+								 JOptionPane.YES_NO_OPTION);
+					else
+						cancel = JOptionPane.YES_OPTION;
+					if(cancel==JOptionPane.YES_OPTION){
+						((org.rosuda.REngine.JRI.JRIEngine) Deducer.getREngine())
+						.getRni().rniStop(0);
+						return;
+					}
+				}
+			}
+		}).start();
+		try{
+			REXP result = Deducer.eval(cmd);
+			done = true;
+			return result;
+		}catch(Exception e){
+			return null;
+		}
 	}
-	public void run() {
-		result = Deducer.eval(cmd);
-		done = true;
-	}
-	
-	public REXP getResult(){
-		return result;
-	}
-	
-	public boolean isDone(){return done;}
 }
+
+
+
+

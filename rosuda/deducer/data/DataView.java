@@ -1,11 +1,11 @@
 package org.rosuda.deducer.data;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.EventObject;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -13,20 +13,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.JTextComponent;
 
-import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.editor.Editor;
-import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
-import org.rosuda.deducer.data.ColumnHeaderListener.ColumnContextMenu;
-import org.rosuda.deducer.data.RDataFrameModel.RCellRenderer;
 import org.rosuda.deducer.toolkit.LoadData;
 import org.rosuda.deducer.toolkit.SaveData;
 import org.rosuda.ibase.Common;
@@ -46,7 +43,34 @@ public class DataView extends DataViewerTab implements ActionListener {
 	protected void init(String dataName){
 		this.dataName = dataName;		
 		RDataFrameModel dataModel = new RDataFrameModel(dataName);
-		dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
+		table =new ExTable(dataModel){
+			public boolean editCellAt(int row, int column, EventObject e){
+				boolean result = super.editCellAt(row, column, e);	
+				final Component editor = getEditorComponent();
+				if (editor != null && editor instanceof JTextComponent){
+					if (e == null || e.getClass().toString().endsWith("KeyEvent")){
+						if(((JTextComponent)editor).getText().equals(RDataFrameModel.NA_STRING)){
+							((JTextComponent)editor).setText("NA");
+							((JTextComponent)editor).selectAll();
+						}
+					}
+					else
+					{
+						SwingUtilities.invokeLater(new Runnable(){
+							public void run(){
+								if(((JTextComponent)editor).getText().equals(RDataFrameModel.NA_STRING)){
+									((JTextComponent)editor).setText("NA");
+									((JTextComponent)editor).selectAll();
+								}
+							}
+						});
+					}
+				}
+
+				return result;
+			}
+		};
+		dataScrollPane = new ExScrollableTable(table);
 		dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
 				getExTable().getModel()).getRowNamesModel());
 		dataScrollPane.getExTable().setDefaultRenderer(Object.class,

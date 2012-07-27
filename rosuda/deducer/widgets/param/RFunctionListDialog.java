@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
@@ -41,6 +42,7 @@ public class RFunctionListDialog extends  JDialog implements ActionListener{
 			setModel(el);
 			setRun(true);
 		}catch(Exception ex){ex.printStackTrace();}
+
 	}
 	
 	public RFunctionListDialog(RFunctionList el) {
@@ -50,6 +52,7 @@ public class RFunctionListDialog extends  JDialog implements ActionListener{
 			setModel(el);
 			setRun(true);
 		}catch(Exception ex){ex.printStackTrace();}
+
 	}
 	
 	private void initGUI() {
@@ -93,6 +96,7 @@ public class RFunctionListDialog extends  JDialog implements ActionListener{
 	}
 	
 	public void setModel(RFunctionList el){
+		
 		if(globalParams==null || globalParams.length==0){
 			if(el.requiresVariableSelector())
 				panel = view = el.getView(selector);
@@ -130,6 +134,8 @@ public class RFunctionListDialog extends  JDialog implements ActionListener{
 					AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL,
 					AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
 		}	
+		validate();
+		repaint();
 	}
 	
 	

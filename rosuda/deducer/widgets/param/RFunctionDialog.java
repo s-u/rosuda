@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 
 public class RFunctionDialog extends javax.swing.JDialog implements ActionListener {
@@ -77,12 +78,16 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 	}
 	
 	public void setModel(RFunction el){
+		initialModel = (RFunction) el.clone();
 		panel.removeAll();
 		view = el.getView();
 		panel.add(view);
-		initialModel = (RFunction) el.clone();
 		model = el;
-		this.setTitle(el.getName());
+		setTitle(el.getName());
+		validate();
+		repaint();
+
+
 	}
 	public void setToInitialModel(){
 		RFunction newModel = (RFunction) initialModel.clone();
