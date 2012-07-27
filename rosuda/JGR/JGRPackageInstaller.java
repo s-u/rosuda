@@ -152,10 +152,8 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 				JGR.RLIBS = libs;
 				JGRPrefs.writePrefs(true);
 				try {
-					JGR.eval(".libPaths(\"" + destDir + "\")");
-				} catch (REngineException e) {
-					new ErrorMsg(e);
-				} catch (REXPMismatchException e) {
+					JGR.timedEval(".libPaths(\"" + destDir + "\")");
+				} catch (Exception e) {
 					new ErrorMsg(e);
 				}
 			}
@@ -173,10 +171,10 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 				cmd += "\"" + instPkgs[i] + "\",";
 			cmd += "\"" + instPkgs[instPkgs.length - 1] + "\")";
 			if (type.equals("binaries") && JGRPrefs.isMac)
-				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\"" + destDir + "\",type=\"mac.binary\")", true);
+				JGR.MAINRCONSOLE.execute("install.packages(" + cmd + ",\"" + destDir + "\",type=\"mac.binary\")", true);
 			// JGR.MAINRCONSOLE.execute("install.packages("+cmd+",\""+destDir+"\",contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
 			else
-				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\"" + RController.addSlashes(destDir) + "\")", true);
+				JGR.MAINRCONSOLE.execute("install.packages(" + cmd + ",\"" + RController.addSlashes(destDir) + "\")", true);
 		}
 	}
 

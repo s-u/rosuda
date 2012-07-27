@@ -292,41 +292,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		execute(cmd, true);
 	}
 
-	/**
-	 * Execute a coomand and add it to history
-	 * 
-	 * @param cmd
-	 *            command for execution
-	 */
-	public void executeLater(String cmd) {
-		final String cm = cmd;
-		Runnable doWorkRunnable = new Runnable() {
-			public void run() {
-				execute(cm, true);
-			}
-		};
-		SwingUtilities.invokeLater(doWorkRunnable);
-	}
-
-	/**
-	 * Execute a coomand and add it to history
-	 * 
-	 * @param cmd
-	 *            command for execution
-	 * @param addToHist
-	 *            indicates wether the command should be added to history or not
-	 */
-	public void executeLater(String cmd, boolean addToHist) {
-		final String cm = cmd;
-		final boolean add = addToHist;
-		Runnable doWorkRunnable = new Runnable() {
-			public void run() {
-				execute(cm, add);
-			}
-		};
-		SwingUtilities.invokeLater(doWorkRunnable);
-
-	}
 
 	/**
 	 * Execute a command and add it into history.
@@ -495,7 +460,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		if (fopen.getFile() != null) {
 			wspace = (JGRPrefs.workingDirectory = fopen.getDirectory())
 					+ fopen.getFile();
-			execute("load(\"" + wspace.replace('\\', '/') + "\")", false);
+			execute("load(\"" + wspace.replace('\\', '/') + "\")");
+			/*
 			try {
 				// to avoid quoting hell we use an assignment
 				JGR.getREngine().assign(".$JGR",
@@ -505,7 +471,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				new ErrorMsg(e);
 			} catch (REXPMismatchException e) {
 				new ErrorMsg(e);
-			}
+			}*/
 		}
 	}
 
@@ -517,9 +483,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 */
 	public void saveWorkSpace(String file) {
 		if (file == null)
-			executeLater("save.image()");
+			execute("save.image()");
 		else
-			executeLater("save.image(\""
+			execute("save.image(\""
 					+ (file == null ? "" : file.replace('\\', '/'))
 					+ "\",compress=TRUE)");
 		JGR.writeHistory();
@@ -860,7 +826,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			} catch (CannotUndoException ex) {
 			}
 		else if (cmd == "help")
-			executeLater("help.start()");
+			execute("help.start()");
 		else if (cmd == "table")
 			new DataTable(null, null, true);
 		else if (cmd == "save")
@@ -919,7 +885,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			if (chooser.getSelectedFile() != null)
 				JGRPrefs.workingDirectory = chooser.getSelectedFile()
 						.toString();
-			executeLater("setwd(\""
+			execute("setwd(\""
 					+ chooser.getSelectedFile().toString().replace('\\', '/')
 					+ "\")");
 		} else if (cmd == "update")

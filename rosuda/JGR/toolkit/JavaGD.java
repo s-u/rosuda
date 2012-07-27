@@ -155,32 +155,32 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 				try{
 					fn = escapeStr(fn);
 					if(sfx.equals("pdf")){
-						JGR.eval(".jgr.save.JavaGD.as(useDevice=pdf, source=" + 
+						JGR.threadedEval(".jgr.save.JavaGD.as(useDevice=pdf, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",onefile=TRUE, paper=\"special\")");
 					}else if(sfx.equals("eps")){
-						JGR.eval(".jgr.save.JavaGD.as(useDevice=postscript, " + 
+						JGR.threadedEval(".jgr.save.JavaGD.as(useDevice=postscript, " + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",onefile=FALSE, paper=\"special\",horizontal=FALSE)");
 					}else if(sfx.equals("png")){
-						JGR.eval(".jgr.save.JavaGD.as(useDevice=png, source=" + 
+						JGR.threadedEval(".jgr.save.JavaGD.as(useDevice=png, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",units=\"in\",res=244)");
 					}else if(sfx.equals("jpeg")){
-						JGR.eval(".jgr.save.JavaGD.as(useDevice=jpeg, source=" + 
+						JGR.threadedEval(".jgr.save.JavaGD.as(useDevice=jpeg, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",units=\"in\",res=72)");
 					}else if(sfx.equals("bmp")){
-						JGR.eval(".jgr.save.JavaGD.as(useDevice=bmp, source=" + 
+						JGR.threadedEval(".jgr.save.JavaGD.as(useDevice=bmp, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",units=\"in\",res=244,antialias=NULL)");
 					}else if(sfx.equals("tiff")){
-						JGR.eval(".jgr.save.JavaGD.as(useDevice=tiff, source=" + 
+						JGR.threadedEval(".jgr.save.JavaGD.as(useDevice=tiff, source=" + 
 								(getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",units=\"in\",res=244)");
 					}
 					
-				}catch(Exception ex){new ErrorMsg(ex);}
+				}catch(Exception ex){ex.printStackTrace();}
 			}
 		}
 
@@ -189,7 +189,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
     public void executeDevOff() {
         if (c==null || c.getDeviceNumber()<0) return;
         try {
-        	JGR.eval("try({ dev.set("+(c.getDeviceNumber()+1)+"); dev.off()},silent=TRUE)");
+        	JGR.timedEval("try({ dev.set("+(c.getDeviceNumber()+1)+"); dev.off()},silent=TRUE)");
         }catch(Exception e){e.printStackTrace();}
     }
 
@@ -230,13 +230,7 @@ class JGRBufferedPanel extends JGDBufferedPanel{
 	}
 	
 	public void devOff(){
-		try {
-			JGR.eval("dev.off("+(this.devNr+1)+")");
-		} catch (REngineException e) {
-			e.printStackTrace();
-		} catch (REXPMismatchException e) {
-			e.printStackTrace();
-		}
+			JGR.timedEval("dev.off("+(this.devNr+1)+")");
 	}
 	
 	public void initRefresh() {

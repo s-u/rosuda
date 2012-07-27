@@ -231,7 +231,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener, KeyListe
 				try {
 					if (((DefaultMutableTreeNode) p.getLastPathComponent()).getLevel() == 1) {
 						DefaultMutableTreeNode n = (DefaultMutableTreeNode) p.getPathComponent(1);
-						JGR.eval("rm(" + ((RObject) n.getUserObject()).getRName() + ")");
+						JGR.timedEval("rm(" + ((RObject) n.getUserObject()).getRName() + ")");
 						objModel.removeNodeFromParent(n);
 					}
 				} catch (Exception ex) {

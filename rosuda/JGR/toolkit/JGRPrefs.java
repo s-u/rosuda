@@ -234,13 +234,7 @@ public class JGRPrefs {
 		StyleConstants.setItalic(OBJECT, OBJECT_IT);
 		StyleConstants.setForeground(QUOTE, QUOTEColor);
 		if (JGR.getREngine() != null && JGR.STARTED) {
-			try {
-				JGR.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
-			} catch (REngineException e) {
-				new ErrorMsg(e);
-			} catch (REXPMismatchException e) {
-				new ErrorMsg(e);
-			}
+			JGR.threadedEval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
 		}
 	}
 

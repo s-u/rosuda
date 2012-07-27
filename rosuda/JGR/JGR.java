@@ -5,7 +5,6 @@ package org.rosuda.JGR;
 // --- for licensing information see LICENSE file in the original JGR
 // distribution ---
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -17,13 +16,11 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -286,75 +283,43 @@ public class JGR {
 		return x;
 	}
 	
+	public static void threadedEval(String cmd){
+		final String c = cmd;
+		new Thread(new Runnable(){
+
+			public void run() {
+				try {
+					JGR.eval(c);
+				} catch (Exception e) {}
+			}
+	
+		}).start();
+	}
+	
 	public static REXP timedEval(String cmd){
-		return timedEval(cmd,5,15000,true);
+		return timedEval(cmd,15000,true);
 	}
 	
 	public static REXP timedEval(String cmd,boolean ask){
-		return timedEval(cmd,5,15000,ask);
+		return timedEval(cmd,15000,ask);
 	}
 	
-	public static REXP timedEval(String cmd,int checkInterval,int maxTime,boolean ask){
-		JDialog  dialog = null;
-		JOptionPane jopt = null;
-		RunnableEval re = new RunnableEval(cmd);
-		Thread t = new Thread(re);
-		boolean cancel = false;
-		t.start();
-
-		int totalTime = 0;
-		while(true){
-			try {
-				Thread.sleep(checkInterval);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-				return null;
-			}
-			if(re.isDone()){
-				if(dialog!=null)
-					dialog.dispose();
-				return re.getResult();
-			}
-			totalTime += checkInterval;
-			if(totalTime>=maxTime){
-				
-				if(ask){
-					if(dialog==null){
-						jopt = new JOptionPane(
-								"This R process is taking some time.\n\nWould you like to cancel it?",
-								 JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION);
-						dialog = jopt.createDialog(null,"Cancel current operation");
-					}
-					if(!dialog.isShowing() | !dialog.isVisible()){
-						dialog.setLocationRelativeTo(null);
-						dialog.setVisible(true);
-					}
-					//System.out.println(jopt.getValue());
-					if(jopt!=null && jopt.getValue()!=null && jopt.getValue().equals(new Integer(0)))
-						cancel=true;
-				}else
-					cancel=true;
-				totalTime=0;
-			}
-			
-			if(cancel){
-				new Thread(new Runnable() {
-					public void run(){
-						try{	
-							((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine())
-									.getRni().rniStop(0);
-						}catch(Exception e){
-							e.printStackTrace();
-						}	
-				}
-				}).start();		
-				return null;
-			}
-			
-		}
+	public static REXP timedEval(String cmd,int interval,boolean ask){
+		return new MonitoredEval(interval,ask).run(cmd);
 	}
 
-
+	public static void timedAssign(String symbol, REXP value){
+		timedAssign(symbol, value,15000,true);
+	}
+	
+	public static void timedAssign(String symbol, REXP value,boolean ask){
+		timedAssign(symbol, value,15000,ask);
+	}
+	
+	public static void timedAssign(String symbol, REXP value,int interval,boolean ask){
+		new MonitoredEval(interval,ask).assign(symbol, value);
+	}
+	
 	public static REngine getREngine() {
 		return rEngine;
 	}
@@ -927,31 +892,63 @@ public class JGR {
 	
 }
 
-final class RunnableEval implements Runnable{
-		REXP result;
-		volatile boolean done;
-		volatile String cmd;
-		
-		public RunnableEval(String command){
-			cmd=command;
-			done = false;
-		}
-
-		public void setCommand(String command){
-			cmd = command;
-		}
-		public void run() {
-			try {
-				result = JGR.eval(cmd);
-			} catch (Exception e) {
-				result = null;
-			} 
-			done = true;
-		}
-		
-		public REXP getResult(){
-			return result;
-		}
-		
-		public boolean isDone(){return done;}
+final class MonitoredEval{
+	volatile boolean done;
+	int interval;
+	boolean ask;
+	
+	public MonitoredEval(int inter,boolean ak){
+		done = false;
+		interval = inter;
+		ask=ak;
 	}
+	
+	protected void startMonitor(){
+		new Thread(new Runnable(){
+
+			public void run() {
+				while(true){
+					try {
+						Thread.sleep(interval);
+					} catch (InterruptedException e) {
+						return;
+					}
+					if(done)
+						return;
+					int cancel;
+					if(ask)
+						cancel = JOptionPane.showConfirmDialog(null, 
+							"This R process is taking some time.\nWould you like to cancel it?",
+							"Cancel R Process",
+								 JOptionPane.YES_NO_OPTION);
+					else
+						cancel = JOptionPane.YES_OPTION;
+					if(cancel==JOptionPane.YES_OPTION){
+						((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine())
+						.getRni().rniStop(0);
+						return;
+					}
+				}
+			}
+		}).start();		
+	}
+
+	public REXP run(String cmd) {
+		startMonitor();
+		try{
+			REXP result = JGR.eval(cmd);
+			done = true;
+			return result;
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	public void assign(String symbol, REXP value) {
+		startMonitor();
+		try{
+			JGR.getREngine().assign(symbol, value);
+			done = true;
+		}catch(Exception e){}
+	}
+}

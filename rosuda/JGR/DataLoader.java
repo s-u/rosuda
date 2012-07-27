@@ -100,7 +100,7 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 				else if (fileName.toLowerCase().endsWith(".xls")||fileName.toLowerCase().endsWith(".xlsx")){
 					RController.loadPackage("XLConnect");
 					String sheet = JOptionPane.showInputDialog("Which worksheet should be loaded?", "1");
-					JGR.MAINRCONSOLE.executeLater("library(XLConnect)\n" + var + " <- readWorksheet(loadWorkbook('" + (directory ).replace('\\', '/')+ fileName + "'),sheet="+sheet+")", true);
+					JGR.MAINRCONSOLE.execute("library(XLConnect)\n" + var + " <- readWorksheet(loadWorkbook('" + (directory ).replace('\\', '/')+ fileName + "'),sheet="+sheet+")", true);
 				}else {
 					int opt = JOptionPane.showConfirmDialog(this, "Unknown File Type.\nWould you like to try to open it as a text data file?");
 					if (opt == JOptionPane.OK_OPTION)
@@ -115,13 +115,7 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 
 	public void loadRdaFile(String fileName, String directory) {
 		String cmd = "print(load(\"" + (directory.replace('\\', '/') + fileName) + "\"))";
-		try {
-			JGR.eval("cat('The following data objects have been loaded:\\\n')");
-		} catch (REngineException e) {
-			new ErrorMsg(e);
-		} catch (REXPMismatchException e) {
-			new ErrorMsg(e);
-		}
+		JGR.threadedEval("cat('The following data objects have been loaded:\\\n')");
 		execute(cmd, true);
 	}
 

@@ -327,8 +327,8 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 	}
 	
 	public void editObject(){
-		try {
-			REXP x = JGR.eval("suppressWarnings(try(paste(capture.output(dput("+ 
+		try{
+			REXP x = JGR.timedEval("suppressWarnings(try(paste(capture.output(dput("+ 
 					this.getExecuteableRObjectName()+")),collapse=\"\n\"),silent=TRUE))");
 			if(x!=null){
 				StringBuffer sb = new StringBuffer();
@@ -337,8 +337,8 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 				Editor ed = new Editor();
 				ed.setText(sb);
 			}
-		} catch (REngineException e) {
-		} catch (REXPMismatchException e) {
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 	

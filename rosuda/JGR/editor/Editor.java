@@ -417,12 +417,12 @@ public class Editor extends TJFrame implements ActionListener {
 				try{
 					String txt = textArea.getSelectedText();
 					JGR.getREngine().assign("..text_code..", txt);
-					REXP sexp = JGR.eval("reformat.code(..text_code..)");
-					if(sexp instanceof REXPString){
+					REXP sexp = JGR.timedEval("reformat.code(..text_code..)");
+					if(sexp!=null && sexp instanceof REXPString){
 						String newText = ((REXPString)sexp).asString();
 						textArea.setSelectedText(newText);
 					}
-					JGR.eval("rm('..text_code..')");
+					JGR.timedEval("rm('..text_code..')");
 				}catch(Exception ex){}
 			}			
 		}

@@ -301,12 +301,10 @@ public class TxtTableLoader extends javax.swing.JFrame {
 
 		if (preview) {
 			try {
-				JGR.eval(cmd);
-			} catch(REngineException e) {
-				new ErrorMsg(e);
-			} catch(REXPMismatchException e) {
-				new ErrorMsg(e);
-			}
+				JGR.timedEval(cmd);
+			} catch(Exception e) {
+				e.printStackTrace();
+			} 
 		}
 		else
 			execute(cmd, true);
@@ -315,11 +313,9 @@ public class TxtTableLoader extends javax.swing.JFrame {
 	private void loadPreview() {
 		loadInR(previewName, true);
 		try {
-			JGR.eval(".refreshObjects()");
-		} catch(REngineException e) {
-			new ErrorMsg(e);
-		} catch(REXPMismatchException e) {
-			new ErrorMsg(e);
+			JGR.timedEval(".refreshObjects()");
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		RObject obj = new RObject(previewName, "data.frame", null, false);
 		SVarSet vs = RController.newSet(obj);
@@ -328,14 +324,12 @@ public class TxtTableLoader extends javax.swing.JFrame {
 		dataTable.setTableHeader(rTable.getJTable().getTableHeader());
 		rTable.dispose();
 		try {
-			REXPLogical result = (REXPLogical) JGR.eval("\"" + previewName + "\" %in% ls()");
-			if (result.isTRUE()[0])
-				JGR.eval("rm(" + previewName + ")");
-		} catch(REngineException e) {
-			new ErrorMsg(e);
-		} catch(REXPMismatchException e) {
-			new ErrorMsg(e);
-		}
+			REXPLogical result = (REXPLogical) JGR.timedEval("\"" + previewName + "\" %in% ls()");
+			if (result==null || result.isTRUE()[0])
+				JGR.timedEval("rm(" + previewName + ")");
+		} catch(Exception e) {
+			e.printStackTrace();
+		} 
 	}
 	
 	public void execute(String cmd,boolean hist){

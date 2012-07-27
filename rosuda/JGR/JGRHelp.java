@@ -150,7 +150,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 							location.toString().lastIndexOf("/") + 1);
 					title = title.substring(0, title.lastIndexOf('.'));
 				} catch (Exception e) {
-					new ErrorMsg(e);
+					title = location.toString();
 				}
 			}
 			if (tabArea.getTabCount() == JGRPrefs.maxHelpTabs)
@@ -191,32 +191,25 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 			}
 		} else {
 			try {
-				REXP port = JGR.eval("tools:::httpdPort");
+				REXP port = JGR.timedEval("tools:::httpdPort");
 				server = "http://127.0.0.1:" + port.asString();
-			} catch (REngineException e) {
-				new ErrorMsg(e);
-			} catch (REXPMismatchException e) {
-				new ErrorMsg(e);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
         }
             
         
         try {
-            REXP version = JGR.eval("version$minor");
+            REXP version = JGR.timedEval("version$minor");
             if (Double.parseDouble(version.asString()) >= 14.0) {
                 searchString = "pattern";
             } else {
                 searchString = "name";
             }
-        } catch (REngineException e) {
-            e.printStackTrace();
-            new ErrorMsg(e);
-            searchString = "name";
-        } catch (REXPMismatchException e) {
-            new ErrorMsg(e);
+        } catch (Exception e) {
             e.printStackTrace();
             searchString = "name";
-        }
+        } 
         
 		index = server + "/doc/html/packages.html";
 

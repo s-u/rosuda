@@ -1,14 +1,19 @@
 package org.rosuda.JGR.browser;
 
 import java.awt.Component;
+import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.browser.DefaultBrowserNode.PopupListener;
 import org.rosuda.REngine.REXP;
 
 public class EnvironmentNode extends DefaultBrowserNode {
@@ -48,7 +53,30 @@ public class EnvironmentNode extends DefaultBrowserNode {
 		}
 		
 	}
-
+	
+	public JPopupMenu getPopupMenu() {
+		JPopupMenu menu = new JPopupMenu();
+		ActionListener lis = new PopupListener();
+		JMenuItem item = new JMenuItem ("Edit");
+		item.addActionListener(lis);
+		//menu.add( item );
+		//menu.add(new JSeparator());
+		item = new JMenuItem ("Print");
+		item.addActionListener(lis);
+		menu.add( item );
+		item = new JMenuItem ("Summary");
+		item.addActionListener(lis);
+		//menu.add( item );
+		item = new JMenuItem ("Plot");
+		item.addActionListener(lis);
+		//menu.add( item );
+		//menu.add(new JSeparator());
+		item = new JMenuItem ("Remove");
+		item.addActionListener(lis);
+		menu.add( item );
+		
+		return menu;
+	}
 
 	public void update(DefaultTreeModel mod) {
 		if(!expanded)

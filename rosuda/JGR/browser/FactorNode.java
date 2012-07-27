@@ -7,6 +7,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
@@ -75,10 +76,20 @@ public class FactorNode extends DefaultBrowserNode{
 	}
 	
 	public void editObject(){
-		RObject o = new RObject(this.getExecuteableRObjectName(), cls, true);
-		org.rosuda.ibase.SVarSet vs = RController.newSet(o);
-		if (vs != null && vs.count() != 0)
-			new DataTable(vs, o.getType(), o.isEditable());
+		new Thread(new Runnable(){
+			public void run() {
+				final RObject o = new RObject(getExecuteableRObjectName(), cls, true);
+				final org.rosuda.ibase.SVarSet vs = RController.newSet(o);
+				if (vs != null && vs.count() != 0){
+					SwingUtilities.invokeLater(new Runnable(){
+						public void run() {
+							new DataTable(vs, o.getType(), o.isEditable());
+						}
+						
+					});
+				}
+			}
+		}).start();
 	}
 	
 	public void plotObject(){
