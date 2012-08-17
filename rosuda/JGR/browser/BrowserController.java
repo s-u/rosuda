@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 public class BrowserController {
 	
+	public static int MAX_CHILDREN = 10000;
+	
 	protected static boolean initialized = false;
 	
 	protected static HashMap factories = new HashMap();

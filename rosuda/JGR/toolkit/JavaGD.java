@@ -79,6 +79,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 	public void gdNewPage(int devNr) {
 		super.gdNewPage(devNr);
 		jfr.setTitle("JavaGD (" + (getDeviceNumber() + 1) + ")" + (active ? " *active*" : ""));
+		jfr.setVisible(true);
 	}
 
 	/**
@@ -86,7 +87,6 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 	 */
 	public void gdActivate() {
 		super.gdActivate();
-		jfr.toFront();
 		jfr.setTitle("JavaGD " + ((getDeviceNumber() > 0) ? ("(" + (getDeviceNumber() + 1) + ")") : "") + " *active*");
 	}
 
@@ -189,7 +189,8 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
     public void executeDevOff() {
         if (c==null || c.getDeviceNumber()<0) return;
         try {
-        	JGR.timedEval("try({ dev.set("+(c.getDeviceNumber()+1)+"); dev.off()},silent=TRUE)");
+        	JGR.timedEval("try({ dev.set("+(c.getDeviceNumber()+1)+
+        			"); dev.off()},silent=TRUE)",false);
         }catch(Exception e){e.printStackTrace();}
     }
 

@@ -8,6 +8,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
@@ -95,30 +96,42 @@ public class EnvironmentNode extends DefaultBrowserNode {
 					return;
 				objectClasses = rexp.asStrings();
 			}
-			if(objectNames.length<children.size())
-				for(int i=children.size()-1;i>=objectNames.length;i--){
-					//System.out.println("remove 1");
-					mod.removeNodeFromParent((MutableTreeNode) children.get(i));
-				}
-
-			for(int i=0;i<objectNames.length;i++){
+			if(objectNames.length<children.size()){
+				final String[] objNms = objectNames;
+				final DefaultTreeModel m = mod;
+				SwingUtilities.invokeAndWait(new Runnable(){
+					public void run() {
+						for(int i=children.size()-1;i>=objNms.length;i--){
+							m.removeNodeFromParent((MutableTreeNode) children.get(i));
+						}
+					}
+				});
+			}
+			int nc = Math.min(objectNames.length, BrowserController.MAX_CHILDREN);
+			for(int i=0;i<nc;i++){
 				if(i<objectClasses.length){
-					BrowserNode node = BrowserController.createNode(this, objectNames[i], objectClasses[i]);
+					final BrowserNode node = BrowserController.createNode(this, objectNames[i], objectClasses[i]);
 					if(children.size()>i && children.get(i).equals(node)){
 						((BrowserNode)children.get(i)).update(mod);
 					}else{
 						//if(children.size()>i)
 						//	System.out.println(children.get(i).equals(node));
-						Object[] tmp = children.toArray();
-						if(tmp.length>i){
-							for(int ind=i;ind<tmp.length;ind++){
-								//System.out.println("remove 2");
-								mod.removeNodeFromParent((MutableTreeNode) tmp[ind]);
+						final Object[] tmp = children.toArray();
+						final DefaultTreeModel m = mod;
+						final int j=i;
+						SwingUtilities.invokeAndWait(new Runnable(){
+							public void run() {
+								if(tmp.length>j){
+									for(int ind=j;ind<tmp.length;ind++){
+										m.removeNodeFromParent((MutableTreeNode) tmp[ind]);
+									}
+								}
+								m.insertNodeInto(node, EnvironmentNode.this, children.size());
+															
 							}
-						}
-						//System.out.println("HeadNode add"+node.getRName());
-						mod.insertNodeInto(node, this, children.size());
-						node.update(mod);
+						});
+						node.update(m);	
+
 					}
 				}
 			}

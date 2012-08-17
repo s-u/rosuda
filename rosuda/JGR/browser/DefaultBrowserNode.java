@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -18,6 +19,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -188,12 +190,18 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 				if(rexp==null)
 					return;
 				boolean hasChildren = ((REXPLogical)rexp).isTRUE()[0];			
-				if(!hasChildren){
-					Object[] tmp = children.toArray();
-					for(int i=0;i<tmp.length;i++)
-						mod.removeNodeFromParent((MutableTreeNode) tmp[i]);
-					return;
+				if(!hasChildren && children.size()>0){
+					final Object[] tmp = children.toArray();
+					final DefaultTreeModel m = mod;
+					SwingUtilities.invokeAndWait(new Runnable(){
+						public void run() {
+							for(int i=0;i<tmp.length;i++)
+								m.removeNodeFromParent((MutableTreeNode) tmp[i]);							
+						}
+					});
 				}
+				if(!hasChildren)
+					return;
 				REXP nrexp = JGR.idleEval("names(" + fullName + ")");
 				if(nrexp==null)
 					return;
@@ -214,22 +222,40 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 					names = nrexp.asStrings();
 					isNA = nrexp.isNA();
 				}
-				if(names.length<children.size())
-					for(int i=children.size()-1;i>=names.length;i--)
-						mod.removeNodeFromParent((MutableTreeNode) children.get(i));
-				for(int i=0;i<names.length;i++){
-					BrowserNode node = BrowserController.createNode(this,isNA[i] ? null : names[i],
+				if(names.length<children.size()){
+					final DefaultTreeModel m = mod;
+					final String[] nms = names;
+					SwingUtilities.invokeAndWait(new Runnable(){
+						public void run() {
+							for(int i=children.size()-1;i>=nms.length;i--)
+								m.removeNodeFromParent((MutableTreeNode) children.get(i));
+						}
+					});
+					
+				}
+				int nc = Math.min(names.length, BrowserController.MAX_CHILDREN);
+				for(int i=0;i<nc;i++){
+					final BrowserNode node = BrowserController.createNode(this,isNA[i] ? null : names[i],
 							objectClasses[i]);
 					if(children.size()>i && children.get(i).equals(node)){
 						((BrowserNode)children.get(i)).update(mod);
 					}else{
 						//System.out.println("DefaultBrowserNode add: " + node.getRName());
-						Object[] tmp = children.toArray();
-						if(tmp.length>i){
-							for(int ind=i;ind<tmp.length;ind++)
-								mod.removeNodeFromParent((MutableTreeNode) tmp[ind]);
-						}
-						mod.insertNodeInto(node, this, children.size());
+						final Object[] tmp = children.toArray();
+						final int j = i;
+						final DefaultTreeModel m = mod;
+						final int nChildren = children.size();
+						SwingUtilities.invokeAndWait(new Runnable(){
+							public void run() {
+								if(tmp.length>j){
+									for(int ind=j;ind<tmp.length;ind++)
+										m.removeNodeFromParent((MutableTreeNode) tmp[ind]);
+								}
+								m.insertNodeInto(node, DefaultBrowserNode.this, nChildren);
+							}
+							
+						});
+						
 						node.update(mod);
 					}
 				}

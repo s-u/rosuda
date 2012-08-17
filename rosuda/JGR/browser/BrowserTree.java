@@ -34,7 +34,13 @@ public class BrowserTree extends JTree {
         (TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.putClientProperty("JTree.lineStyle", "None");
 		this.setCellRenderer(new BrowserCellRenderer());
-		head.update(mod);
+		new Thread(new Runnable(){
+			public void run() {
+				head.update(mod);
+			}
+			
+		}).start();
+		
 		this.repaint();
 		ExpandListener lis = new ExpandListener();
 		this.addTreeWillExpandListener(lis);
@@ -80,18 +86,41 @@ public class BrowserTree extends JTree {
 
 		public void treeWillExpand(TreeExpansionEvent event)
 				throws ExpandVetoException {
-			BrowserNode node = (BrowserNode) event.getPath().getLastPathComponent();
-			node.setExpanded(true);
-			node.update(mod);
-			mod.reload(node);
+			final BrowserNode node = (BrowserNode) event.getPath().getLastPathComponent();
+			new Thread(new Runnable(){
+				public void run() {
+					node.setExpanded(true);
+					node.update(mod);
+					SwingUtilities.invokeLater(new Runnable(){
+						public void run() {
+							mod.reload(node);
+						}
+						
+					});
+					
+				}
+				
+			}).start();
+
 		}
 
 		public void treeCollapsed(TreeExpansionEvent event) {
 			//System.out.println("collapsing");
-			BrowserNode node = (BrowserNode) event.getPath().getLastPathComponent();
-			node.setExpanded(false);
-			node.update(mod);
-			mod.reload(node);
+			final BrowserNode node = (BrowserNode) event.getPath().getLastPathComponent();
+			new Thread(new Runnable(){
+				public void run() {
+					node.setExpanded(false);
+					node.update(mod);
+					SwingUtilities.invokeLater(new Runnable(){
+						public void run() {
+							mod.reload(node);
+						}
+						
+					});
+					
+				}
+				
+			}).start();
 		}
 
 		public void treeExpanded(TreeExpansionEvent event) {}
@@ -101,14 +130,7 @@ public class BrowserTree extends JTree {
 	class TreeMouseListener implements MouseListener{
 
 		public void mouseClicked(MouseEvent e) {
-		    if (SwingUtilities.isRightMouseButton(e)) {
-
-		        int row = BrowserTree.this.getClosestRowForLocation(e.getX(), e.getY());
-		        BrowserTree.this.setSelectionRow(row);
-		        JPopupMenu popupMenu= ((BrowserNode)BrowserTree.this.getSelectionPath().getLastPathComponent()).getPopupMenu();
-		        if(popupMenu!=null)
-		        	popupMenu.show(e.getComponent(), e.getX(), e.getY());
-		    }else if(e.getClickCount() == 2){
+		    if(e.getClickCount() == 2){
 		        int row = BrowserTree.this.getClosestRowForLocation(e.getX(), e.getY());
 		        BrowserTree.this.setSelectionRow(row);
 		        final BrowserNode node = ((BrowserNode)BrowserTree.this.getSelectionPath().getLastPathComponent());
@@ -125,9 +147,25 @@ public class BrowserTree extends JTree {
 
 		public void mouseExited(MouseEvent arg0) {}
 
-		public void mousePressed(MouseEvent arg0) {}
+		public void mousePressed(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+		    	pop(e);
+		    }
+		}
 
-		public void mouseReleased(MouseEvent arg0) {}
+		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+		    	pop(e);
+		    }
+		}
+		
+		private void pop(MouseEvent e){
+			 int row = BrowserTree.this.getClosestRowForLocation(e.getX(), e.getY());
+		       BrowserTree.this.setSelectionRow(row);
+		       JPopupMenu popupMenu= ((BrowserNode)BrowserTree.this.getSelectionPath().getLastPathComponent()).getPopupMenu();
+  		        if(popupMenu!=null)
+		        	popupMenu.show(e.getComponent(), e.getX(), e.getY());			
+		}
 		
 	}
 	
@@ -136,6 +174,7 @@ public class BrowserTree extends JTree {
 
 class Refresher implements Runnable{
 	public boolean keepRunning = true;
+	public volatile boolean isUpdating = false;
 	DefaultTreeModel model;
 	public Refresher(DefaultTreeModel mod){
 		model=mod;
@@ -153,13 +192,18 @@ class Refresher implements Runnable{
 			} catch (InterruptedException e) {
 				keepRunning=false;
 			}
-			SwingUtilities.invokeLater(new Runnable(){
-
-				public void run() {
-					((BrowserNode)model.getRoot()).update(model);
-				}
-				
-			});
+			if(!isUpdating){
+				isUpdating = true;
+				((BrowserNode)model.getRoot()).update(model);
+				isUpdating=false;
+				/*SwingUtilities.invokeLater(new Runnable(){
+	
+					public void run() {
+						((BrowserNode)model.getRoot()).update(model);
+						isUpdating=false;
+					}
+				});*/
+			}
 		}
 	}
 	

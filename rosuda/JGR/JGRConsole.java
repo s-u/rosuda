@@ -214,13 +214,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			public void componentResized(ComponentEvent evt) {
 				super.componentResized(evt);
 				if (JGR.getREngine() != null && JGR.STARTED) {
-					try {
-						JGR.eval("options(width=" + getFontWidth() + ")");
-					} catch (REngineException e) {
-						new ErrorMsg(e);
-					} catch (REXPMismatchException e) {
-						new ErrorMsg(e);
-					}
+					JGR.threadedEval("options(width=" + getFontWidth() + ")");
 				}
 				consolePanel
 						.setDividerLocation(((int) ((double) getHeight() * 0.70)));
@@ -237,16 +231,18 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
 		this.getContentPane().add(consolePanel, BorderLayout.CENTER);
+		
+		
 		this.setMinimumSize(new Dimension(555, 650));
-		this.setSize(new Dimension(800,
+		
+		this.setSize(new Dimension(JGRPrefs.consoleWidth,
 				Common.screenRes.height < 1000 ? Common.screenRes.height - 50
-						: 900));
+						: JGRPrefs.consoleHeight));
 		// Point center = new
 		// Point(Common.screenRes.width/2-this.getWidth()/2,40);
 		// this.setLocation(center);
 		this.setVisible(true);
-		this
-				.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		// progress.setVisible(false);
 		input.mComplete.setVisible(false);
 		new Thread(new Refresher()).start();
@@ -811,9 +807,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			//execute("object.browser()", false);
 		}else if (cmd == "packagemgr")
 			execute("JGR::package.manager()", false);
-		else if (cmd == "packageinst")
+		else if (cmd == "packageinst"){
 			execute("installPackages()", false);
-		else if (cmd == "paste")
+		}else if (cmd == "paste")
 			input.paste();
 		else if (cmd == "preferences") {
 			PrefDialog inst = PrefDialog.showPreferences(this);

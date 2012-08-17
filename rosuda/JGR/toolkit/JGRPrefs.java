@@ -180,6 +180,12 @@ public class JGRPrefs {
 
 	/** Tab width */
 	public static int tabWidth = 4;
+	
+	
+	/**Console dims*/
+	public static int consoleWidth = 800;
+	public static int consoleHeight = 700;
+	
 
 	/**
 	 * Apply current settings to JGR.
@@ -294,6 +300,9 @@ public class JGRPrefs {
 		tabWidth = prefs.getInt("tabWidth", 4);
 		askForSavingWorkspace = prefs.getBoolean("AskForSavingWorkspace", true);
 		
+		consoleWidth = prefs.getInt("consoleWidth", 550);
+		consoleHeight = prefs.getInt("consoleHeight", 700);
+		
 		is = null;
 		try {
 			is = new BufferedInputStream(new FileInputStream(System
@@ -373,6 +382,8 @@ public class JGRPrefs {
 						: ("," + JGRPackageManager.remindPackages)));
 		prefs.put("WorkingDirectory", workingDirectory);
 		prefs.putInt("tabWidth", tabWidth);
+		prefs.putInt("consoleWidth", JGR.MAINRCONSOLE.getWidth());
+		prefs.putInt("consoleHeight", JGR.MAINRCONSOLE.getHeight());
 		
 		if (JGRPackageManager.defaultPackages != null
 				&& JGRPackageManager.defaultPackages.length > 0) {

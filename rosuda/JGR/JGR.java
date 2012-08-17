@@ -16,11 +16,13 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -249,6 +251,7 @@ public class JGR {
 		JGR.MAINRCONSOLE.execute("", false);
 		MAINRCONSOLE.toFront();
 		MAINRCONSOLE.input.requestFocus();
+		JGR.threadedEval("options(width=" + MAINRCONSOLE.getFontWidth() + ")");
 		// redefine Java Output streams to be written to JGR console
 		System.setOut(MAINRCONSOLE.getStdOutPrintStream());
 		//System.setErr(MAINRCONSOLE.getStdErrPrintStream());
@@ -256,7 +259,7 @@ public class JGR {
 		//kludge to fix infinite recursion crash on mac os x
 		//get rid of this when bug is fixed
 		if (System.getProperty("os.name").startsWith("Mac"))
-			try{JGR.eval("options(expressions=1000)");}catch(Exception e){}
+			try{JGR.threadedEval("options(expressions=1000)");}catch(Exception e){}
 		
 		new Refresher().run();
 	}
@@ -894,50 +897,79 @@ public class JGR {
 
 final class MonitoredEval{
 	volatile boolean done;
+	volatile REXP result;
 	int interval;
+	int checkInterval;
 	boolean ask;
-	
 	public MonitoredEval(int inter,boolean ak){
 		done = false;
 		interval = inter;
+		checkInterval = interval;
 		ask=ak;
 	}
 	
 	protected void startMonitor(){
-		new Thread(new Runnable(){
-
-			public void run() {
-				while(true){
-					try {
-						Thread.sleep(interval);
-					} catch (InterruptedException e) {
-						return;
-					}
-					if(done)
-						return;
-					int cancel;
-					if(ask)
-						cancel = JOptionPane.showConfirmDialog(null, 
-							"This R process is taking some time.\nWould you like to cancel it?",
-							"Cancel R Process",
-								 JOptionPane.YES_NO_OPTION);
-					else
-						cancel = JOptionPane.YES_OPTION;
-					if(cancel==JOptionPane.YES_OPTION){
-						((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine())
-						.getRni().rniStop(0);
-						return;
-					}
-				}
+		int t = 0;
+		while(true){
+			try {
+				Thread.sleep(checkInterval);
+				
+			} catch (InterruptedException e) {
+				return;
 			}
-		}).start();		
+			if(done)
+				return;
+			if(t+checkInterval <interval){
+				t = t + checkInterval;
+				continue;
+			}
+			int cancel;
+			if(ask){
+				cancel = JOptionPane.showConfirmDialog(null, 
+					"This R process is taking some time.\nWould you like to cancel it?",
+					"Cancel R Process",
+						 JOptionPane.YES_NO_OPTION);
+			}else
+				cancel = JOptionPane.YES_OPTION;
+			if(cancel==JOptionPane.YES_OPTION){
+				((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine())
+				.getRni().rniStop(0);
+				return;
+			}else{
+				t=0;
+			}
+		}			
 	}
 
 	public REXP run(String cmd) {
-		startMonitor();
+		
 		try{
-			REXP result = JGR.eval(cmd);
-			done = true;
+			if(SwingUtilities.isEventDispatchThread() && ask){
+				final String c = cmd;
+				new Thread(new Runnable(){
+					public void run() {
+						try {
+							result = JGR.eval(c);
+						} catch (REngineException e) {
+							result = null;
+						} catch (REXPMismatchException e) {
+							result=null;
+						}
+						done = true;
+					}
+				}).start();	
+				checkInterval = 10;
+				startMonitor();
+			}else{
+				new Thread(new Runnable(){
+					public void run() {
+						startMonitor();
+					}
+				}).start();	
+					
+				result = JGR.eval(cmd);
+			}
+			done = true;				
 			return result;
 		}catch(Exception e){
 			return null;
@@ -945,10 +977,33 @@ final class MonitoredEval{
 	}
 	
 	public void assign(String symbol, REXP value) {
-		startMonitor();
-		try{
-			JGR.getREngine().assign(symbol, value);
-			done = true;
-		}catch(Exception e){}
+		if(SwingUtilities.isEventDispatchThread() && ask){
+			final String sym = symbol;
+			final REXP val = value;
+			new Thread(new Runnable(){
+				public void run() {
+					try {
+						JGR.getREngine().assign(sym, val);
+					} catch (REngineException e) {
+						result = null;
+					} catch (REXPMismatchException e) {
+						result=null;
+					}
+					done = true;
+				}
+			}).start();	
+			checkInterval = 10;
+			startMonitor();
+		}else{
+			new Thread(new Runnable(){
+				public void run() {
+					startMonitor();
+				}
+			}).start();	
+			try{
+				JGR.getREngine().assign(symbol, value);
+				done = true;
+			}catch(Exception e){}
+		}
 	}
 }
