@@ -183,7 +183,7 @@ public class JGRPrefs {
 	
 	
 	/**Console dims*/
-	public static int consoleWidth = 800;
+	public static int consoleWidth = 550;
 	public static int consoleHeight = 700;
 	
 
@@ -300,8 +300,6 @@ public class JGRPrefs {
 		tabWidth = prefs.getInt("tabWidth", 4);
 		askForSavingWorkspace = prefs.getBoolean("AskForSavingWorkspace", true);
 		
-		consoleWidth = prefs.getInt("consoleWidth", 550);
-		consoleHeight = prefs.getInt("consoleHeight", 700);
 		
 		is = null;
 		try {
@@ -348,6 +346,9 @@ public class JGRPrefs {
 		LINE_HIGHLIGHT = editPrefs.getBoolean("LINE_HIGHLIGHT", true);
 		HIGHLIGHTColor = Color.decode(editPrefs.get("HIGHLIGHTColor", "#e0e0e0"));
 		LINE_NUMBERS = editPrefs.getBoolean("LINE_NUMBERS", true);
+		
+		consoleWidth = editPrefs.getInt("consoleWidth", 550);
+		consoleHeight = editPrefs.getInt("consoleHeight", 700);
 	}
 
 	/**
@@ -382,8 +383,6 @@ public class JGRPrefs {
 						: ("," + JGRPackageManager.remindPackages)));
 		prefs.put("WorkingDirectory", workingDirectory);
 		prefs.putInt("tabWidth", tabWidth);
-		prefs.putInt("consoleWidth", JGR.MAINRCONSOLE.getWidth());
-		prefs.putInt("consoleHeight", JGR.MAINRCONSOLE.getHeight());
 		
 		if (JGRPackageManager.defaultPackages != null
 				&& JGRPackageManager.defaultPackages.length > 0) {
@@ -440,6 +439,8 @@ public class JGRPrefs {
 		editPrefs.put("HIGHLIGHTColor","#"+ Integer.toHexString(HIGHLIGHTColor.getRGB()).substring(2));
 		editPrefs.putBoolean("LINE_NUMBERS", LINE_NUMBERS);
 		
+		editPrefs.putInt("consoleWidth", JGR.MAINRCONSOLE.getWidth());
+		editPrefs.putInt("consoleHeight", JGR.MAINRCONSOLE.getHeight());
 		try {
 			editPrefs.exportNode(new FileOutputStream(System
 					.getProperty("user.home")

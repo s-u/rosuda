@@ -612,10 +612,25 @@ public class RDataFrameModel extends ExDefaultTableModel {
 				pages.clear();
 				pendingPages.clear();
 				populateMetaData();
-				if(strSame!=null && !((REXPLogical)strSame).isTRUE()[0])
-					this.fireTableStructureChanged();
-				if(strSame!=null)
-					this.fireTableDataChanged();			
+				if(strSame!=null && !((REXPLogical)strSame).isTRUE()[0]){
+					SwingUtilities.invokeLater(new Runnable(){
+
+						public void run() {
+							RDataFrameModel.this.fireTableStructureChanged();
+						}
+						
+					});
+					
+				}
+				if(strSame!=null){
+					SwingUtilities.invokeLater(new Runnable(){
+
+						public void run() {
+							RDataFrameModel.this.fireTableDataChanged();
+						}
+						
+					});				
+				}		
 
 				changed=true;
 			}

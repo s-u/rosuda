@@ -21,6 +21,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 
@@ -63,7 +64,7 @@ public class Deducer {
 	static int menuIndex=3;
 	static String recentActiveData = "";
 	static final String Version= "0.7-0";
-	public static String guiEnv = "gui.working.env";
+	public static String guiEnv = ".gui.working.env";
 	public static boolean insideJGR;
 	public static boolean started;
 	private static RConnector rConnection = null;
@@ -170,7 +171,7 @@ public class Deducer {
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Import Template", "Import template", cListener);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Open Plot", "Open plot", cListener);		
-		    JMenu sm = new JMenu("Templates");
+		    JMenu sm = new JMenu("Quick");
 			sm.setMnemonic(KeyEvent.VK_S);
 			String[] labels = PlotController.getTemplateNames();
 			for(int i = 0;i<labels.length;i++){
@@ -202,6 +203,20 @@ public class Deducer {
 			//Replace DataTable with Data Viewer
 			JGR.MAINRCONSOLE.getJMenuBar().getMenu(menuIndex).remove(1);
 			insertJMenuItem(JGR.MAINRCONSOLE, "Packages & Data", "Data Viewer", "table", cListener, 1);
+
+			sm = new JMenu("GUI Add-ons");
+			sm.setMnemonic(KeyEvent.VK_S);
+			labels = new String[] {"Text","Psychometrics","Extras","Spatial"};
+			cmds = new String[] {"DeducerText","DeducerPlugInScaling",
+					"DeducerExtras","DeducerSpatial"};
+			for(int i = 0;i<labels.length;i++){
+				JMenuItem mi = new JMenuItem();
+				mi.setText(labels[i]);
+				mi.setActionCommand(cmds[i]);
+				mi.addActionListener(cListener);
+				sm.add(mi);
+			}
+			EzMenuSwing.getMenu(JGR.MAINRCONSOLE, "Packages & Data").add(sm, 3);
 
 			//Override New Data with Data Viewer enabled version
 			JGR.MAINRCONSOLE.getJMenuBar().getMenu(0).remove(0);
@@ -512,6 +527,8 @@ public class Deducer {
 			Deducer.timedEval(".getDialog('Interactive Mosaic Plot')$run()");
 		}else if(cmd.equals("ipcp")){
 			Deducer.timedEval(".getDialog('Interactive Parallel Coordinate Plot')$run()");
+		}else if(cmd.startsWith("Deducer")){
+			RController.loadPackage(cmd);
 		}
 		
 		if(needsRLocked && fromConsole && !isJGR()){
@@ -834,52 +851,80 @@ public class Deducer {
 
 final class MonitoredEval{
 	volatile boolean done;
+	volatile REXP result;
 	int interval;
+	int checkInterval;
 	boolean ask;
-	
 	public MonitoredEval(int inter,boolean ak){
 		done = false;
 		interval = inter;
+		checkInterval = interval;
 		ask=ak;
+	}
+	
+	protected void startMonitor(){
+		int t = 0;
+		while(true){
+			try {
+				Thread.sleep(checkInterval);
+				
+			} catch (InterruptedException e) {
+				return;
+			}
+			if(done)
+				return;
+			if(t+checkInterval <interval){
+				t = t + checkInterval;
+				continue;
+			}
+			int cancel;
+			if(ask){
+				cancel = JOptionPane.showConfirmDialog(null, 
+					"This R process is taking some time.\nWould you like to cancel it?",
+					"Cancel R Process",
+						 JOptionPane.YES_NO_OPTION);
+			}else
+				cancel = JOptionPane.YES_OPTION;
+			if(cancel==JOptionPane.YES_OPTION){
+				((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine())
+				.getRni().rniStop(0);
+				return;
+			}else{
+				t=0;
+			}
+		}			
 	}
 
 	public REXP run(String cmd) {
 		
-		new Thread(new Runnable(){
-
-			public void run() {
-				while(true){
-					try {
-						Thread.sleep(interval);
-					} catch (InterruptedException e) {
-						return;
-					}
-					if(done)
-						return;
-					int cancel;
-					if(ask)
-						cancel = JOptionPane.showConfirmDialog(null, 
-							"This R process is taking some time.\nWould you like to cancel it?",
-							"Cancel R Process",
-								 JOptionPane.YES_NO_OPTION);
-					else
-						cancel = JOptionPane.YES_OPTION;
-					if(cancel==JOptionPane.YES_OPTION){
-						((org.rosuda.REngine.JRI.JRIEngine) Deducer.getREngine())
-						.getRni().rniStop(0);
-						return;
-					}
-				}
-			}
-		}).start();
 		try{
-			REXP result = Deducer.eval(cmd);
-			done = true;
+			if(SwingUtilities.isEventDispatchThread() && ask){
+				final String c = cmd;
+				new Thread(new Runnable(){
+					public void run() {
+						result = Deducer.eval(c);
+						done = true;
+					}
+				}).start();	
+				checkInterval = 10;
+				startMonitor();
+			}else{
+				new Thread(new Runnable(){
+					public void run() {
+						startMonitor();
+					}
+				}).start();	
+					
+				result = Deducer.eval(cmd);
+			}
+			done = true;				
 			return result;
 		}catch(Exception e){
 			return null;
 		}
 	}
+	
+
 }
 
 

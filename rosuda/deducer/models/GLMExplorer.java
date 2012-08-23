@@ -2,12 +2,16 @@ package org.rosuda.deducer.models;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPString;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
 import org.rosuda.deducer.toolkit.AssumptionIcon;
@@ -28,41 +32,87 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	GLMExplorer(GLMModel mod){
 		super();
 		this.setTitle("Generalized Linear Model Explorer");
-		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.GeneralizedLinearModel");		
-		setModel(mod);
-		initTabs();
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.GeneralizedLinearModel");
+		final GLMModel m = mod;
+		new Thread(new Runnable(){
+
+			public void run() {
+				setModel(m);
+				initTabs();				
+			}
+			
+		}).start();
+
 		initAssumptions();
 		this.addWindowListener(this);
 	}
 	
 	public void initTabs(){
-		try{
-			String call="par(mfrow = c(2, 3),mar=c(5,4,2,2))\n"+
-				"hist(resid("+pre.modelName+"),main=\"Residual\",xlab=\"Residuals\")\n"+
-				"plot("+pre.modelName+",2,sub.caption=\"\")\n"+
-				"plot("+pre.modelName+", c(1,4,3,5),sub.caption=\"\")";
-			diagnosticTab = new ModelPlotPanel(call);
-			tabs.addTab("Diagnostics", diagnosticTab);
-			
-			call="par(mar=c(5,4,2,2))\n"+
-				"try(crPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
-			termTab = new ModelPlotPanel(call);
-			boolean st = false;
-			try{
-				st = ((REXPLogical)Deducer.timedEval(
-					"length(grep(\":\",c(attr(terms("+
-					pre.modelName+"),\"term.labels\"))))==0")).isTRUE()[0];
-			}catch(Exception e){}
-			if(st)
-				tabs.addTab("Terms", termTab);
-			
-			call="par(mar=c(5,4,2,2))\n"+
-			"try(avPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
-			addedTab = new ModelPlotPanel(call);
-			tabs.addTab("Added Variable", addedTab);
-		}catch(Exception e){
-			new ErrorMsg(e);
+
+		String call="par(mfrow = c(2, 3),mar=c(5,4,2,2))\n"+
+		"hist(resid("+pre.modelName+"),main=\"Residual\",xlab=\"Residuals\")\n"+
+		"plot("+pre.modelName+",2,sub.caption=\"\")\n"+
+		"plot("+pre.modelName+", c(1,4,3,5),sub.caption=\"\")";
+		diagnosticTab = new ModelPlotPanel(call);
+		try {
+			SwingUtilities.invokeAndWait(new Runnable(){
+				public void run() {
+					tabs.addTab("Diagnostics", diagnosticTab);
+				}
+				
+			});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
 		}
+		
+		REXP result = Deducer.timedEval("colnames(model.matrix("+pre.modelName+"))");
+		if(result==null || ((REXPString)result).length()>9)
+			return;
+		
+		call="par(mar=c(5,4,2,2))\n"+
+			"try(crPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
+		termTab = new ModelPlotPanel(call);
+		boolean st = false;
+		try{
+			st = ((REXPLogical)Deducer.timedEval(
+				"length(grep(\":\",c(attr(terms("+
+				pre.modelName+"),\"term.labels\"))))==0")).isTRUE()[0];
+		}catch(Exception e){}
+		if(st){
+			try {
+				SwingUtilities.invokeAndWait(new Runnable(){
+					public void run() {
+						tabs.addTab("Terms", termTab);
+					}
+					
+				});
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		call="par(mar=c(5,4,2,2))\n"+
+		"try(avPlots("+pre.modelName+",ask=FALSE,col=1),silent=TRUE)";
+		addedTab = new ModelPlotPanel(call);
+		try {
+			SwingUtilities.invokeAndWait(new Runnable(){
+				public void run() {
+					tabs.addTab("Added Variable", addedTab);
+				}
+				
+			});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+
 	}
 	
 	protected void initAssumptions(){
@@ -87,9 +137,18 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	public void setModel(GLMModel mod){
 		model = mod;
 		pre =model.run(true,pre);
-		modelFormula.setText(pre.formula);
-		preview.setText(pre.preview);
-		preview.setCaretPosition(0);
+
+			SwingUtilities.invokeLater(new Runnable(){
+
+				public void run() {
+					modelFormula.setText(pre.formula);
+					preview.setText(pre.preview);
+					preview.setCaretPosition(0);
+				}
+				
+			});
+
+
 	}
 	
 	
@@ -97,7 +156,14 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 		model.run(false,pre);
 		this.dispose();
 		GLMDialog.setLastModel(model);
-		Deducer.timedEval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
+		Deducer.timedEval("suppressWarnings(rm('"+pre.data.split("\\$")[1]+"','"+
+				pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+"))");
+	}
+	
+	public void cancel(){
+		Deducer.timedEval("suppressWarnings(rm('"+pre.data.split("\\$")[1]+"','"+
+				pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+"))");
+		this.dispose();
 	}
 	
 	public void updateClicked(){

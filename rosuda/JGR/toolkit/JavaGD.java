@@ -19,8 +19,6 @@ import java.awt.event.WindowListener;
 import javax.swing.WindowConstants;
 
 import org.rosuda.JGR.JGR;
-import org.rosuda.JGR.RController;
-import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngineException;

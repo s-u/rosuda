@@ -661,14 +661,24 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		}
 	}
 	
-	public void mouseClicked(MouseEvent arg0) {}
+	public void mouseClicked(MouseEvent arg0) {
+		if(arg0.getClickCount()==2){
+			Object cur = variable.getSelectedItem();
+			String a = JOptionPane.showInputDialog(variable, 
+					"Edit variable by hand. For example log(variable)",
+					cur==null ? null : cur.toString());
+			if(a!=null){
+				variable.setSelectedItem(a);
+			}			
+		}
+	}
 	public void mouseEntered(MouseEvent arg0) {}
 	public void mouseExited(MouseEvent arg0) {}
 	public void mousePressed(MouseEvent arg0) {
 		if(arg0.isPopupTrigger()){
 			Object cur = variable.getSelectedItem();
 			String a = JOptionPane.showInputDialog(variable, 
-					"Edit variable by hand.\nUse with care (Advanced)",
+					"Edit variable by hand. For example log(variable)",
 					cur==null ? null : cur.toString());
 			if(a!=null){
 				variable.setSelectedItem(a);
@@ -680,7 +690,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		if(arg0.isPopupTrigger()){
 			Object cur = variable.getSelectedItem();
 			String a = JOptionPane.showInputDialog(variable, 
-					"Edit variable by hand.\nUse with care (Advanced)",
+					"Edit variable by hand. For example log(variable)",
 					cur==null ? null : cur.toString());
 			if(a!=null){
 				variable.setSelectedItem(a);

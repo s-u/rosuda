@@ -203,7 +203,7 @@ public class RController {
 			JGR.MAINRCONSOLE.execute("install.packages('" + pack + "');library(" + pack + ")", true);
 		} else
 			try {
-				JGR.timedEval("library(" + pack + ")");
+				JGR.MAINRCONSOLE.execute("library(" + pack + ")");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

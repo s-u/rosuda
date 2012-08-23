@@ -482,7 +482,7 @@ public class Scale implements ElementModel{
 		ParamNumeric pn;
 		
 		
-		p = new ParamScaleLegend("legend",s.aesName,true);
+		p = new ParamScaleLegend("legend",s.aesName,false);
 		p.setTitle("");
 		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		

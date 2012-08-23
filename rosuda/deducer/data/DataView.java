@@ -95,8 +95,15 @@ public class DataView extends DataViewerTab implements ActionListener {
 	public void refresh() {
 		boolean changed = ((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
 		if(changed){
-			dataScrollPane.getRowNamesModel().refresh();  
-			dataScrollPane.autoAdjustRowWidth();  
+			SwingUtilities.invokeLater(new Runnable(){
+
+				public void run() {
+					dataScrollPane.getRowNamesModel().refresh();  
+					dataScrollPane.autoAdjustRowWidth();
+				}
+				
+			});
+  
 		}
 	}
 

@@ -403,6 +403,30 @@ public class Stat {
 		s.generated.add("level");
 		s.generated.add("piece");
 		return s;
+	}
+	
+	public static Stat makeEcdf(){
+		Stat s = new Stat();
+		s.name = "ecdf";
+		s.defaultGeom = "area";
+		
+		Aes aes;
+		
+		aes = Aes.makeAes("x");
+		aes.required = true;
+		s.aess.add(aes);
+		
+		aes = Aes.makeAes("y");
+		aes.required = true;
+		aes.defaultVariable = "..y..";
+		aes.variable = "..y..";
+		s.aess.add(aes);
+
+		Param p;
+		
+		//s.generated.add("y");
+		
+		return s;
 	}	
 	
 	public static Stat makeFunction(){
@@ -774,6 +798,8 @@ public class Stat {
 			return Stat.makeDensity();
 		else if(statName=="density2d")
 			return Stat.makeDensity2d();
+		else if(statName=="ecdf")
+			return Stat.makeEcdf();
 		else if(statName=="function")
 			return Stat.makeFunction();
 		else if(statName=="hline")

@@ -26,7 +26,7 @@ public class PlotController {
 			"dotplot","errorbar","errorbarh","freqpoly","hex","histogram","hline","jitter","line","linerange",
 			"path","point","pointrange","polygon","quantile","raster", "rect","ribbon","rug","segment","smooth","step","text",
 			"tile","violin","vline"};
-	protected static String[] statNames = {"abline","bin","bin2d","bindot","binhex","boxplot","contour","density","density2d","function",
+	protected static String[] statNames = {"abline","bin","bin2d","bindot","binhex","boxplot","contour","density","density2d","ecdf","function",
 			"hline","identity","qq","quantile","smooth","spoke","sum","summary","unique","ydensity","vline"};
 	protected static String[] scaleNames = {"area","size","size_manual","size_identity",
 		"colour_gradient", "colour_hue","colour_brewer","colour_gradient2","colour_gradientn","colour_grey","colour_manual","colour_identity",
@@ -40,7 +40,7 @@ public class PlotController {
 	protected static String[] facetNames = {"grid","wrap"};
 	protected static String[] coordNames = {"cartesian","equal","flip","map","polar","trans"};
 	protected static String[] posNames = {"dodge","identity","jitter","stack","fill"};
-	protected static String[] themeNames = { "grey","bw","opts","xlab","ylab"};	
+	protected static String[] themeNames = { "grey","bw","theme","title","xlab","ylab"};	
 	
 	
 	public static void init(){

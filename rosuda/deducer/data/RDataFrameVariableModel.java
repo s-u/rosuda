@@ -5,6 +5,7 @@ package org.rosuda.deducer.data;
 
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
@@ -349,7 +350,13 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			if(ident!=null && ((REXPLogical)ident).isFALSE()[0]){
 				Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
 				populateArrays();
-				this.fireTableDataChanged();			
+				SwingUtilities.invokeLater(new Runnable(){
+
+					public void run() {
+						RDataFrameVariableModel.this.fireTableDataChanged();
+					}
+					
+				});		
 				changed=true;
 			}
 		}

@@ -15,6 +15,7 @@ public class LogisticExplorer extends GLMExplorer {
 		this.setTitle("Logistic Model Explorer");
 		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LogisticModel");
 	}
+/*
 	public void initTabs(){
 		try{
 			String call="par(mfrow = c(2, 2),mar=c(5,4,2,2))\n"+
@@ -39,7 +40,7 @@ public class LogisticExplorer extends GLMExplorer {
 			new ErrorMsg(e);
 		}
 	}
-	
+*/
 	public void updateClicked(){
 		LogisticBuilder bld = new LogisticBuilder(model);
 		bld.setLocationRelativeTo(this);
@@ -70,6 +71,6 @@ public class LogisticExplorer extends GLMExplorer {
 		model.run(false,pre);
 		this.dispose();
 		LogisticDialog.setLastModel(model);
-		Deducer.timedEval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
+		Deducer.timedEval("suppressWarnings(rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+"))");
 	}
 }
