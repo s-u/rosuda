@@ -33,7 +33,7 @@ public class JGRListener implements ActionListener {
 		String cmd = e.getActionCommand();
 		if(silent){
 			try {
-				JGR.threadedEval(cmd);
+				JGR.timedEval(cmd);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			} 
