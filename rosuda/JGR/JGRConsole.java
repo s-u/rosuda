@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.FileDialog;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -801,8 +802,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			new Editor();
 		// else if (cmd == "newwsp") newWorkSpace();
 		else if (cmd == "objectmgr"){
+			Point cloc = this.getLocationOnScreen();
+			int width = this.getWidth();
 			BrowserWindow win = new BrowserWindow();
-			win.setLocationRelativeTo(null);
+			win.setLocation(Math.min(cloc.x+width,Common.screenRes.width-200), 
+					Math.min(Common.screenRes.height-200,cloc.y));
 			win.setVisible(true);
 			//execute("object.browser()", false);
 		}else if (cmd == "packagemgr")
