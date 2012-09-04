@@ -177,13 +177,13 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 						swTest = new JCheckBox();
 						testPanel.add(swTest);
 						swTest.setText("Shapiro-Wilk test");
-						swTest.setBounds(17, 77, 139, 18);
+						swTest.setBounds(17, 77, 170, 18);
 					}
 					{
 						swLabel = new JLabel();
 						testPanel.add(swLabel);
 						swLabel.setText("against normality");
-						swLabel.setBounds(40, 93, 116, 14);
+						swLabel.setBounds(40, 93, 116, 18);
 					}
 					{
 						assumpN = new AssumptionIcon("/icons/N_assump.png","Large Sample",

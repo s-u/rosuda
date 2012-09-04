@@ -173,8 +173,8 @@ public class VariableView extends DataViewerTab implements ActionListener{
 						JOptionPane.QUESTION_MESSAGE);
 				if(confirm == JOptionPane.NO_OPTION)
 					return;
-				Deducer.timedEval("rm("+dataName + ")");
-				RController.refreshObjects();
+				Deducer.threadedEval("rm("+dataName + ")");
+				//RController.refreshObjects();
 			}else if (cmd == "about")
 				new AboutDialog(null);
 			else if (cmd == "cut"){
@@ -195,8 +195,8 @@ public class VariableView extends DataViewerTab implements ActionListener{
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
 				inputValue = Deducer.getUniqueName(inputValue);
 				if(inputValue!=null){
-					Deducer.timedEval(inputValue.trim()+"<-data.frame(Var1=NA)");
-					RController.refreshObjects();
+					Deducer.threadedEval(inputValue.trim()+"<-data.frame(Var1=NA)");
+					//RController.refreshObjects();
 				}
 			}else if (cmd == "loaddata"){
 				LoadData dld= new LoadData();

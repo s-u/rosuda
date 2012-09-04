@@ -23,7 +23,7 @@ public class DefaultVariableSource implements VariableSource{
 		String[] vals = new String[]{};
 		try {
 			vals=Deducer.timedEval("names("+dataName+")").asStrings();
-		} catch (REXPMismatchException e) {
+		} catch (Exception e) {
 		}
 		return vals;
 	}

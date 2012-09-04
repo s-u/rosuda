@@ -585,7 +585,16 @@ public class Deducer {
 		return rConnection.eval(cmd);
 	}
 	
+	public static void threadedEval(String cmd){
+		final String c = cmd;
+		new Thread(new Runnable(){
 
+			public void run() {
+				rConnection.eval(c);
+			}
+			
+		}).start();
+	}
 	public static REXP timedEval(String cmd){
 		return timedEval(cmd,15000,true);
 	}

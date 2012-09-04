@@ -4,7 +4,9 @@ package org.rosuda.deducer.widgets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 
 import org.rosuda.REngine.REXP;
@@ -124,7 +126,17 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		String cmd = e.getActionCommand();
+		final String cmd = e.getActionCommand();
+		new Thread(new Runnable(){
+
+			public void run() {
+				runCmd(cmd);
+			}
+			
+		}).start();
+	}
+	
+	void runCmd(String cmd){
 		if(cmd.equals("Run") || cmd.equals("OK")){
 			String state = getWidgetStatesAsString();
 			REXP rCheck = null;
@@ -149,7 +161,7 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 					check = rCheck.asString();
 			} catch (REXPMismatchException e1) {
 				JOptionPane.showMessageDialog(this, "Dialog error. Check function must return a string. Return" +
-													"'' if there the check passes.");
+													" \"\" if the check passes.");
 			}
 			if(check.length()<1){
 				
@@ -166,18 +178,28 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 				} catch (REXPMismatchException e1) {
 					e1.printStackTrace();
 				}
-				this.setVisible(false);
+				SwingUtilities.invokeLater(new Runnable(){
+					public void run() {
+						SimpleRDialog.this.setVisible(false);
+					}
+					
+				});
 				completed();
 			}else{
 				JOptionPane.showMessageDialog(this, check);
 				return;
 			}
-		}else if(cmd=="Cancel"){
+		}else if(cmd.equals("Cancel")){
 			clearWorkingModels();
-			this.setVisible(false);
-		}else if(cmd=="Reset")
-			reset();
+			SwingUtilities.invokeLater(new Runnable(){
+				public void run() {
+					SimpleRDialog.this.setVisible(false);
+				}
+				
+			});
+			
+		}else if(cmd.equals("Reset"))
+			reset();		
 	}
-	
 	
 }

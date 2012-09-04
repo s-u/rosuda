@@ -293,13 +293,13 @@ public class TransformDialog extends JDialog implements ActionListener{
 		if(type==types[2]){				//center
 			call = into + " <- " + variable + " - mean(" + variable + ", na.rm=TRUE)\n";
 		}else if(type == types[3]){		//std
-			call = into + " <- rescaler(" + variable + ")\n";
+			call = into + " <- (" + variable + " - mean("+variable+",na.rm=TRUE)) / sd("+variable+",na.rm=TRUE)\n";
 		}else if(type == types[4]){		//robust std
-			call = into + " <- rescaler(" + variable + ",type= 'robust')\n";
+			call = into + " <- (" + variable + " - median("+variable+",na.rm=TRUE)) / mad("+variable+",na.rm=TRUE)\n";
 		}else if(type == types[5]){		//range
-			call = into + " <- rescaler(" + variable + ",type= 'range')\n";
+			call = into + " <- (" + variable + " - min("+variable+",na.rm=TRUE)) / diff(range("+variable+",na.rm=TRUE))\n";
 		}else if(type == types[6]){		//box cox
-			call = into + " <- box.cox(" + variable + ","+lambda+")\n";
+			call = into + " <- bcPower(" + variable + ","+lambda+")\n";
 		}else if(type == types[7]){		//rank
 			call = into + " <- rank(" + variable + ", na.last='keep', ties='" + 
 					rankComboBox.getSelectedItem().toString() + "')\n";
@@ -441,7 +441,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 			tmpInto = data + "[['" + (String)into.get(0) + "']]";
 			if(isBoxCox){
 				lam = Deducer.getUniqueName("box.cox.mle");
-				RCmd += lam + " <- box.cox.powers(" +tmpVar+")\n";
+				RCmd += lam + " <- powerTransform(" +tmpVar+")\n";
 				RCmd += "print("+lam+")\n";
 			}	
 			if(isCustom)
@@ -461,7 +461,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 			RCmd += intoVars + " <- " + Deducer.makeRCollection(into, "c", true) + "\n";
 			if(isBoxCox){
 				lam = Deducer.getUniqueName("box.cox.mle");
-				RCmd += lam + " <- box.cox.powers(" + data + "[," + variables + "])\n";
+				RCmd += lam + " <- powerTransform(" + data + "[," + variables + "])\n";
 				RCmd += "print("+lam+")\n";
 			}	
 			tmpVar = data + "[["+ variables + "[i]]]";

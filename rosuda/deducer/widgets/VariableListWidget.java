@@ -165,10 +165,11 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 	 * @param removeFromVariableSelector should the items be removed from the VariableSelector
 	 */
 	public void setModel(DefaultListModel mod, boolean removeFromVariableSelector){
+
 		if(removeFromVariableSelector && selector==null)
 			setModel(mod,false);
 		else{
-			if(selector!=null && selector.getSelectedData()!=null)
+/*			if(selector!=null && selector.getSelectedData()!=null)
 				try {
 					Vector rNames = new Vector();
 					String[] names = Deducer.eval("names("+selector.getSelectedData()+")").asStrings();
@@ -184,7 +185,7 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			
+*/		
 			
 			if(mod==null)
 				mod = new DefaultListModel();
@@ -193,15 +194,13 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 			for(int i=0;i<mod.size();i++){
 				if(removeFromVariableSelector){
 					exists = selector.remove(mod.get(i));
-					if(exists)
+					//System.out.println(exists + " " + mod.get(i));
+					//if(exists)
 						newModel.addElement(mod.get(i));
 				}else
 					newModel.addElement(mod.get(i));
 			}
-			DefaultListModel varModel = (DefaultListModel) varList.getModel();
-			varModel.clear();
-			for(int i=0;i<newModel.size();i++)
-				varModel.addElement(newModel.get(i));
+			varList.setModel(newModel);
 		}
 	}
 	

@@ -209,7 +209,7 @@ public class GLMModel extends ModelModel {
 		try{
 			String[] out = new String[]{};
 			if(effects.effects.size()>0){
-				String[] t = new String[1];
+/*				String[] t = new String[1];
 				if(prevModel!=null){
 					t=Deducer.timedEval("attr(terms("+prevModel.modelName+
 										"),\"term.labels\")").asStrings();
@@ -218,11 +218,12 @@ public class GLMModel extends ModelModel {
 				if(t!=null)
 					for(int i=0;i<t.length;i++)
 						ter.add(t[i]);
-				Vector terms = new Vector();
+*/				Vector terms = new Vector();
 				for(int i=0;i<effects.effects.size();i++){
-					if(prevModel==null || ter.contains(effects.effects.get(i)))
+					//if(prevModel==null || ter.contains(effects.effects.get(i)))
 						terms.add("\""+effects.effects.get(i)+"\"");
 				}
+
 				Vector effectCalls=new Vector();
 				for(int i=0;i<terms.size();i++){
 					if(effects.confInt)
@@ -261,7 +262,7 @@ public class GLMModel extends ModelModel {
 		try{
 			String[] out = new String[]{};
 			if(plots.effects.size()>0){
-				String[] t = new String[1];
+/*				String[] t = new String[1];
 				if(prevModel!=null){
 					try{
 					t=Deducer.eval("attr(terms("+prevModel.modelName+
@@ -271,9 +272,9 @@ public class GLMModel extends ModelModel {
 				Vector ter = new Vector();
 				for(int i=0;i<t.length;i++)
 					ter.add(t[i]);
-				Vector terms = new Vector();
+*/				Vector terms = new Vector();
 				for(int i=0;i<plots.effects.size();i++){
-					if(prevModel==null || ter.contains(plots.effects.get(i)))
+					//if(prevModel==null || ter.contains(plots.effects.get(i)))
 						terms.add("\""+plots.effects.get(i)+"\"");
 				}
 				Vector plotCalls=new Vector();

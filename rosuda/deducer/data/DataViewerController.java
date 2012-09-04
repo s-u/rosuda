@@ -85,7 +85,7 @@ public class DataViewerController {
 					}else if(cmd=="New Data"){
 						String inputValue = JOptionPane.showInputDialog("Data Name: ");
 						if(inputValue!=null)
-							Deducer.eval(inputValue.trim()+"<-data.frame(Var1=NA)");
+							Deducer.threadedEval(inputValue.trim()+"<-data.frame(Var1=NA)");
 					}else if(cmd=="tutorial"){
 						HelpButton.showInBrowser("http://www.youtube.com/user/MrIanfellows#p/u/5/iZ857h2j6wA");
 					}else if(cmd=="wiki"){

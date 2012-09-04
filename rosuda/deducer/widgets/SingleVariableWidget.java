@@ -169,7 +169,7 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 		if(removeFromVariableSelector && selector==null)
 			setModel(mod,false);
 		else{
-			if(selector!=null && selector.getSelectedData()!=null)
+/*			if(selector!=null && selector.getSelectedData()!=null)
 				try {
 					Vector rNames = new Vector();
 					String[] names = Deducer.timedEval("names("+selector.getSelectedData()+")").asStrings();
@@ -185,7 +185,7 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			
+*/			
 			if(mod==null)
 				mod = new DefaultListModel();
 			DefaultListModel newModel = new DefaultListModel();
@@ -193,7 +193,7 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 			for(int i=0;i<mod.size();i++){
 				if(removeFromVariableSelector){
 					exists = selector.remove(mod.get(i));
-					if(exists)
+					//if(exists)
 						newModel.addElement(mod.get(i));
 				}else
 					newModel.addElement(mod.get(i));

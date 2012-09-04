@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
@@ -382,24 +383,30 @@ public class RDialog extends JDialog {
 	 * run the dialog
 	 */
 	public void run(){
-		if(parent==null)
-			this.setToLast();
-		else{
-			DeducerWidget wid;
-			Object widModel;
-			for(int i=0;i < widgets.size();i++){
-				wid = (DeducerWidget) widgets.get(i);
-				widModel = models.get(wid);
-				if(widModel!=null)
-					wid.setModel(widModel);
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run() {
+				if(parent==null)
+					RDialog.this.setToLast();
+				else{
+					DeducerWidget wid;
+					Object widModel;
+					for(int i=0;i < widgets.size();i++){
+						wid = (DeducerWidget) widgets.get(i);
+						widModel = models.get(wid);
+						if(widModel!=null)
+							wid.setModel(widModel);
+					}
+				}
+				RDialog.this.setVisible(true);
+				if(!Deducer.isJGR()){
+					WindowTracker.addWindow(RDialog.this);
+					if(parent==null)
+						WindowTracker.waitForAllClosed();
+				}
 			}
-		}
-		this.setVisible(true);
-		if(!Deducer.isJGR()){
-			WindowTracker.addWindow(this);
-			if(parent==null)
-				WindowTracker.waitForAllClosed();
-		}
+			
+		});
+
 	}
 	
 }

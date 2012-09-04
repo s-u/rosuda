@@ -629,15 +629,19 @@ public class Geom {
 		
 		Aes aes;
 		
+		aes = Aes.makeAes("y");
+		aes.required = true;
+		g.aess.add(aes);	
+
 		aes = Aes.makeAes("x");
 		aes.required = true;
 		g.aess.add(aes);	
 		
-		aes = Aes.makeAes("ymin");
+		aes = Aes.makeAes("xmin");
 		aes.required = true;
 		g.aess.add(aes);	
 		
-		aes = Aes.makeAes("ymax");
+		aes = Aes.makeAes("xmax");
 		aes.required = true;
 		g.aess.add(aes);	
 		
