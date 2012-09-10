@@ -25,6 +25,7 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 		tooltipText=tooltip;
 		cmdText=cmd;
 		singList.getModel().addListDataListener(this);
+		this.setContentAreaFilled(false);
 	}
 	
 	public SingletonAddRemoveButton(String[] tooltip,String[] cmd,SingletonDJList lis,VariableSelector var){
@@ -35,6 +36,7 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 		cmdText=cmd;
 		leftList = var.getJList();
 		singList.getModel().addListDataListener(this);
+		this.setContentAreaFilled(false);
 	}
 	
 	public SingletonAddRemoveButton(String[] tooltip,String[] cmd,SingletonDJList lis,JList leftList){
@@ -45,6 +47,7 @@ public class SingletonAddRemoveButton extends IconButton implements ActionListen
 		cmdText=cmd;
 		this.leftList = leftList;
 		singList.getModel().addListDataListener(this);
+		this.setContentAreaFilled(false);
 	}
 	
 	public void setList(SingletonDJList list){

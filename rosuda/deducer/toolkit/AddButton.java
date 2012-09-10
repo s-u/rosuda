@@ -16,12 +16,14 @@ public class AddButton extends IconButton implements ActionListener{
 		this.addActionListener(this);
 		rightList=list;
 		leftList = var.getJList();
+		this.setContentAreaFilled(false);
 	}
 	public AddButton(String name,JList left,JList right){
 		super("/icons/1rightarrow_32.png", name, null,name);
 		this.addActionListener(this);
 		rightList=right;
 		leftList = left;
+		this.setContentAreaFilled(false);
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {

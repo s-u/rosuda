@@ -181,6 +181,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				getContentPane().add(mergeButton, new AnchorConstraint(763, 598, 820, 408, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				mergeButton.setPreferredSize(new java.awt.Dimension(130, 32));
+				mergeButton.setContentAreaFilled(false);
 			}
 			{
 				pairedPanel = new JPanel();
@@ -235,6 +236,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				getContentPane().add(pairButton, new AnchorConstraint(325, 566, 374, 436, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				pairButton.setPreferredSize(new java.awt.Dimension(89, 32));
+				pairButton.setContentAreaFilled(false);
 			}
 			{
 				varPanel1 = new JPanel();

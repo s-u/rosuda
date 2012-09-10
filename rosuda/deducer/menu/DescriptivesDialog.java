@@ -141,6 +141,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 				addDesc = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");
 				firstPanel.add(addDesc, new AnchorConstraint(176, 543, 286, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addDesc.setPreferredSize(new java.awt.Dimension(42, 33));
+				addDesc.setContentAreaFilled(false);
 			}
 			{
 				strataPanel = new JPanel();
@@ -189,16 +190,19 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 				removeDesc = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
 				firstPanel.add(removeDesc, new AnchorConstraint(301, 543, 411, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				removeDesc.setPreferredSize(new java.awt.Dimension(42, 42));
+				removeDesc.setContentAreaFilled(false);
 			}
 			{
 				addStrata = new IconButton("/icons/1rightarrow_32.png","Add Strata",this,"Add Strata");;
 				firstPanel.add(addStrata, new AnchorConstraint(681, 543, 791, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addStrata.setPreferredSize(new java.awt.Dimension(42, 42));
+				addStrata.setContentAreaFilled(false);
 			}
 			{
 				removeStrata = new IconButton("/icons/1leftarrow_32.png","Remove Strata",this,"Remove Strata");;
 				firstPanel.add(removeStrata, new AnchorConstraint(806, 543, 916, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				removeStrata.setPreferredSize(new java.awt.Dimension(42,33));
+				removeStrata.setContentAreaFilled(false);
 			}
 		}
 	}
@@ -241,11 +245,13 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			removeFunc = new IconButton("/icons/1leftarrow_32.png","Remove Function",this,"Remove Function");;
 			secondPanel.add(removeFunc, new AnchorConstraint(321, 574, 437, 478, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 			removeFunc.setPreferredSize(new java.awt.Dimension(43, 32));
+			removeFunc.setContentAreaFilled(false);
 		}
 		{
 			addFunc = new IconButton("/icons/1rightarrow_32.png","Add Function",this,"Add Function");;
 			secondPanel.add(addFunc, new AnchorConstraint(188, 574, 303, 478, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 			addFunc.setPreferredSize(new java.awt.Dimension(43, 32));
+			addFunc.setContentAreaFilled(false);
 		}
 		{
 			functionPanel = new JPanel();

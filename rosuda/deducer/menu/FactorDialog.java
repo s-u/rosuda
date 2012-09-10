@@ -98,18 +98,21 @@ public class FactorDialog extends JDialog implements ActionListener {
 				getContentPane().add(add, new AnchorConstraint(110, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				add.setPreferredSize(new java.awt.Dimension(40, 41));
+				add.setContentAreaFilled(false);
 			}
 			{
 				remove = new IconButton("/icons/edit_remove_32.png","Delete",this,"Delete");
 				getContentPane().add(remove, new AnchorConstraint(152, 937, 655, 769, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				remove.setPreferredSize(new java.awt.Dimension(40, 41));
+				remove.setContentAreaFilled(false);
 			}
 			{
 				down = new IconButton("/icons/1downarrow_32.png","Down",this,"Down");
 				getContentPane().add(down, new AnchorConstraint(70, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				down.setPreferredSize(new java.awt.Dimension(40, 35));
+				down.setContentAreaFilled(false);
 
 			}
 			{
@@ -117,6 +120,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 				getContentPane().add(up, new AnchorConstraint(35, 937, 260, 769, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				up.setPreferredSize(new java.awt.Dimension(40, 35));
+				up.setContentAreaFilled(false);
 			}
 			{
 				listPanel = new JPanel();

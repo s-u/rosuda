@@ -17,6 +17,7 @@ import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
+import org.rosuda.deducer.toolkit.SingletonAddRemoveButton;
 import org.rosuda.deducer.toolkit.SingletonDJList;
 import org.rosuda.deducer.toolkit.VariableSelector;
 
@@ -47,12 +48,11 @@ import javax.swing.border.BevelBorder;
 
 public class ContingencyDialog extends JDialog implements ActionListener {
 	private VariableSelector variableSelector;
-	private IconButton addStratum;
-	private IconButton removeStratum;
+	private SingletonAddRemoveButton addRemoveStratumButton;
 	private IconButton removeColumn;
 	private JButton help;
 	private SubsetPanel subsetPanel;
-	private DJList stratumList;
+	private SingletonDJList stratumList;
 	private DJList columnList;
 	private DJList rowList;
 	private JButton postHoc;
@@ -89,7 +89,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		statOpt = new StatisticsOptions();
 		resultOpt = new ResultsOptions();
 		setToLast();
-		new Thread(new Refresher()).start();
 	}
 	
 	public void saveToLast(){
@@ -126,8 +125,11 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			return;
 		}
 		allExist=variableSelector.removeAll(lastStratumModel);
-		if(allExist)
+		if(allExist){
 			stratumList.setModel(lastStratumModel);
+			addRemoveStratumButton.setList(stratumList);
+			addRemoveStratumButton.refresh();			
+		}
 		else{
 			reset(true);
 			return;
@@ -182,6 +184,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				getContentPane().add(addRow, new AnchorConstraint(76, 442, 153, 371, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 				addRow.setPreferredSize(new Dimension(42, 42));
+				addRow.setContentAreaFilled(false);
 			}
 			{
 				okCancel = new OkayCancelPanel(true,true,this);
@@ -251,32 +254,30 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				getContentPane().add(removeRow, new AnchorConstraint(169, 442, 153, 371, AnchorConstraint.ANCHOR_REL,
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 				removeRow.setPreferredSize(new java.awt.Dimension(42, 42));
+				removeRow.setContentAreaFilled(false);
 			}
 			{
 				addColumn = new IconButton("/icons/1rightarrow_32.png","Add Column",this,"Add Column");
 				getContentPane().add(addColumn, new AnchorConstraint(405, 442, 153, 371, AnchorConstraint.ANCHOR_REL,
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 				addColumn.setPreferredSize(new java.awt.Dimension(42,42));
+				addColumn.setContentAreaFilled(false);
 			}
 			{
 				removeColumn = new IconButton("/icons/1leftarrow_32.png","Remove Column",this,"Remove Column");
 				getContentPane().add(removeColumn, new AnchorConstraint(498, 442, 153, 371, AnchorConstraint.ANCHOR_REL,
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 				removeColumn.setPreferredSize(new java.awt.Dimension(42,42));
+				removeColumn.setContentAreaFilled(false);
 			}
 			{
-				addStratum = new IconButton("/icons/1rightarrow_32.png","Add Stratum",this,"Add Stratum");
-				getContentPane().add(addStratum, new AnchorConstraint(674, 442, 153, 371, AnchorConstraint.ANCHOR_REL, 
+				addRemoveStratumButton = new SingletonAddRemoveButton(new String[]{"add","remove"},
+						new String[]{"add","remove"},stratumList,variableSelector);
+				getContentPane().add(addRemoveStratumButton, new AnchorConstraint(674, 442, 153, 371, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-				addStratum.setPreferredSize(new java.awt.Dimension(42, 42));
+				addRemoveStratumButton.setPreferredSize(new java.awt.Dimension(42, 42));
 			}
-			{
-				removeStratum = new IconButton("/icons/1leftarrow_32.png","Remove Stratum",this,"Remove Stratum");
-				getContentPane().add(removeStratum, new AnchorConstraint(674, 442, 153, 371, AnchorConstraint.ANCHOR_REL, 
-						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-				removeStratum.setPreferredSize(new java.awt.Dimension(42, 42));
-				removeStratum.setVisible(false);
-			}
+
 			{
 				results = new JButton();
 				getContentPane().add(results, new AnchorConstraint(293, 954, 345, 818, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
@@ -311,6 +312,8 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		rowList.setModel(new DefaultListModel());
 		columnList.setModel(new DefaultListModel());
 		stratumList.setModel(new DefaultListModel());
+		addRemoveStratumButton.setList(stratumList);
+		addRemoveStratumButton.refresh();
 		subsetPanel.setText("");
 		if(resetOptions){
 			cellOpt = new CellOptions();
@@ -428,15 +431,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			}else if(objs.length==1 && stratumList.getModel().getSize()==0){
 				variableSelector.remove(objs[0]);
 				((DefaultListModel)stratumList.getModel()).addElement(objs[0]);
-				addStratum.setVisible(false);
-				removeStratum.setVisible(true);
+
 			}
 		}else if(cmd == "Remove Stratum"){
 			DefaultListModel tmpModel =(DefaultListModel)stratumList.getModel();
 			if(tmpModel.getSize()>0){
 				variableSelector.add(tmpModel.remove(0));
-				addStratum.setVisible(true);
-				removeStratum.setVisible(false);				
+				
 			}
 		}else if(cmd == "Post-Hoc"){
 			
@@ -1153,6 +1154,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						conservative.setText("Conservative");
 						conservative.setPreferredSize(new java.awt.Dimension(171, 19));
 						conservative.addActionListener(this);
+						conservative.setVisible(false);
 					}
 					{
 						sep = new JSeparator();
@@ -1351,29 +1353,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		}
 	}
 	
-	class Refresher implements Runnable {
-		public Refresher() {
-		}
 
-		public void run() {
-			while (true)
-				try {
-					Thread.sleep(500);
-					Runnable doWorkRunnable = new Runnable() {
-						public void run() { 
-							if(stratumList.getModel().getSize()>0){
-								addStratum.setVisible(false);
-								removeStratum.setVisible(true);
-							}else{
-								addStratum.setVisible(true);
-								removeStratum.setVisible(false);
-							}
-						}};
-					SwingUtilities.invokeLater(doWorkRunnable);
-				} catch (Exception e) {
-					new ErrorMsg(e);
-				}
-		}
-	}
 	
 }

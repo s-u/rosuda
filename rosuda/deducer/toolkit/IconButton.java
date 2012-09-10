@@ -52,6 +52,7 @@ public class IconButton extends JButton implements MouseListener {
 		this.setToolTipText(tooltip);
 		this.addActionListener(al);
 		this.addMouseListener(this);
+		this.setContentAreaFilled(false);
 	}
 	
 	public void setIcon(String iconUrl){

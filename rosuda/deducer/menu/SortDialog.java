@@ -70,21 +70,25 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 				remove = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
 				getContentPane().add(remove, new AnchorConstraint(397, 550, 535, 470, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				remove.setPreferredSize(new java.awt.Dimension(40, 41));
+				remove.setContentAreaFilled(false);
 			}
 			{
 				Add = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");
 				getContentPane().add(Add, new AnchorConstraint(250, 550, 390, 470, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				Add.setPreferredSize(new java.awt.Dimension(40, 41));
+				Add.setContentAreaFilled(false);
 			}
 			{
 				increasing = new IconButton("/icons/sort_az_32.png","Increasing: Descending",this,"Increasing");
 				getContentPane().add(increasing, new AnchorConstraint(615, 865, 755, 785, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				increasing.setPreferredSize(new java.awt.Dimension(40, 41));
+				increasing.setContentAreaFilled(false);
 			}
 			{
 				decreasing = new IconButton("/icons/sort_za_32.png","Decreasing: Ascending",this,"Decreasing");
 				getContentPane().add(decreasing, new AnchorConstraint(615, 780, 755, 700, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				decreasing.setPreferredSize(new java.awt.Dimension(40, 41));
+				decreasing.setContentAreaFilled(false);
 			}
 			{
 				sortPanel = new JPanel();

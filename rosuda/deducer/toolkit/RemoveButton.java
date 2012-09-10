@@ -16,6 +16,7 @@ public class RemoveButton extends IconButton implements ActionListener{
 		this.addActionListener(this);
 		leftList = var.getJList();
 		rightList=list;
+		this.setContentAreaFilled(false);
 	}
 	
 	public RemoveButton(String name,JList left,JList right){
@@ -23,6 +24,7 @@ public class RemoveButton extends IconButton implements ActionListener{
 		this.addActionListener(this);
 		leftList = left;
 		rightList=right;
+		this.setContentAreaFilled(false);
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {

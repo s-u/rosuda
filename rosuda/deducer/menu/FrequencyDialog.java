@@ -62,6 +62,7 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 				getContentPane().add(options, new AnchorConstraint(829, 550, 966, 470, AnchorConstraint.ANCHOR_NONE, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				options.setPreferredSize(new java.awt.Dimension(40, 41));
+				options.setContentAreaFilled(false);
 			}
 			{
 				okCancel=new OkayCancelPanel(false,false,this);
@@ -79,11 +80,13 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 				remove = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
 				getContentPane().add(remove, new AnchorConstraint(397, 550, 535, 470, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				remove.setPreferredSize(new java.awt.Dimension(40, 41));
+				remove.setContentAreaFilled(false);
 			}
 			{
 				Add = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");
 				getContentPane().add(Add, new AnchorConstraint(250, 550, 390, 470, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				Add.setPreferredSize(new java.awt.Dimension(40, 41));
+				Add.setContentAreaFilled(false);
 			}
 			{
 				frequencyPanel = new JPanel();

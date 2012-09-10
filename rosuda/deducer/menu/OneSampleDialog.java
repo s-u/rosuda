@@ -109,6 +109,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 					add.setPreferredSize(new java.awt.Dimension(36, 36));
+					add.setContentAreaFilled(false);
 				}
 				{
 					remove = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
@@ -116,6 +117,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 					remove.setPreferredSize(new java.awt.Dimension(36, 36));
+					remove.setContentAreaFilled(false);
 
 				}
 				{
@@ -158,6 +160,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 								this,"t-test Options");
 						testPanel.add(ttestOptions);
 						ttestOptions.setBounds(171, 17, 27, 27);
+						ttestOptions.setContentAreaFilled(false);
 					}
 					{
 						assumpNOrNorm = new AssumptionIcon("/icons/N_or_norm_assump.png",

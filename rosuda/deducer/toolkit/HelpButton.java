@@ -13,6 +13,7 @@ public class HelpButton extends IconButton {
 		super("/icons/info_28.png", "help",null, "help");
 		url = baseUrl + helpUrl;
 		this.addActionListener(new actLis());
+		this.setContentAreaFilled(false);
 	}
 
 	public void setUrl(String newUrl){
