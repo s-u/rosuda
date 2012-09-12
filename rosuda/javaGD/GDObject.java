@@ -357,7 +357,7 @@ class GDRaster extends GDObject {
 	int comp_off[]  = { 0, 1, 2, 3 };
 	SampleModel sm = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, img_w, img_h, 4, img_w * 4, comp_off);
         WritableRaster raster = Raster.createWritableRaster(sm, dbuf, null);
-	ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB), // FIXME: does R use sRGB or linear RGB?
+	ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
 						true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
 	image = new BufferedImage(cm, raster, false, null);
 	//System.out.println(" - image = "+image);
