@@ -234,7 +234,7 @@ class JGRBufferedPanel extends JGDBufferedPanel{
 	
 	public void initRefresh() {
 		try {
-			JGR.idleEval("try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)");
+			JGR.idleEval("try(JavaGD:::.javaGD.resize("+devNr+"),silent=TRUE)");
 		} catch (REngineException e) {
 			e.printStackTrace();
 		} catch (REXPMismatchException e) {
@@ -247,7 +247,7 @@ class JGRBufferedPanel extends JGDBufferedPanel{
         if (!d.equals(lastSize)) {
             REXP exp=null;
 			try {
-				exp = JGR.idleEval("try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)");
+				exp = JGR.idleEval("try(JavaGD:::.javaGD.resize("+devNr+"),silent=TRUE)");
 			} catch (REngineException e) {
 				e.printStackTrace();
 			} catch (REXPMismatchException e) {
