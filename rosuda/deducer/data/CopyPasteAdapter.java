@@ -72,6 +72,10 @@ public class CopyPasteAdapter implements ActionListener{
 		try{jTable1.getCellEditor().cancelCellEditing();}catch(Exception e){}
 		Object[][] values = ((ExDefaultTableModel)jTable1.getModel()).getRange(
 				rowStart,rowStart+numrows,colStart,colStart+numcols);
+		if(isCut){
+			((ExDefaultTableModel)jTable1.getModel()).eraseRange(
+					rowStart,rowStart+numrows,colStart,colStart+numcols);
+		}		
 		numcols = values.length;
 		if(values.length>0)
 			numrows = values[0].length;
@@ -86,10 +90,7 @@ public class CopyPasteAdapter implements ActionListener{
 			if(j<numcols-1)
 				sbf.append("\n");
 		}
-		if(isCut){
-			((ExDefaultTableModel)jTable1.getModel()).eraseRange(
-					rowStart,rowStart+numrows,colStart,colStart+numcols);
-		}
+
 		stsel  = new StringSelection(sbf.toString());
 		system = Toolkit.getDefaultToolkit().getSystemClipboard();
 		system.setContents(stsel,stsel);

@@ -12,6 +12,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import org.rosuda.deducer.Deducer;
+
 
 /**
  * A drop-down combo-box
@@ -57,7 +59,7 @@ public class ComboBoxWidget extends javax.swing.JPanel implements DeducerWidget 
 	 * 
 	 * @return The JComboBox
 	 */
-	JComboBox getComboBox(){
+	public JComboBox getComboBox(){
 		return comboBox;
 	}
 	
@@ -84,7 +86,7 @@ public class ComboBoxWidget extends javax.swing.JPanel implements DeducerWidget 
 	}
 
 	public String getRModel() {
-		return "\"" + comboBox.getSelectedItem() + "\"";
+		return "\"" + Deducer.addSlashes(comboBox.getSelectedItem().toString()) + "\"";
 	}
 
 	public String getTitle() {

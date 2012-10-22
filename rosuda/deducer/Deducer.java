@@ -1,4 +1,4 @@
-
+ 
 package org.rosuda.deducer;
 
 import java.awt.Event;
@@ -63,7 +63,7 @@ public class Deducer {
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	static int menuIndex=3;
 	static String recentActiveData = "";
-	static final String Version= "0.7-0";
+	static final String Version= "0.7-5";
 	public static String guiEnv = ".gui.working.env";
 	public static boolean insideJGR;
 	public static boolean started;
@@ -864,6 +864,7 @@ final class MonitoredEval{
 	int interval;
 	int checkInterval;
 	boolean ask;
+	String c;
 	public MonitoredEval(int inter,boolean ak){
 		done = false;
 		interval = inter;
@@ -887,11 +888,13 @@ final class MonitoredEval{
 				continue;
 			}
 			int cancel;
+			new ErrorMsg(new Exception(c));//TODO:delete
 			if(ask){
 				cancel = JOptionPane.showConfirmDialog(null, 
 					"This R process is taking some time.\nWould you like to cancel it?",
 					"Cancel R Process",
 						 JOptionPane.YES_NO_OPTION);
+				
 			}else
 				cancel = JOptionPane.YES_OPTION;
 			if(cancel==JOptionPane.YES_OPTION){
@@ -908,7 +911,7 @@ final class MonitoredEval{
 		
 		try{
 			if(SwingUtilities.isEventDispatchThread() && ask){
-				final String c = cmd;
+				c = cmd;
 				new Thread(new Runnable(){
 					public void run() {
 						result = Deducer.eval(c);
@@ -924,7 +927,7 @@ final class MonitoredEval{
 					}
 				}).start();	
 					
-				result = Deducer.eval(cmd);
+				result = Deducer.eval(c=cmd);
 			}
 			done = true;				
 			return result;

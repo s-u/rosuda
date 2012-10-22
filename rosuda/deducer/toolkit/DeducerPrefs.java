@@ -33,7 +33,7 @@ public class DeducerPrefs {
 		if(!started){
 			SHOWDATA = true;
 			SHOWANALYSIS = true;
-			USEQUAQUACHOOSER = Common.isMac() ? true : false;
+			USEQUAQUACHOOSER = false;//Common.isMac() ? true : false;
 			VIEWERATSTARTUP = true;		
 			map = new HashMap();
 			readPrefs();

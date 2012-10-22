@@ -368,7 +368,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		}
 		public Object getUnfilteredElementAt(int index) {
 			Object returnValue = list.get(index);
-			filter(lastFilter);
+			//filter(lastFilter);
 			return returnValue;
 		}
 		public Object removeUnfilteredElementAt(int index) {
@@ -386,7 +386,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			Object element;
 			for (int i=0;i<list.size();i++) {
 				element = list.get(i);
-				if (element.toString().toLowerCase().indexOf(search.toLowerCase(), 0) != -1) {
+				if (search.length()==0 || element.toString().toLowerCase().indexOf(search.toLowerCase(), 0) != -1) {
 					if(rFilter!=""){
 						org.rosuda.REngine.REXP tmp = new org.rosuda.REngine.REXP();
 						tmp = Deducer.timedEval(rFilter+"("+getSource().fix((String)dataComboBox.getSelectedItem(),

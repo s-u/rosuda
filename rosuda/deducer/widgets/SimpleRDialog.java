@@ -166,6 +166,7 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 			if(check.length()<1){
 				
 				try {
+					System.out.println(state);
 					if(rRunFunc!=null)
 						Deducer.timedEval(rRunFunc + "(" + state + ")");
 					else if(runRef!=null){

@@ -74,10 +74,11 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	
 	public void setDataName(String name){
 		
-		boolean envDefined = ((REXPLogical)Deducer.eval("'"+guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
+		boolean envDefined = ((REXPLogical)Deducer.timedEval("'"+guiEnv+
+				"' %in% .getOtherObjects()",false)).isTRUE()[0];
 		
 		if(!envDefined){
-			Deducer.eval(guiEnv+"<-new.env(parent=emptyenv())");
+			Deducer.timedEval(guiEnv+"<-new.env(parent=emptyenv())"+";NULL",false);
 		}
 		if(tempDataName!=null)
 			removeCachedData();
@@ -85,7 +86,7 @@ public class RDataFrameModel extends ExDefaultTableModel {
 		if(rDataName!=null){
 			tempDataName = Deducer.getUniqueName(rDataName + Math.random(),guiEnv);
 			try {
-				Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+				Deducer.timedEval(guiEnv+"$"+tempDataName+"<-"+rDataName+";NULL",false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -98,14 +99,15 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	public void populateMetaData(){
 		int[] dims;
 		try {
-			dims = Deducer.eval("dim("+rDataName+")").asIntegers();
+			dims = Deducer.timedEval("dim("+rDataName+")").asIntegers();
 			nrow = dims[0];
 			ncol = dims[1];	
 			
 			String[] tmpClasses = null;
 			try {
-				tmpClasses = Deducer.eval(
-						"sapply("+rDataName+",function(x){a <- class(x);return(a[length(a)])})").asStrings();
+				tmpClasses = Deducer.timedEval(
+						"sapply("+rDataName+",function(x){a <- class(x);return(a[length(a)])})",
+						false).asStrings();
 			} catch (Exception e1) {}
 			if(tmpClasses==null){
 				tmpClasses = new String[ncol];
@@ -167,14 +169,14 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	
 	public void removeColumn(int colNumber){
 		if(colNumber<getRealColumnCount()){
-			Deducer.eval(rDataName+"<-"+rDataName+"[,-"+(colNumber+1)+"]");
+			Deducer.timedEval(rDataName+"<-"+rDataName+"[,-"+(colNumber+1)+"]"+";NULL",false);
 			refresh();
 		}
 	}
 
 	public void removeRow(int row){
 		if((row+1)<=getRealRowCount()){
-			Deducer.eval(rDataName + "<- "+rDataName + "[-"+(row+1)+",]");
+			Deducer.timedEval(rDataName + "<- "+rDataName + "[-"+(row+1)+",]"+";NULL",false);
 			refresh();
 		}
 	}
@@ -183,37 +185,45 @@ public class RDataFrameModel extends ExDefaultTableModel {
 		if(col>getRealColumnCount()+1)
 			return;
 		if(col<1)
-			Deducer.eval(rDataName+"<-data.frame(V=as.integer(NA),"+
-					rDataName+"[,"+(col+1)+":"+getRealColumnCount()+",drop=FALSE])");
+			Deducer.timedEval(rDataName+"<-data.frame(V=as.integer(NA),"+
+					rDataName+"[,"+(col+1)+":"+getRealColumnCount()+",drop=FALSE])"+";NULL",false);
 		else if(col>=getRealColumnCount())
-			Deducer.eval(rDataName+"<-data.frame("+rDataName+",V=as.integer(NA))");
+			Deducer.timedEval(rDataName+"<-data.frame("+rDataName+",V=as.integer(NA))"+";NULL",false);
 		else
-			Deducer.eval(rDataName+"<-data.frame("+rDataName+"[,1:"+col+",drop=FALSE],V=as.integer(NA),"+
-				rDataName+"[,"+(col+1)+":"+getRealColumnCount()+",drop=FALSE])");
+			Deducer.timedEval(rDataName+"<-data.frame("+rDataName+"[,1:"+col+",drop=FALSE],V=as.integer(NA),"+
+				rDataName+"[,"+(col+1)+":"+getRealColumnCount()+",drop=FALSE])"+";NULL",false);
 		refresh();
 	}
 	
 	public void insertNewRow(int row){
 		int rowCount =getRealRowCount();
 		setValueAt("NA",Math.max(rowCount,row),0);
-		Deducer.eval("attr("+rDataName+",'row.names')["+(Math.max(rowCount,row)+1)+"]<-'New'");
+		Deducer.timedEval("attr("+rDataName+",'row.names')["+(Math.max(rowCount,row)+1)+"]<-'New'",
+				false);
 		if(row<1)
-			Deducer.eval(rDataName+"<-rbind("+rDataName+
-					"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",,drop=FALSE])");
+			Deducer.timedEval(rDataName+"<-rbind("+rDataName+
+					"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",,drop=FALSE])"+";NULL",
+					false);
 		else if(row<rowCount)
-			Deducer.eval(rDataName+"<-rbind("+rDataName+"[1:"+row+",,drop=FALSE],"+rDataName+
-					"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",,drop=FALSE])");
-		Deducer.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
+			Deducer.timedEval(rDataName+"<-rbind("+rDataName+"[1:"+row+",,drop=FALSE],"+rDataName+
+					"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",,drop=FALSE])"+";NULL",
+					false);
+		Deducer.timedEval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))"+";NULL",
+				false);
 		
 	}
 	
 	public String getPageValue(int row,int col){
-		for(int i=0;i<pageLocations.size();i++){
-			int[] loc = (int[]) pageLocations.get(i);
-			if(row>=loc[0] && row< (loc[0]+numPageRows) && col>=loc[1] && col<(loc[1]+numPageCols)){
-				//System.out.println("found page");
-				String[][] page = (String[][]) pages.get(i);
-				return page[col - loc[1]][row - loc[0]];
+		synchronized(pages) {
+			synchronized(pageLocations) {
+				for(int i=0;i<pageLocations.size();i++){
+					int[] loc = (int[]) pageLocations.get(i);
+					if(row>=loc[0] && row< (loc[0]+numPageRows) && col>=loc[1] && col<(loc[1]+numPageCols)){
+						//System.out.println("found page");
+						String[][] page = (String[][]) pages.get(i);
+						return page[col - loc[1]][row - loc[0]];
+					}
+				}
 			}
 		}
 		return null;
@@ -268,7 +278,7 @@ public class RDataFrameModel extends ExDefaultTableModel {
 		pendingPages.remove(new Integer(tmp));		
 	}
 	
-	public void loadPage(int row,int col){
+	public void loadPage(final int row,final int col){
 		//System.out.println("number of pages:" + pages.size());
 		//System.out.println("Loading page:");
 		//System.out.println(row);
@@ -282,12 +292,12 @@ public class RDataFrameModel extends ExDefaultTableModel {
 					column[i]="";
 			}else{
 				try {
-					column = Deducer.eval("format("+rDataName+"[("+
+					column = Deducer.timedEval("format("+rDataName+"[("+
 							(row+1)+"):("+Math.min(nrow,row+numPageRows+1)+"),"+
-							(j+col+1)+"])").asStrings();
-					boolean[] isNA = Deducer.eval(rDataName+"[("+
+							(j+col+1)+"])",false).asStrings();
+					boolean[] isNA = Deducer.timedEval(rDataName+"[("+
 							(row+1)+"):("+Math.min(nrow,row+numPageRows+1)+"),"+
-							(j+col+1)+"]").isNA();
+							(j+col+1)+"]",false).isNA();
 					for(int i=0;i<isNA.length;i++){
 						if(isNA[i])
 							column[i]=NA_STRING;
@@ -316,20 +326,31 @@ public class RDataFrameModel extends ExDefaultTableModel {
 			}
 			//System.out.println(column.length);
 		}
-		pages.add(page);
-		int[] dim = new int[]{row,col};
-		pageLocations.add(dim);
-		if(pages.size()>maxPages){
-			pages.remove(0);
-			pageLocations.remove(0);
+		synchronized(pages) {
+			synchronized(pageLocations) {
+				pages.add(page);
+				int[] dim = new int[]{row,col};
+				pageLocations.add(dim);
+				if(pages.size()>maxPages){
+					pageLocations.remove(0);
+					pages.remove(0);
+				}
+			}
 		}
 		removePending(row,col);
 		//this.fireTableRowsUpdated(row, row+numPageRows-1);
-		for(int i=row;i<row+numPageRows;i++){
-			for(int j=col;j<col+numPageCols;j++){
-				this.fireTableCellUpdated(i, j);
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run() {
+		/*		for(int i=row;i<row+RDataFrameModel.numPageRows;i++){
+					for(int j=col;j<col+RDataFrameModel.numPageCols;j++){
+						RDataFrameModel.this.fireTableCellUpdated(i, j);
+					}
+				}*/
+				RDataFrameModel.this.fireTableRowsUpdated(row, row+RDataFrameModel.numPageRows-1);
 			}
-		}
+			
+		});
+
 	}
 	
 	
@@ -380,38 +401,38 @@ public class RDataFrameModel extends ExDefaultTableModel {
 		boolean isLogical = value.equals("TRUE") || value.equals("FALSE");
 		boolean isNA = value.equals("NA") || value.equals("");
 		
-		Deducer.eval("rm(\"" +tempDataName+"\",envir="+guiEnv+");");
+		Deducer.eval("rm(\"" +tempDataName+"\",envir="+guiEnv+")"+";NULL");
 		if(isNA){
-			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<- NA");
+			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<- NA"+";NULL");
 			setPageValue(NA_STRING,row,col);
 		}else if(colClass==3){
 			boolean isNewLevel=((REXPLogical)Deducer.eval("'"+value.toString()+"' %in% " +
-					"levels(" +rDataName+"[,"+(col+1)+"])")).isFALSE()[0];
+					"levels(" +rDataName+"[,"+(col+1)+"])"+";NULL")).isFALSE()[0];
 
 			if(isNewLevel){
 				String addLevel = "levels(" +rDataName+"[,"+(col+1)+"])<-c("+
 						"levels(" +rDataName+"[,"+(col+1)+"]),'"+value.toString()+"')";
-				Deducer.eval(addLevel);
+				Deducer.eval(addLevel+";NULL");
 			}
-			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");	
+			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'"+";NULL");	
 			setPageValue(value.toString(),row,col);
 		}else if(isDouble || isLogical){
-			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-" + value.toString());
+			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-" + value.toString()+";NULL");
 			setPageValue(value.toString(),row,col);
 		}else{
-			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'"+";NULL");
 			setPageValue(value.toString(),row,col);
 			if(colClass<3){
 				classes[col] = 4;
 				colClassChange=true;
 			}
 		}
-		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName+";NULL");
 		this.fireTableCellUpdated(row, col);			
 		if(colClassChange)
 			this.fireTableDataChanged();
 		if((row+1)>numRealRows){
-			Deducer.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
+			Deducer.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))"+";NULL");
 			pageLocations.clear();
 			pages.clear();
 			pendingPages.clear();
@@ -523,7 +544,7 @@ public class RDataFrameModel extends ExDefaultTableModel {
 					if(isNewLevel){
 						String addLevel = "levels(" +rDataName+"[,"+(col+j+1)+"])<-c("+
 								"levels(" +rDataName+"[,"+(col+j+1)+"]),'"+value.toString()+"')";
-						Deducer.eval(addLevel);
+						Deducer.eval(addLevel+";NULL");
 					}
 				}
 			}
@@ -571,9 +592,9 @@ public class RDataFrameModel extends ExDefaultTableModel {
 			//Deducer.eval("print("+guiEnv+"$"+temporary+")");
 			Deducer.eval(rDataName+"[("+
 					(row+1)+"):("+(row+numRows)+"),"+
-					(col+j+1)+"] <- " + guiEnv+"$"+temporary);
+					(col+j+1)+"] <- " + guiEnv+"$"+temporary+";NULL");
 		}
-		Deducer.eval("rm(\"" +temporary+"\",envir="+guiEnv+");");
+		Deducer.eval("rm(\"" +temporary+"\",envir="+guiEnv+");"+";NULL");
 		refresh();
 	}
 	
@@ -582,16 +603,16 @@ public class RDataFrameModel extends ExDefaultTableModel {
 			return;
 		row2 = Math.min(row2,nrow);
 		col2 = Math.min(col2,ncol);		
-		Deducer.eval("rm(\"" +tempDataName+"\",envir="+guiEnv+");");
+		Deducer.eval("rm(\"" +tempDataName+"\",envir="+guiEnv+")"+";NULL");
 		Deducer.eval(rDataName+"[("+
 				(row1+1)+"):("+(row2)+"),"+
-				(col1+1)+":"+(col2)+"] <- NA");	
+				(col1+1)+":"+(col2)+"] <- NA"+";NULL");	
 		for(int i=row1;i<row2;i++)
 			for(int j=col1;j<col2;j++){
 				setPageValue(NA_STRING,i,j);
 				this.fireTableCellUpdated(i, j);
 			}
-		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName+";NULL");
 	}
 	
 	/**
@@ -607,7 +628,8 @@ public class RDataFrameModel extends ExDefaultTableModel {
 			if(ident!=null && ((REXPLogical)ident).isFALSE()[0]){
 				REXP strSame = Deducer.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+")) && " +
 								"identical(colnames("+rDataName+"),colnames("+guiEnv+"$"+tempDataName+"))");
-				Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+				Deducer.eval("("+guiEnv+"$"+tempDataName+"<-"+rDataName+");NULL");
+
 				pageLocations.clear();
 				pages.clear();
 				pendingPages.clear();
@@ -667,14 +689,14 @@ public class RDataFrameModel extends ExDefaultTableModel {
 		boolean envDefined = ((REXPLogical)Deducer.eval("'"+guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
 		
 		if(!envDefined){
-			Deducer.eval(guiEnv+"<-new.env(parent=emptyenv())");
+			Deducer.eval(guiEnv+"<-new.env(parent=emptyenv())"+";NULL");
 		}
 		boolean tempStillExists = false;
 		REXP tmp = Deducer.eval("exists('"+tempDataName+"',where="+guiEnv+",inherits=FALSE)");
 		if(tmp instanceof REXPLogical)
 			tempStillExists = ((REXPLogical)tmp).isTRUE()[0];
 		if(tempStillExists)
-			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");		
+			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")"+";NULL");		
 	}
 	
 	protected void finalize() throws Throwable {
@@ -761,9 +783,9 @@ public class RDataFrameModel extends ExDefaultTableModel {
 			}
 
 			if(isInteger || isDouble)
-				Deducer.eval("rownames("+rDataName+")["+ (index+1) +"] <- " + valueString);
+				Deducer.eval("rownames("+rDataName+")["+ (index+1) +"] <- " + valueString+";NULL");
 			else
-				Deducer.eval("rownames("+rDataName+")["+ (index+1) +"] <- '" + valueString +"'");
+				Deducer.eval("rownames("+rDataName+")["+ (index+1) +"] <- '" + valueString +"'"+";NULL");
 			refresh();
 		}
 	}
