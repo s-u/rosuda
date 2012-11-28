@@ -101,7 +101,7 @@ public class Scale implements ElementModel{
 		p.setValue("Blues");
 		p.setDefaultValue("Blues");
 		p.setOptions(new String[]{"YlOrRd","YlOrBr","YlGnBu","YlGn","Reds","RdPu",
-				"Pruples","PuRd","PuBuGn","PuBu","OrRd","Oranges","Greys","Greens",
+				"Purples","PuRd","PuBuGn","PuBu","OrRd","Oranges","Greys","Greens",
 				"GnBu","BuPu","BuGn","Blues","","Set3","Set2","Set1","Pastel2","Pastel1",
 				"Paired","Dark2","Accent","","Spectral","RdYlGn","RdYlBu","RdGy",
 				"RdBu","PuOr","PRGn","PiYG","BrBG"});

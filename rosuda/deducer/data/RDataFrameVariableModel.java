@@ -51,7 +51,7 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			removeCachedData();
 		rDataName = name;
 		if(rDataName!=null){
-			tempDataName = Deducer.getUniqueName(rDataName + Math.random(),guiEnv);
+			tempDataName = Deducer.getUniqueName(rDataName + (Math.random()+1.0),guiEnv);
 			try {
 				Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
 			} catch (Exception e) {
