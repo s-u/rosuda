@@ -165,7 +165,7 @@ public class ParamScaleLegend extends Param{
 						labelCall = tmp[0];
 				}
 				
-				Vector callVector = new Vector();			
+				Vector callVector = new Vector();	
 				if(!aes.equals("x") && !aes.equals("y")){
 					String[] tmp = guideFunctionList.getParamCalls();
 					for(int i=0;i<tmp.length;i++)
@@ -269,6 +269,7 @@ public class ParamScaleLegend extends Param{
 		
 		Element e = super.toXML();
 		Document doc = e.getOwnerDocument();
+		e.setAttribute("aes",aes);
 		if(value!=null){
 			Vector v = (Vector) getValue();
 			String text = (String) v.get(0);
@@ -278,7 +279,7 @@ public class ParamScaleLegend extends Param{
 			node.setAttribute("legendTitle", text);
 			node.setAttribute("show", show.toString());
 			node.setAttribute("nrow", tm.getRowCount()+"");
-			
+			node.setAttribute("aes",this.aes);
 			Element cNode = doc.createElement("column_0");
 			for(int i=0;i<tm.getRowCount();i++)
 				cNode.setAttribute("element_"+i, tm.getValueAt(i, 0)==null ? null : tm.getValueAt(i, 0).toString());
@@ -341,6 +342,7 @@ public class ParamScaleLegend extends Param{
 			System.out.println("Error ParamScaleLegend: class mismatch: " + cn);
 			(new Exception()).printStackTrace();
 		}
+		setAes(node.getAttribute("aes"));
 		Document doc = node.getOwnerDocument();
 		super.setFromXML(node);
 		Vector valEls = XMLHelper.getChildrenElementsByTag(node,"value");
@@ -355,7 +357,6 @@ public class ParamScaleLegend extends Param{
 			tm.addColumn("value");
 			tm.addColumn("label");
 			tm.setRowCount(Integer.parseInt(e.getAttribute("nrow")));
-			
 			Node cNode =e.getElementsByTagName("column_0").item(0);
 			NamedNodeMap attr = cNode.getAttributes();
 			Node c1Node =e.getElementsByTagName("column_1").item(0);

@@ -217,6 +217,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 	}
 	public void setModel(OneSampleModel mod){
 		model=new OneSampleModel();
+		variableSelector.reset();
 		if(mod.data!=null){
 			variableSelector.setSelectedData(mod.data);
 		}

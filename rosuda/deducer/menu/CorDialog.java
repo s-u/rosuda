@@ -294,6 +294,7 @@ public class CorDialog extends JDialog implements ActionListener{
 		model=mod;
 		variables.setModel(new DefaultListModel());
 		with.setModel(new DefaultListModel());
+		variableSelector.reset();
 		if(mod.dataName!=null){
 			variableSelector.setSelectedData(mod.dataName);
 			allExist=variableSelector.removeAll(mod.variables);

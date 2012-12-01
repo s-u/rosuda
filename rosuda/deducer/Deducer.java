@@ -117,7 +117,7 @@ public class Deducer {
 			DeducerPrefs.initialize();
 			
 			started=true;
-			timedEval(".javaGD.set.class.path(\"org/rosuda/JGR/JavaGD\")");
+			timedEval("JavaGD:::.javaGD.set.class.path(\"org/rosuda/JGR/JavaGD\")");
 			new Thread(new DataRefresher()).start();
 		}catch(Exception e){new ErrorMsg(e);}
 	}

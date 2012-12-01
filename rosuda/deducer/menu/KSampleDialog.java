@@ -301,6 +301,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 		factor.setModel(new DefaultListModel());
 		addFactor.refreshListListener();
 		outcomes.setModel(new DefaultListModel());
+		variableSelector.reset();
 		if(mod.dataName!=null){
 			variableSelector.setSelectedData(mod.dataName);
 			allExist=variableSelector.removeAll(mod.variables);
