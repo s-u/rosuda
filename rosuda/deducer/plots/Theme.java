@@ -64,6 +64,42 @@ public class Theme implements ElementModel{
 		return t;
 	}
 
+	public static Theme makeClassic(){
+		Theme t = new Theme();
+		t.setName("theme_classic");
+		
+		ParamNumeric p;
+		
+		p = new ParamNumeric();
+		p.setName("base_size");
+		p.setTitle("base text size");
+		p.setViewType(Param.VIEW_ENTER);
+		p.setValue(new Double(12));
+		p.setDefaultValue(new Double(12));
+		p.setLowerBound(new Double(0));
+		t.params.add(p);
+		
+		return t;
+	}
+
+	public static Theme makeMinimal(){
+		Theme t = new Theme();
+		t.setName("theme_minimal");
+		
+		ParamNumeric p;
+		
+		p = new ParamNumeric();
+		p.setName("base_size");
+		p.setTitle("base text size");
+		p.setViewType(Param.VIEW_ENTER);
+		p.setValue(new Double(12));
+		p.setDefaultValue(new Double(12));
+		p.setLowerBound(new Double(0));
+		t.params.add(p);
+		
+		return t;
+	}
+
 	
 	public static Theme makeTitle(){
 		Theme t = new Theme();
@@ -681,6 +717,10 @@ public class Theme implements ElementModel{
 			return makeBw();
 		else if(name.equals("grey"))
 			return makeGrey();
+		else if(name.equals("classic"))
+			return makeClassic();
+		else if(name.equals("minimal"))
+			return makeMinimal();
 		else if(name.equals("theme"))
 			return makeOpts();
 		else if(name.equals("xlab"))

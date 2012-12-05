@@ -40,7 +40,7 @@ public class PlotController {
 	protected static String[] facetNames = {"grid","wrap"};
 	protected static String[] coordNames = {"cartesian","equal","flip","map","polar","trans"};
 	protected static String[] posNames = {"dodge","identity","jitter","stack","fill"};
-	protected static String[] themeNames = { "grey","bw","theme","title","xlab","ylab"};	
+	protected static String[] themeNames = { "grey","bw","classic","minimal","theme","title","xlab","ylab"};	
 	
 	
 	public static void init(){

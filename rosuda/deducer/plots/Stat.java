@@ -735,7 +735,7 @@ public class Stat {
 		Param p;
 		
 		ParamCharacter pc = new ParamCharacter("scale");
-		pc.setOptions(new String[]{"equal","count"});
+		pc.setOptions(new String[]{"area","count","width"});
 		pc.setViewType(ParamCharacter.VIEW_COMBO);
 		pc.setDefaultValue("equal");
 		pc.setValue("equal");
