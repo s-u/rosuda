@@ -322,6 +322,9 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	g.begin();
 	paintInit(g);
 	if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintBack(g);
+
+	// FIXME: this is a hack .. since iObjs get only painted by nextLayer() *and* PPs are painted on layer 0, we have no way to put iObjs before base PPs -- so this is a hack to create a special layer that is invoked "by hand"
+	if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) pm.drawLayer(g, -2, layers);
 	if ((dontCache || g.localLayerCache<0 || g.localLayerCache==0) && !showOnlyHilited) paintObjects(g);
 	nextLayer(g);
 	if (dontCache || g.localLayerCache<0 || g.localLayerCache==1) paintSelected(g);

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6861E2D1174CF1D60018B718 /* PlotImage.java in Sources */ = {isa = PBXBuildFile; fileRef = 6861E2D0174CF1D60018B718 /* PlotImage.java */; };
+		6861E2E1174CF30B0018B718 /* PoGraSSimage.java in Sources */ = {isa = PBXBuildFile; fileRef = 6861E2E0174CF30B0018B718 /* PoGraSSimage.java */; };
 		6897F9150A01704A004241FC /* Commander.java in Sources */ = {isa = PBXBuildFile; fileRef = 6897F6580A01702E004241FC /* Commander.java */; };
 		6897F9160A01704A004241FC /* Common.java in Sources */ = {isa = PBXBuildFile; fileRef = 6897F6590A01702E004241FC /* Common.java */; };
 		6897F9170A01704A004241FC /* DBCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 6897F65A0A01702E004241FC /* DBCanvas.java */; };
@@ -129,6 +131,8 @@
 
 /* Begin PBXFileReference section */
 		2835E2070AAAC23300012BE8 /* iPlots.jar */ = {isa = PBXFileReference; explicitFileType = archive.jar; includeInIndex = 0; path = iPlots.jar; sourceTree = BUILT_PRODUCTS_DIR; };
+		6861E2D0174CF1D60018B718 /* PlotImage.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlotImage.java; sourceTree = "<group>"; };
+		6861E2E0174CF30B0018B718 /* PoGraSSimage.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PoGraSSimage.java; sourceTree = "<group>"; };
 		6897F6580A01702E004241FC /* Commander.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = Commander.java; path = ../../ibase/Commander.java; sourceTree = SOURCE_ROOT; };
 		6897F6590A01702E004241FC /* Common.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = Common.java; path = ../../ibase/Common.java; sourceTree = SOURCE_ROOT; };
 		6897F65A0A01702E004241FC /* DBCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = DBCanvas.java; path = ../../ibase/DBCanvas.java; sourceTree = SOURCE_ROOT; };
@@ -350,6 +354,7 @@
 				6897F68E0A017030004241FC /* PlotCanvas.java */,
 				6897F68F0A017030004241FC /* PlotColor.java */,
 				6897F6900A017030004241FC /* PlotComponent.java */,
+				6861E2D0174CF1D60018B718 /* PlotImage.java */,
 				6897F6920A017030004241FC /* PlotJPanel.java */,
 				6897F6930A017030004241FC /* PlotLine.java */,
 				6897F6940A017030004241FC /* PlotManager.java */,
@@ -402,6 +407,7 @@
 				6897F8C00A017039004241FC /* PoGraSSmeta.java */,
 				6897F8C10A017039004241FC /* PoGraSSPDF.java */,
 				6897F8C20A017039004241FC /* PoGraSSPS.java */,
+				6861E2E0174CF30B0018B718 /* PoGraSSimage.java */,
 			);
 			name = pograss;
 			path = ../../pograss;
@@ -466,7 +472,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 0AE31F6908BBAC2E002AF232 /* Build configuration list for PBXProject "iPlots" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 00E6828FFEC88D1A11DB9C8B;
 			productRefGroup = 0120612AFEC8923411DB9C8B /* Products */;
 			projectDirPath = "";
@@ -587,6 +600,8 @@
 				6897FBCD0A0170C7004241FC /* Plugin.java in Sources */,
 				6897FBD50A0170DD004241FC /* PluginManager.java in Sources */,
 				68C342250A48733700F97264 /* PlotTextVector.java in Sources */,
+				6861E2D1174CF1D60018B718 /* PlotImage.java in Sources */,
+				6861E2E1174CF30B0018B718 /* PoGraSSimage.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
