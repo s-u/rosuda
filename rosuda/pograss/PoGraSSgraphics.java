@@ -90,6 +90,9 @@ public class PoGraSSgraphics extends PoGraSS {
     public void lineTo(int x, int y) { if (paintLayer==-1 || paintLayer==curLayer) { g.drawLine(cx,cy,x,y); cx=x; cy=y; } };
     public void drawRect(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.drawRect(x1,y1,x2,y2); };
     public void fillRect(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.fillRect(x1,y1,x2,y2); };
+	public void drawImage(PoGraSSimage img, int x1, int y1, int x2, int y2) {
+		if (paintLayer == -1 || paintLayer == curLayer) g.drawImage(img.getImage(), x1, y1, x2 - x1, y2 - y1, null);
+	}
     public void drawRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {
         if (paintLayer==-1 || paintLayer==curLayer) g.drawRoundRect(x1,y1,x2,y2,dx,dy);
     };
