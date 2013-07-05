@@ -208,9 +208,9 @@ public class SVarFact extends SVar
               tempcats[tempcats.length - 1] = o.toString();
             }
             catch (Exception e) {e.printStackTrace();}
-            System.out.println(tempcats[tempcats.length-1]);
+            //System.out.println(tempcats[tempcats.length-1]);
             cats = tempcats;
-            System.out.println(o.toString());
+            //System.out.println(o.toString());
             catI = getCatIndex(o.toString());
         }
         cont[i] = catI;
