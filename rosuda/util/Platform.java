@@ -27,7 +27,7 @@ public class Platform {
     public Platform() {
     }
 
-    /** initialize platforms with the defeault implementation (in org.rosuda.util)
+    /** initialize platforms with the default implementation (in org.rosuda.util)
         @return newly initailized platform object */
     public static Platform initPlatform() { return initPlatform("org.rosuda.util."); }
 
@@ -37,7 +37,8 @@ public class Platform {
     public static Platform initPlatform(String classPrefix) {
         if (p!=null) return p; // prevent loops
         if (Platform.screenRes==null) Platform.screenRes=Toolkit.getDefaultToolkit().getScreenSize();
-        if (System.getProperty("java.vendor").indexOf("Apple")>-1) {
+        if (System.getProperty("os.name").indexOf("Mac OS")>-1 || 
+        		System.getProperty("java.vendor").indexOf("Apple")>-1) {
             isMac=true;
             try {
                 Class c=Class.forName(classPrefix+"PlatformMac");
