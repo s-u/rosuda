@@ -787,7 +787,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		JGRPrefs.OBJECT_IT = italicObjects.isSelected();
 		JGRPrefs.COMMENT_IT = italicComments.isSelected();
 		JGRPrefs.apply();
-		JGRPrefs.writePrefs(false);
+		JGRPrefs.writePrefs();
 		return true;
 	}
 

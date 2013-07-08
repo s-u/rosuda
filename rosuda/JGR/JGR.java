@@ -100,9 +100,6 @@ public class JGR {
 	/** RHOME path of current used R */
 	public static String RHOME = null;
 
-	/** RLIB pathes, where we can find the user's R-packages */
-	public static String[] RLIBS = null;
-
 	/** Rengine {@link org.rosuda.JRI.Rengine}, needed for executing R-commands */
 	private static REngine rEngine = null;
 
@@ -158,7 +155,7 @@ public class JGR {
 	 */
 	public JGR() {
 		SVar.int_NA = -2147483648;
-
+		
 		Object dummy = new Object();
 		JGRPackageManager.neededPackages.put("base", dummy);
 		JGRPackageManager.neededPackages.put("graphics", dummy);
@@ -258,8 +255,10 @@ public class JGR {
 		
 		//kludge to fix infinite recursion crash on mac os x
 		//get rid of this when bug is fixed
-		if (System.getProperty("os.name").startsWith("Mac"))
-			try{JGR.threadedEval("options(expressions=1000)");}catch(Exception e){}
+		//UPDATE: this is fixed as of 1.7-16 provided the -Xss10m opion is used
+		//		to start java. This is default on the mac 2.0 launcher.
+		//if (System.getProperty("os.name").startsWith("Mac"))
+		//	try{JGR.threadedEval("options(expressions=1000)");}catch(Exception e){}
 		
 		new Refresher().run();
 	}
@@ -629,28 +628,6 @@ public class JGR {
 		RHOME = rhome;
 	}
 
-	/**
-	 * Set R_LIBS (in java app).
-	 * 
-	 * @param lib
-	 *            Library path
-	 */
-	public static void setRLibs(String lib) {
-		setRLibs(new String[] { lib });
-	}
-
-	/**
-	 * Set R_LIBS (in java app).
-	 * 
-	 * @param libs
-	 *            Library pathes
-	 */
-	public static void setRLibs(String[] libs) {
-		RLIBS = libs;
-		for (int i = 0; i < RLIBS.length; i++)
-			if (RLIBS[i].startsWith("~"))
-				RLIBS[i] = RLIBS[i].replaceFirst("~", System.getProperty("user.home"));
-	}
 
 	/**
 	 * Set keywords for highlighting.

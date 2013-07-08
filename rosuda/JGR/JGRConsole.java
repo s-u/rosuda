@@ -9,7 +9,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.FileDialog;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -28,6 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -141,7 +144,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				"Open", "openwsp", "Save", "savewsp", "Save as...",
 				"saveaswsp", "-", "Clear All", "clearwp", "+",
 				"Packages & Data", "@BObject Browser", "objectmgr",
-				"DataTable", "table", "-", "Package Manager", "packagemgr",
+				"Data Table", "table", "-", "Package Manager", "packagemgr",
 				"Package Installer", "packageinst", "~Window", "+", "Help",
 				"R Help", "help", "~Preferences", "~About", "0" };
 		JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
@@ -183,6 +186,14 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				}
 			}
 		}
+		
+		//Set application icon (primarily for windows)
+		try{
+			URL url = getClass().getResource("/icons/JGR.png");
+			Toolkit kit = Toolkit.getDefaultToolkit();
+			Image img = kit.createImage(url);
+			getFrame().setIconImage(img);
+		}catch(Exception e){}
 
 		// Add History if we didn't found one in the user's home directory
 		if (JGR.RHISTORY == null)

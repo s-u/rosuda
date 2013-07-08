@@ -354,10 +354,8 @@ public class JGRPrefs {
 	/**
 	 * Save preferences to .JGRPrefsrc.
 	 * 
-	 * @param writeLibs
-	 *            R_LIBS should only be saved when new packages where installed.
 	 */
-	public static void writePrefs(boolean writeLibs) {
+	public static void writePrefs() {
 		Preferences prefs = Preferences
 				.userNodeForPackage(org.rosuda.JGR.JGR.class);
 
@@ -398,12 +396,6 @@ public class JGRPrefs {
 			//packages += ",rJava,JavaGD,iplots,JGR";
 			
 			prefs.put("DefaultPackages", packages);
-		}
-		if (JGR.RLIBS != null && JGR.RLIBS.length > 1) {
-			String libpaths = JGR.RLIBS[0].toString();
-			for (int i = 1; i < JGR.RLIBS.length - 1; i++)
-				libpaths += (isWindows ? ";" : ":") + JGR.RLIBS[i];
-			prefs.put("InitialRLibraryPath", libpaths);
 		}
 		try {
 			prefs.exportNode(new FileOutputStream(System
@@ -456,6 +448,6 @@ public class JGRPrefs {
 	 */
 	public static void writeCurrentPackagesWhenExit() {
 		readPrefs();
-		writePrefs(false);
+		writePrefs();
 	}
 }

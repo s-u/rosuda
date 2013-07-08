@@ -128,53 +128,13 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 	}
 
 	private void installPkg() {
-		String destDir = null;
-		for (int i = 0; i < JGR.RLIBS.length; i++)
-			if (checkLibPaths(JGR.RLIBS[i])) {
-				destDir = JGR.RLIBS[i];
-				break;
-			}
-		if (destDir == null) {
-			JFileChooser chooser = new JFileChooser();
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			chooser.setDialogTitle("Choose Installation Directory");
-			int r = chooser.showOpenDialog(this);
-			if (r == JFileChooser.CANCEL_OPTION)
-				return;
-			if (chooser.getSelectedFile() != null)
-				destDir = chooser.getSelectedFile().toString();
-			if (!checkLibPaths(destDir))
-				destDir = null;
-			if (destDir != null) {
-				String[] libs = new String[(JGR.RLIBS.length + 1)];
-				libs[0] = destDir;
-				System.arraycopy(JGR.RLIBS, 0, libs, 1, JGR.RLIBS.length);
-				JGR.RLIBS = libs;
-				JGRPrefs.writePrefs(true);
-				try {
-					JGR.timedEval(".libPaths(\"" + destDir + "\")");
-				} catch (Exception e) {
-					new ErrorMsg(e);
-				}
-			}
-		}
-		if (destDir == null) {
-			JOptionPane.showMessageDialog(this,
-					"JGR was unable to write to the library directory.\nPlease change your library path or get sufficient rights.",
-					"Permisson denied", JOptionPane.OK_OPTION);
-			return;
-		}
 		Object[] instPkgs = pkgList.getSelectedValues();
 		String cmd = "c(";
 		if (instPkgs.length > 0) {
 			for (int i = 0; i < instPkgs.length - 1; i++)
 				cmd += "\"" + instPkgs[i] + "\",";
 			cmd += "\"" + instPkgs[instPkgs.length - 1] + "\")";
-			if (type.equals("binaries") && JGRPrefs.isMac)
-				JGR.MAINRCONSOLE.execute("install.packages(" + cmd + ",\"" + destDir + "\",type=\"mac.binary\")", true);
-			// JGR.MAINRCONSOLE.execute("install.packages("+cmd+",\""+destDir+"\",contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
-			else
-				JGR.MAINRCONSOLE.execute("install.packages(" + cmd + ",\"" + RController.addSlashes(destDir) + "\")", true);
+			JGR.MAINRCONSOLE.execute("install.packages(" + cmd + ")", true);
 		}
 	}
 

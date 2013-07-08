@@ -26,6 +26,8 @@ import javax.swing.text.Segment;
 import javax.swing.text.TabExpander;
 import javax.swing.text.Utilities;
 
+import org.rosuda.ibase.Common;
+
 /**
  * The text area repaint manager. It performs double buffering and paints lines
  * of text.
@@ -384,7 +386,8 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
 		gfx.setColor(getBackground());
 		gfx.fillRect(OFFSET + clipRect.x, clipRect.y, clipRect.width, clipRect.height);
-		((Graphics2D)gfx).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		if(!Common.isMac())
+			((Graphics2D)gfx).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		// We don't use yToLine() here because that method doesn't
 		// return lines past the end of the document
 		int height = fm.getHeight();
