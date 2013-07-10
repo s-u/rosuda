@@ -32,11 +32,13 @@ public class ParamFacet extends Param{
 	public String scaleWrap;
 	public Boolean asTableWrap;
 	public Boolean drop;
+	public Boolean dropGrid;
 	
 	public ParamFacet(){
 		asTableGrid = new Boolean(true);
 		asTableWrap = new Boolean(true);
 		drop = new Boolean(true);
+		dropGrid = new Boolean(true);
 		margins = new Boolean(false);
 		setName("facet");
 		setTitle("facet");
@@ -81,6 +83,7 @@ public class ParamFacet extends Param{
 		f.asTableGrid = new Boolean(asTableGrid.booleanValue());
 		f.asTableWrap = new Boolean(asTableWrap.booleanValue());
 		f.drop = new Boolean(drop.booleanValue());
+		f.dropGrid = new Boolean(dropGrid.booleanValue());
 		if(nrow!=null)
 			f.nrow = new Integer(nrow.intValue());
 		if(ncol!=null)
@@ -123,6 +126,9 @@ public class ParamFacet extends Param{
 			
 			if(!asTableGrid.booleanValue())
 				v.add(", as.table = FALSE");
+			
+			if(!dropGrid.booleanValue())
+				v.add(", drop = FALSE");
 		}else{
 			if(varsWrap.length==0)
 				return new String[]{};
@@ -143,7 +149,7 @@ public class ParamFacet extends Param{
 			if(!asTableWrap.booleanValue())
 				v.add(", as.table = FALSE");	
 			if(!drop.booleanValue())
-				v.add(", as.table = FALSE");
+				v.add(", drop = FALSE");
 		}
 		calls = new String[v.size()];
 		for(int i=0;i<v.size();i++)
@@ -189,6 +195,8 @@ public class ParamFacet extends Param{
 			node.setAttribute("asTableWrap", asTableWrap.toString());
 		if(drop!=null)
 			node.setAttribute("drop", drop.toString());
+		if(dropGrid!=null)
+			node.setAttribute("dropGrid", dropGrid.toString());
 		if(scaleWrap!=null)
 			node.setAttribute("scaleWrap", scaleWrap);
 		if(nrow!=null)
@@ -234,6 +242,10 @@ public class ParamFacet extends Param{
 			drop = new Boolean(node.getAttribute("drop").equals("true"));
 		else
 			drop = null;
+		if(node.hasAttribute("dropGrid"))
+			dropGrid = new Boolean(node.getAttribute("dropGrid").equals("true"));
+		else
+			dropGrid = new Boolean(true);
 		if(node.hasAttribute("scaleWrap"))
 			scaleWrap = node.getAttribute("scaleWrap");
 		else

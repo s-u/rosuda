@@ -38,6 +38,7 @@ public class ParamFacetWidget extends ParamWidget implements ActionListener{
 	private JCheckBox margins;
 	private JCheckBox spaceFixed;
 	private JCheckBox asTableGrid;
+	private JCheckBox dropGrid;
 	
 	private JTextField nrow;
 	private JTextField ncol;
@@ -59,12 +60,12 @@ public class ParamFacetWidget extends ParamWidget implements ActionListener{
 			BorderLayout thisLayout = new BorderLayout();
 			this.setLayout(thisLayout);
 			this.setPreferredSize(new java.awt.Dimension(241, 350));
-			this.setMinimumSize(new java.awt.Dimension(241, 300));
+			this.setMinimumSize(new java.awt.Dimension(100, 350));
 			this.setMaximumSize(new java.awt.Dimension(241, 350));
 			{
 				tabs = new JTabbedPane();
 				this.add(tabs, BorderLayout.CENTER);
-				tabs.setPreferredSize(new java.awt.Dimension(264, 350));
+				tabs.setPreferredSize(new java.awt.Dimension(264, 420));
 				{
 					gridPanel = new JPanel();
 					AnchorLayout gridPanelLayout = new AnchorLayout();
@@ -119,6 +120,7 @@ public class ParamFacetWidget extends ParamWidget implements ActionListener{
 			margins = new JCheckBox("show margins");
 			spaceFixed = new JCheckBox("fix facet size");
 			asTableGrid = new JCheckBox("as table");
+			dropGrid = new JCheckBox("drop");
 			
 			nrow = new JTextField();
 			ncol = new JTextField();
@@ -137,7 +139,7 @@ public class ParamFacetWidget extends ParamWidget implements ActionListener{
 		JButton okay = new JButton();
 		d.getContentPane().add(okay);
 		okay.setText("Okay");
-		okay.setBounds(146, 133, 69, 22);
+		okay.setBounds(146, 150, 69, 22);
 		okay.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -155,8 +157,10 @@ public class ParamFacetWidget extends ParamWidget implements ActionListener{
 		spaceFixed.setBounds(12, 81, 156, 17);
 		d.getContentPane().add(asTableGrid);
 		asTableGrid.setBounds(12, 104, 156, 17);
+		d.getContentPane().add(dropGrid);
+		dropGrid.setBounds(12, 127, 156, 17);		
 		d.setModal(true);
-		d.setSize(227, 188);
+		d.setSize(227, 210);
 		d.setLocationRelativeTo(gridOptions);
 		d.setVisible(true);
 	}
@@ -269,6 +273,7 @@ public class ParamFacetWidget extends ParamWidget implements ActionListener{
 			ncol.setText("");
 		asTableWrap.setSelected(model.asTableWrap.booleanValue());
 		drop.setSelected(model.drop.booleanValue());
+		dropGrid.setSelected(model.dropGrid.booleanValue());
 		this.setType(model.facetType);
 	}
 
@@ -299,6 +304,7 @@ public class ParamFacetWidget extends ParamWidget implements ActionListener{
 		model.asTableGrid = new Boolean(asTableGrid.isSelected());
 		model.asTableWrap = new Boolean(asTableWrap.isSelected());
 		model.drop = new Boolean(drop.isSelected());
+		model.dropGrid = new Boolean(dropGrid.isSelected());
 		try{
 			model.nrow = new Integer(Integer.parseInt(nrow.getText()));
 		}catch(Exception e){model.nrow = null;}

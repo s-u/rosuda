@@ -32,10 +32,10 @@ public class FacetPanel extends ElementView {
 			}			
 			{
 				facetWidget = new ParamFacetWidget(variableSelector,new ParamFacet());
-				this.add(facetWidget, new AnchorConstraint(200, 972, 800, 427, 
+				this.add(facetWidget, new AnchorConstraint(150, 972, 850, 427, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
-						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				facetWidget.setPreferredSize(new java.awt.Dimension(225, 216));
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				//facetWidget.setPreferredSize(new java.awt.Dimension(225, 216));
 			}
 
 		} catch (Exception e) {
