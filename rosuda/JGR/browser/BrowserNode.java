@@ -33,4 +33,6 @@ public interface BrowserNode extends MutableTreeNode{
 	
 	public void removeChildObjectFromR(BrowserNode child);
 	
+	public void setShowSep(boolean show);
+	
 }

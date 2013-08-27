@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -138,6 +139,9 @@ public class JGR {
 
 	/** Splashscreen */
 	public static org.rosuda.JGR.toolkit.SplashScreen splash;
+	
+	/** arguments from command line */
+	public static String[] arguments = new String[]{};
 
 	/** arguments for Rengine */
 	private static String[] rargs = { "--save" };
@@ -149,6 +153,16 @@ public class JGR {
 	private static boolean JGRmain = false;
 
 	private static String tempWD;
+	
+	/**
+	 * Default packages passed though launcher
+	 */
+	private static String launcherPackages = null;
+	
+	/**
+	 * should splash screen be displayed
+	 */
+	private static boolean showSplash = true;
 
 	/**
 	 * Starting the JGR Application (javaside)
@@ -173,12 +187,14 @@ public class JGR {
 		org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
 		JGRPrefs.initialize();
 		splash = new org.rosuda.JGR.toolkit.SplashScreen();
-		splash.start();
+		if(showSplash)
+			splash.start();
 		readHistory();
 		MAINRCONSOLE = new JGRConsole();
 		MAINRCONSOLE.setWorking(true);
-		splash.toFront();
-		if (System.getProperty("os.name").startsWith("Window")) {
+		if(showSplash)
+			splash.toFront();
+		if (showSplash && System.getProperty("os.name").startsWith("Window")) {
 			splash.stop();
 			JGRPrefs.isWindows = true;
 		}
@@ -236,22 +252,26 @@ public class JGR {
 		// practice it doesn't
 		// hurt if we load them despite the fact that R_DEFAULT_PACKAGES has
 		// been set.
-		if (JGRPrefs.defaultPackages != null)
-			RController.requirePackages(JGRPrefs.defaultPackages);
 		RController.requirePackages("JGR"); // ensure JGR is loaded
 		JGRPackageManager.defaultPackages = RController.getJgrDefaultPackages();
+		if(launcherPackages != null)
+			RController.requirePackages(launcherPackages);
+		if (JGRPrefs.defaultPackages != null)
+			RController.requirePackages(JGRPrefs.defaultPackages);
 
 		STARTED = true;
-		if (!System.getProperty("os.name").startsWith("Win"))
+		if (showSplash && !System.getProperty("os.name").startsWith("Win"))
 			splash.stop();
 		// make sure we get a clean prompt after all packages have been loaded
 		JGR.MAINRCONSOLE.execute("", false);
 		MAINRCONSOLE.toFront();
 		MAINRCONSOLE.input.requestFocus();
-		JGR.threadedEval("options(width=" + MAINRCONSOLE.getFontWidth() + ")");
+		int w = MAINRCONSOLE.getFontWidth();
+		if(w>0)
+			JGR.threadedEval("options(width=" + w + ")");
 		// redefine Java Output streams to be written to JGR console
 		System.setOut(MAINRCONSOLE.getStdOutPrintStream());
-		//System.setErr(MAINRCONSOLE.getStdErrPrintStream());
+		System.setErr(MAINRCONSOLE.getStdErrPrintStream());
 		
 		//kludge to fix infinite recursion crash on mac os x
 		//get rid of this when bug is fixed
@@ -772,6 +792,7 @@ public class JGR {
 	 */
 	public static void main(String[] args) {
 		JGRmain = true;
+		arguments = args;
 		if (args.length > 0) {
 			Vector args2 = new Vector();
 			for (int i = 0; i < args.length; i++) {
@@ -793,6 +814,12 @@ public class JGR {
 					System.out.println("\t--debug\t Print more information about JGR's process");
 					System.out.println("\nMost other R options are supported too");
 					System.exit(0);
+				}
+				if (args[i].startsWith("--withPackages=")){
+					launcherPackages = args[i].substring(15);
+				}
+				if (args[i].startsWith("--noSplash")){
+					showSplash=false;
 				}
 			}
 			Object[] arguments = args2.toArray();

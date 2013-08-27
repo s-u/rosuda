@@ -1,10 +1,15 @@
 package org.rosuda.JGR.browser;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,23 +17,32 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.JGRConsole;
 import org.rosuda.JGR.editor.Editor;
+import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
@@ -43,6 +57,7 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 	volatile protected ArrayList children = new ArrayList();
 	protected boolean expanded;	
 	protected ImageIcon icon;
+	protected boolean showSep = false;
 	
 	TreeCellRenderer renderer = new DefaultBrowserCellRenderer();
 
@@ -172,6 +187,10 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 		expanded=expand;
 	}
 	
+	public void setShowSep(boolean show){
+		showSep= show;
+	}
+	
 	synchronized public void update(DefaultTreeModel mod) {
 		REXP rexp;
 		String fullName = parent.getChildExecuteableRObjectName(this);
@@ -251,7 +270,7 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 									for(int ind=j;ind<tmp.length;ind++)
 										m.removeNodeFromParent((MutableTreeNode) tmp[ind]);
 								}
-								m.insertNodeInto(node, DefaultBrowserNode.this, nChildren);
+								m.insertNodeInto(node, DefaultBrowserNode.this, children.size());
 							}
 							
 						});
@@ -274,9 +293,49 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
 	
 	class DefaultBrowserCellRenderer extends DefaultTreeCellRenderer{
 		
+		JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+		JPanel pan = new JPanel();
+		JPanel subpan = new JPanel();
+		JButton but;
+		int offset = -1;
+		Component rigid;
+		int panelWidth = 250;
 		
 		public DefaultBrowserCellRenderer(){
-			super();		
+			super();
+			
+			but =  new IconButton("/icons/advanced_21.png", "", null, "");
+			pan.setLayout(new BoxLayout(pan, BoxLayout.PAGE_AXIS));
+			sep.setPreferredSize(new Dimension( 5000,6));
+			//sep.setMinimumSize(new Dimension( 5000,6));
+			sep.setMaximumSize(new Dimension( 5000,6));
+			sep.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.setVerticalAlignment(JLabel.CENTER);
+			this.setVerticalTextPosition(JLabel.CENTER);
+			subpan.setAlignmentX(Component.LEFT_ALIGNMENT);
+			subpan.setMinimumSize(new Dimension(0,20));
+			pan.removeAll();
+			pan.setPreferredSize(new Dimension( panelWidth,25));
+			pan.setSize(new Dimension( panelWidth,25));
+			pan.setMinimumSize(new Dimension(Short.MAX_VALUE,30));
+			pan.setPreferredSize(new Dimension(Short.MAX_VALUE,30));
+			pan.setMaximumSize(new Dimension(Short.MAX_VALUE,30));
+			pan.setSize(new Dimension( Short.MAX_VALUE,30));
+			pan.add(Box.createVerticalGlue());
+			pan.add(sep);
+			rigid = Box.createRigidArea(new Dimension(1,3));
+			pan.add(rigid);
+			subpan.setLayout(new BoxLayout(subpan, BoxLayout.LINE_AXIS));
+			subpan.add(this);
+			subpan.add(Box.createHorizontalGlue());
+			but.setSize(21, 21);
+			subpan.add(but);
+			subpan.setBackground(null);
+			pan.add(subpan);
+			pan.add(Box.createVerticalGlue());
+			pan.setBackground(null);
+			offset = ((Integer) UIManager.get("Tree.rightChildIndent")).intValue() +
+					((Integer) UIManager.get("Tree.leftChildIndent")).intValue();
 		}
 		
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -286,16 +345,37 @@ public class DefaultBrowserNode implements BrowserNode, BrowserNodeFactory{
                     tree, value, selected,
                     expanded, leaf, row,
                     hasFocus);
+			
+			
 			if(rName!=null)
 				this.setText(rName);
 			else
 				this.setText("" + (parent.getIndex(DefaultBrowserNode.this) + 1));
 			this.setIcon(icon);
-			this.setVerticalAlignment(JLabel.CENTER);
-			this.setVerticalTextPosition(JLabel.CENTER);
-			this.setSize(new Dimension(26,tree.getWidth()));
-			this.setToolTipText(cls);
-			return this;
+			pan.setToolTipText(cls);
+			sep.setVisible(showSep);
+			TreePath tp = tree.getPathForRow(row);
+			panelWidth = tree.getParent().getWidth()-
+					offset*(tp==null? 1 : tp.getPathCount());
+			if(showSep){
+				sep.setSize(new Dimension( panelWidth,6));			
+				sep.setMinimumSize(new Dimension(panelWidth,6));
+				sep.setPreferredSize(new Dimension(panelWidth,6));
+				sep.setMaximumSize(new Dimension(panelWidth,6));
+			}
+			subpan.setSize(new Dimension( panelWidth,20));			
+			subpan.setMinimumSize(new Dimension(panelWidth,20));
+			subpan.setPreferredSize(new Dimension(panelWidth,20));
+			subpan.setMaximumSize(new Dimension(panelWidth,20));
+			
+			but.setVisible(selected);
+			
+
+				
+			//pan.setBorder(BorderFactory.createEmptyBorder());
+			//this.setBounds(0,0,tree.getWidth(),26);
+			//pan.add(this);
+			return pan;
 		}
 	}
 

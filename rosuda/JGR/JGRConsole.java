@@ -34,6 +34,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -114,6 +115,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	public int end = 0;
 
 	public static String guiEnv = "gui.working.env";
+	
+	public static String lastRPrompt = "> ";
 
 	private Integer clearpoint = null;
 
@@ -206,12 +209,14 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		input.setWordWrap(false);
 		input.addFocusListener(this);
 		inputDoc.addUndoableEditListener(toolBar.undoMgr);
-
+		input.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+		
 		output.setEditable(false);
 		output.addFocusListener(this);
 		output.addKeyListener(this);
 		output.setDragEnabled(true);
 		output.setCaret(new SelectionPreservingCaret());
+		output.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
 		JScrollPane sp1 = new JScrollPane(output);
 		sp1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -221,12 +226,16 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		consolePanel.setBottomComponent(sp2);
 		consolePanel
 				.setDividerLocation(((int) ((double) this.getHeight() * 0.65)));
-
+		consolePanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		consolePanel.setDividerSize(5);
+		
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent evt) {
 				super.componentResized(evt);
 				if (JGR.getREngine() != null && JGR.STARTED) {
-					JGR.threadedEval("options(width=" + getFontWidth() + ")");
+					int w = getFontWidth();
+					if(w>0)
+						JGR.threadedEval("options(width=" + w + ")");
 				}
 				consolePanel
 						.setDividerLocation(((int) ((double) getHeight() * 0.70)));
@@ -248,7 +257,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		this.setMinimumSize(new Dimension(555, 650));
 		
 		this.setSize(new Dimension(JGRPrefs.consoleWidth,
-				Common.screenRes.height < 1000 ? Common.screenRes.height - 50
+				Common.screenRes.height < JGRPrefs.consoleHeight ? Common.screenRes.height - 50
 						: JGRPrefs.consoleHeight));
 		// Point center = new
 		// Point(Common.screenRes.width/2-this.getWidth()/2,40);
@@ -626,14 +635,21 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			} else
 				return retVal;
 		} else {
+			JGRConsole.lastRPrompt = prompt;
 			final String fPrompt = prompt;
 			Runnable doWork1 = new Runnable() {
 				public void run() {
 					if (console.length() > 0) {
+						String line = output.getLine(output.getLineCount()-1);
+						if(line!=null && line.startsWith(fPrompt))
+							output.append("\n", JGRPrefs.CMD);
 						output.append(console.toString(), JGRPrefs.RESULT);
 						console.delete(0, console.length());
 						output.setCaretPosition(outputDoc.getLength());
 					}
+					String line = output.getLine(output.getLineCount()-1);
+					if(line!=null && line.length()>0)
+						output.append("\n", JGRPrefs.RESULT);
 					output.append(fPrompt, JGRPrefs.CMD);
 					output.setCaretPosition(outputDoc.getLength());
 				}
@@ -643,6 +659,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			Runnable doWork2 = new Runnable() {
 				public void run() {
 					try {
+						String line = output.getLine(output.getLineCount()-1);
+						if(line!=null && !line.startsWith(fPrompt))
+							output.append(fPrompt, JGRPrefs.CMD);
 						output.append(s + "\n",JGRPrefs.CMD);
 						if (console.length() > 0) {
 							output.append(console.toString(), JGRPrefs.RESULT);
@@ -1014,6 +1033,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() {
 							if (console.length() > 0) {
+								String line = output.getLine(output.getLineCount()-1);
+								if(line!=null && line.equals(JGRConsole.lastRPrompt))
+									output.append("\n", JGRPrefs.CMD);
 								output.append(console.toString(),
 										JGRPrefs.RESULT);
 								console.delete(0, console.length());

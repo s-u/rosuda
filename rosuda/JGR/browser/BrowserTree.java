@@ -6,10 +6,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Enumeration;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeWillExpandListener;
@@ -26,8 +28,13 @@ public class BrowserTree extends JTree {
 	HeadNode head;
 	DefaultTreeModel mod;
 	Refresher ref;
+	static int nodeOffset = -1;
 	public BrowserTree(){
 		super();
+		if(nodeOffset==-1){
+			nodeOffset = ((Integer) UIManager.get("Tree.rightChildIndent")).intValue() +
+					((Integer) UIManager.get("Tree.leftChildIndent")).intValue();
+		}
 		setModel(mod=new DefaultTreeModel(head=new HeadNode()));
 		//this.setEditable(true);
 		this.getSelectionModel().setSelectionMode
@@ -40,13 +47,14 @@ public class BrowserTree extends JTree {
 			}
 			
 		}).start();
-		
+		this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
 		this.repaint();
 		ExpandListener lis = new ExpandListener();
 		this.addTreeWillExpandListener(lis);
 		this.addTreeExpansionListener(lis);
 		TreeMouseListener mlis = new TreeMouseListener();
 		this.addMouseListener(mlis);
+		this.setRowHeight(0);
 		//this.setRootVisible(false);
 		this.setToggleClickCount(1000);
 	}
@@ -143,13 +151,17 @@ public class BrowserTree extends JTree {
 		    }
 		}
 
-		public void mouseEntered(MouseEvent arg0) {}
+		public void mouseEntered(MouseEvent e) {}
 
 		public void mouseExited(MouseEvent arg0) {}
 
 		public void mousePressed(MouseEvent e) {
 			if (e.isPopupTrigger()) {
 		    	pop(e);
+		    }else{
+		    	int wid = BrowserTree.this.getParent().getWidth();
+		    	if(e.getX()<wid-nodeOffset && e.getX()>=wid-nodeOffset*2)
+		    		pop(e);
 		    }
 		}
 
@@ -188,7 +200,7 @@ class Refresher implements Runnable{
 		while(keepRunning){
 			//System.out.println("refresh");
 			try {	
-				Thread.sleep(4000);
+				Thread.sleep(6000);
 			} catch (InterruptedException e) {
 				keepRunning=false;
 			}

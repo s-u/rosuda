@@ -8,9 +8,11 @@ import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.JGRDataFileSaveDialog;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.DataTable;
+import org.rosuda.JGR.toolkit.JGRPrefs;
 
 public class DataFrameNode extends DefaultBrowserNode {
 	public DataFrameNode(){}
@@ -25,8 +27,19 @@ public class DataFrameNode extends DefaultBrowserNode {
 	
 	public JPopupMenu getPopupMenu() {
 		JPopupMenu menu = new JPopupMenu();
-		ActionListener lis = new PopupListener();
+		final DataFrameNode pThis = this;
+		ActionListener lis = new PopupListener(){
+			public void runCmd(String cmd){
+				super.runCmd(cmd);
+				if(cmd.equals("Save")){
+					new JGRDataFileSaveDialog(null, pThis.getRName(), JGRPrefs.workingDirectory);
+				}
+			}
+		};
 		JMenuItem item = new JMenuItem ("Edit");
+		item.addActionListener(lis);
+		menu.add( item );
+		item = new JMenuItem ("Save");
 		item.addActionListener(lis);
 		menu.add( item );
 		menu.add(new JSeparator());

@@ -1,14 +1,16 @@
 package org.rosuda.JGR.browser;
 
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.Vector;
 
 public class BrowserController {
 	
-	public static int MAX_CHILDREN = 10000;
+	public static int MAX_CHILDREN = 1000;
 	
 	protected static boolean initialized = false;
 	
-	protected static HashMap factories = new HashMap();
+	protected static TreeMap factories = new TreeMap();
 	
 	protected static BrowserNodeFactory defaultFactory = new DefaultBrowserNode();
 	
@@ -25,6 +27,7 @@ public class BrowserController {
 			setFactory("matrix",new MatrixNode());
 			setFactory("environment",new EnvironmentNode());
 			setFactory("function",new FunctionNode());
+			setFactory("list",new DefaultBrowserNode());
 			setFactory("lm",new LmNode());
 			setFactory("glm",new LmNode());
 		}
@@ -47,6 +50,13 @@ public class BrowserController {
 	public void setDefaultFactory(BrowserNodeFactory factory){
 		initialize();
 		defaultFactory = factory;
+	}
+	
+	public static Vector getClasses(){
+		initialize();
+		Vector res = new Vector();
+		res.addAll(factories.keySet());
+		return res;
 	}
 	
 }

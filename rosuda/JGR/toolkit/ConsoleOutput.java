@@ -230,7 +230,7 @@ public class ConsoleOutput extends JTextPane {
 		return s;
 	}
 
-	private String getLine(int i) {
+	public String getLine(int i) {
 		String line = null;
 		try {
 

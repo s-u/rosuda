@@ -16,6 +16,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.RController;
 import org.rosuda.REngine.REXP;
 
 public class HeadNode implements BrowserNode {
@@ -76,6 +77,7 @@ public class HeadNode implements BrowserNode {
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
 				boolean selected, boolean expanded, boolean leaf, int row,
 				boolean hasFocus) {
+			lab.setSize(0,0);
 			return lab;
 		}
 		
@@ -139,6 +141,25 @@ public class HeadNode implements BrowserNode {
 					return;
 				objectClasses = rexp.asStrings();
 			}
+			
+			int[] ord = new int[]{};
+			if(objectNames.length>0){
+				//rexp = JGR.idleEval(
+				//		"order(sapply(ls(),function(a)class(get(a,envir=globalenv()))[1]))");
+				rexp = JGR.idleEval("" +
+						"order(sapply(ls(),function(x) {" +
+						"tmp <- which(class(get(x,envir=globalenv()))[1]==" + 
+						RController.makeRStringVector(BrowserController.getClasses()) +
+						");if(length(tmp)==0)NA else tmp}))");
+
+				if(rexp==null)
+					return;
+				ord = rexp.asIntegers();
+				for(int i=0;i<ord.length;i++){
+					ord[i]--;
+				}
+			}
+			
 			if(objectNames.length<children.size()){
 				final String[] objNms = objectNames;
 				SwingUtilities.invokeAndWait(new Runnable(){
@@ -152,14 +173,20 @@ public class HeadNode implements BrowserNode {
 			int nc = Math.min(objectNames.length, BrowserController.MAX_CHILDREN);
 			for(int i=0;i<nc;i++){
 				if(i<objectClasses.length){
-					final BrowserNode node = BrowserController.createNode(this, objectNames[i], objectClasses[i]);
+					final BrowserNode node = BrowserController.createNode(this, objectNames[ord[i]], 
+							objectClasses[ord[i]]);
+					boolean shSep = i>0 && !objectClasses[ord[i]].equals(objectClasses[ord[i-1]]);
+					//shSep = shSep && !(node.getClass()== DefaultBrowserNode.class && !((DefaultBrowserNode) node).isList);
+					node.setShowSep(shSep);
 					if(children.size()>i && children.get(i).equals(node)){
+						((BrowserNode)children.get(i)).setShowSep(shSep);
 						((BrowserNode)children.get(i)).update(mod);
 					}else{
 						//if(children.size()>i)
 						//	System.out.println(children.get(i).equals(node));
 						final Object[] tmp = children.toArray();
 						final int j=i;
+						
 						SwingUtilities.invokeAndWait(new Runnable(){
 							public void run() {
 								if(tmp.length>j){
@@ -192,6 +219,9 @@ public class HeadNode implements BrowserNode {
 
 	public void removeChildObjectFromR(BrowserNode child) {
 		JGR.MAINRCONSOLE.execute("rm(\""+child.getRName()+"\",envir="+this.getExecuteableRObjectName()+")");
+	}
+
+	public void setShowSep(boolean show) {
 	}
 
 }
