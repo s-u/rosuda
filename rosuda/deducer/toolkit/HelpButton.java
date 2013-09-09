@@ -11,7 +11,12 @@ public class HelpButton extends IconButton {
 	public String url;
 	public HelpButton(String helpUrl) {
 		super("/icons/info_28.png", "help",null, "help");
-		url = baseUrl + helpUrl;
+		if(helpUrl==null)
+			url = baseUrl;
+		else if(helpUrl.startsWith("http://"))
+			url = helpUrl;
+		else
+			url = baseUrl + helpUrl;
 		this.addActionListener(new actLis());
 		this.setContentAreaFilled(false);
 	}
@@ -45,7 +50,7 @@ public class HelpButton extends IconButton {
 	            {
 	              //prioritized 'guess' of users' preference
 	              String[] browsers = {"epiphany", "firefox", "mozilla", "konqueror",
-	                  "netscape","opera","links","lynx"};
+	                  "netscape","opera","links","lynx","chrome"};
 	 
 	              StringBuffer cmd = new StringBuffer();
 	              for (int i=0; i<browsers.length; i++)

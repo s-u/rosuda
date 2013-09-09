@@ -407,7 +407,7 @@ public class RDataFrameModel extends ExDefaultTableModel {
 			setPageValue(NA_STRING,row,col);
 		}else if(colClass==3){
 			boolean isNewLevel=((REXPLogical)Deducer.eval("'"+value.toString()+"' %in% " +
-					"levels(" +rDataName+"[,"+(col+1)+"])"+";NULL")).isFALSE()[0];
+					"levels(" +rDataName+"[,"+(col+1)+"])")).isFALSE()[0];
 
 			if(isNewLevel){
 				String addLevel = "levels(" +rDataName+"[,"+(col+1)+"])<-c("+

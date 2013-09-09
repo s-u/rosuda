@@ -128,7 +128,7 @@ public class PlottingElement implements Transferable{
 			}
 		}else if(type.equals("template")){
 			URL templateURL = getClass().getResource("/templates/" + name+".ggtmpl");
-			
+			helpUrl = "http://www.deducer.org/pmwiki/pmwiki.php?n=Main.Templates";
 			if(templateURL!=null){
 				this.setFromURL(templateURL);
 			}
