@@ -75,7 +75,7 @@ public class ParamMultipleVariables extends Param{
 					(getValue()!=null && !getDefaultValue().toString().equals(getValue().toString()))){
 				if(getFormat().equals(FORMAT_DATA)){
 					calls = new String[] {(name!=null ? (name + " = ") : "") + 
-							data +"[,"+Deducer.makeRCollection(variables,"c",true)+"]"};
+							data +"[,"+Deducer.makeRCollection(variables,"c",true)+", drop=FALSE]"};
 				}else if(getFormat().equals(FORMAT_VARIABLE)){
 					calls = new String[] {(name!=null ? (name + " = ") : "") +
 							Deducer.makeRCollection(variables,"d",false) ,  
