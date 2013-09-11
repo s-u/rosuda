@@ -381,7 +381,6 @@ public class SVarDouble extends SVar {
         
         if (!cacheRanks || ranks==null) {
             int ct=size();
-            r = new int[ct];
             double[] da = cont;
             
             sw.profile("getRanked: pass 1: store relevant values");
@@ -402,31 +401,33 @@ public class SVarDouble extends SVar {
                     return 0;
                 }
             }
-            List data = new ArrayList(da.length);
-            for(int i=0; i<da.length; i++) data.add(new SortDouble(da[i],i));
+            List data = new ArrayList(da.length - missingCount);
+            for(int i = 0; i < da.length; i++) if (!Double.isNaN(da[i])) data.add(new SortDouble(da[i],i));
             Collections.sort(data);
-            for(int i=0; i<da.length; i++) r[i] = ((SortDouble)data.get(i)).index;
+	    int n = data.size();
+            r = new int[n];
+            for(int i = 0; i < n; i++) r[i] = ((SortDouble)data.get(i)).index;
         } else {
             r=ranks;
         }
         
         // we got the full list - now we need to thin it out if a marker was specified
         if (m!=null && r!=null) {
-            int x=r.length;
-            int ct=0;
-            int i=0; // pass 1 : find the # of relevant cases
-            while(i<x) {
-                if (m.get(i)==markspec)
+            int x = r.length;
+            int ct = 0;
+            int i = 0; // pass 1 : find the # of relevant cases
+            while (i < x) {
+                if (m.get(r[i]) == markspec)
                     ct++;
                 i++;
             }
-            if (ct==0) return null;
-            int[] mr=new int[ct];
-            i=0;
-            int mri=0;
-            while(i<x) {
-                if (m.get(r[i])==markspec)
-                    mr[mri++]=r[i];
+            if (ct == 0) return null;
+            int[] mr = new int[ct];
+            i = 0;
+            int mri = 0;
+            while (i < x) {
+                if (m.get(r[i]) == markspec)
+                    mr[mri++] = r[i];
                 i++;
             }
             r=null;
