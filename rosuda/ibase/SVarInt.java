@@ -375,7 +375,11 @@ cases: variable is not numerical or is categorical, no cases matching
                 pd.begin("Calculating ranks ...");
             }
             int ct=size();
+
+	    // setup the permutation vector
             r = new int[ct];
+	    for (int z = 0; z < r.length; z++) r[z] = z;
+
             int[] da = cont;
 
             sw.profile("getRanked: pass 1: store relevant values");
@@ -383,12 +387,12 @@ cases: variable is not numerical or is categorical, no cases matching
             // pass 3: sort by value
             int i=0;
             while (i<ct-1) {
-                double d=da[r[i]];
+                int d=da[r[i]];
                 int j=ct-1;
                 if (pd!=null && (i&255)==0)
                     pd.setProgress((int)(((double)i)*99.0/((double)ct)));
                 while (j>i) {
-                    double d2=da[r[j]];
+                    int d2=da[r[j]];
                     if (d2<d) {
                         int xx=r[i]; r[i]=r[j]; r[j]=xx;
                         d=d2;
