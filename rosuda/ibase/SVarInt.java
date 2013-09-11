@@ -377,16 +377,17 @@ cases: variable is not numerical or is categorical, no cases matching
             int ct=size();
 
 	    // setup the permutation vector
-            r = new int[ct];
-	    for (int z = 0; z < r.length; z++) r[z] = z;
-
+            r = new int[ct - missingCount];
+	    int zi = 0;
             int[] da = cont;
+	    for (int z = 0; z < ct; z++) if (da[z] != int_NA) r[zi++] = z;
 
             sw.profile("getRanked: pass 1: store relevant values");
 
             // pass 3: sort by value
             int i=0;
-            while (i<ct-1) {
+	    ct = r.length;
+            while (i < ct-1) {
                 int d=da[r[i]];
                 int j=ct-1;
                 if (pd!=null && (i&255)==0)
@@ -420,7 +421,7 @@ cases: variable is not numerical or is categorical, no cases matching
             int ct=0;
             int i=0; // pass 1 : find the # of relevant cases
             while(i<x) {
-                if (m.get(i)==markspec)
+                if (m.get(r[i])==markspec)
                     ct++;
                 i++;
             }
