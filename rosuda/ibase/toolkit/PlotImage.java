@@ -25,6 +25,14 @@ public class PlotImage extends PlotObject {
 		}
 	}
 	
+	public void setImage(String filename) {
+		try {
+			this.img = new PoGraSSimage(filename);
+		} catch (java.io.IOException e) { // FIXME: should we throw this?
+			System.err.println("WARNING: cannot create image from file '" + filename + "': " + e);
+		}
+	}
+	
 	/** set both points */
 	public void set(final int X1, final int Y1, final int X2, final int Y2) {
 		set(X1,Y1,X2,Y2);
