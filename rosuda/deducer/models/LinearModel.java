@@ -213,7 +213,7 @@ public class LinearModel extends GLMModel {
 		if(tests.size()>0){
 			String[] t = new String[1];
 			try{
-				if(prevModel!=null){
+				if(preview && prevModel!=null){
 					t=Deducer.timedEval("names(coef("+prevModel.modelName+
 										"))").asStrings();
 				}else if(preview){
@@ -222,7 +222,7 @@ public class LinearModel extends GLMModel {
 				}
 			}catch (Exception e) {
 				e.printStackTrace();
-				new ErrorMsg(e);			
+				//new ErrorMsg(e);			
 			}
 			Vector testCalls = new Vector();
 			String matrixName;
@@ -234,8 +234,8 @@ public class LinearModel extends GLMModel {
 			String call = "";
 			for(int i=0;i<tests.size();i++){
 				ExDefaultTableModel tmod = tests.getModel(i);
-				if((prevModel!=null && tmod.getColumnCount()!=t.length+1) ||
-						(prevModel==null && preview && tmod.getColumnCount()!=t.length+1))
+				if(preview && ((prevModel!=null && tmod.getColumnCount()!=t.length+1) ||
+						(prevModel==null && preview && tmod.getColumnCount()!=t.length+1)))
 					continue;
 				
 				Vector row = new Vector();
@@ -261,7 +261,7 @@ public class LinearModel extends GLMModel {
 				testCalls.add("rm('"+matrixName+"')");
 			if(preview){
 				String testCall;
-				for(int i=0;i<testCalls.size();i++){
+				for(int i=0;i<testCalls.size()-1;i++){
 					testCall=(String)testCalls.get(i);
 					REXP r =Deducer.timedEval("capture.output("+testCall.replaceAll("\n", "").replaceAll("\t", "")+")");
 					if(r!=null)

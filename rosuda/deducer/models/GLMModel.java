@@ -313,7 +313,7 @@ public class GLMModel extends ModelModel {
 			if(tests.size()>0){
 				String[] t = new String[1];
 				try{
-					if(prevModel!=null){
+					if(preview && prevModel!=null){
 						t=Deducer.timedEval("names(coef("+prevModel.modelName+
 											"))").asStrings();
 					}else if(preview){
@@ -331,8 +331,8 @@ public class GLMModel extends ModelModel {
 				String call = "";
 				for(int i=0;i<tests.size();i++){
 					ExDefaultTableModel tmod = tests.getModel(i);
-					if((prevModel!=null && tmod.getColumnCount()!=t.length+1) ||
-							(prevModel==null && preview && tmod.getColumnCount()!=t.length+1))
+					if(preview && ((prevModel!=null && tmod.getColumnCount()!=t.length+1) ||
+							(prevModel==null && preview && tmod.getColumnCount()!=t.length+1)))
 						continue;
 					
 					Vector row = new Vector();
