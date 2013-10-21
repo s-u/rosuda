@@ -600,12 +600,19 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 	public void goTo(URL url, boolean href) {
 	    if (url != null) {
-		currentURLIndex++;
-		history.setSize(currentURLIndex);
-		history.add(url);
-		viewportLocationHistory.setSize(currentURLIndex);
-		viewportLocationHistory.add(this.getViewport().getViewPosition());
-		updatePage(href);
+	    	final URL url1 = url;
+			final boolean href1 = href;
+			Runnable r = new Runnable() {
+				public void run() {
+					currentURLIndex++;
+					history.setSize(currentURLIndex);
+					history.add(url1);
+					viewportLocationHistory.setSize(currentURLIndex);
+					viewportLocationHistory.add(HelpArea.this.getViewport().getViewPosition());
+					HelpArea.this.updatePage(href1);
+				}
+			};
+			SwingUtilities.invokeLater(r);
 	    }
 	}
 

@@ -30,6 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -640,9 +641,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			Runnable doWork1 = new Runnable() {
 				public void run() {
 					if (console.length() > 0) {
-						String line = output.getLine(output.getLineCount()-1);
-						if(line!=null && line.startsWith(fPrompt))
-							output.append("\n", JGRPrefs.CMD);
+						//String line = output.getLine(output.getLineCount()-1);
+						//if(line!=null && line.startsWith(fPrompt))
+						//	output.append("\n", JGRPrefs.CMD);
 						output.append(console.toString(), JGRPrefs.RESULT);
 						console.delete(0, console.length());
 						output.setCaretPosition(outputDoc.getLength());
@@ -652,16 +653,21 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 						output.append("\n", JGRPrefs.RESULT);
 					output.append(fPrompt, JGRPrefs.CMD);
 					output.setCaretPosition(outputDoc.getLength());
+
 				}
 			};
-			SwingUtilities.invokeLater(doWork1);
+			try {
+				SwingUtilities.invokeAndWait(doWork1);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			} 
 			final String s = JGR.rSync.waitForNotification();
 			Runnable doWork2 = new Runnable() {
 				public void run() {
 					try {
-						String line = output.getLine(output.getLineCount()-1);
-						if(line!=null && !line.startsWith(fPrompt))
-							output.append(fPrompt, JGRPrefs.CMD);
+						//String line = output.getLine(output.getLineCount()-1);
+						//if(line!=null && !line.startsWith(fPrompt))
+						//	output.append(fPrompt, JGRPrefs.CMD);
 						output.append(s + "\n",JGRPrefs.CMD);
 						if (console.length() > 0) {
 							output.append(console.toString(), JGRPrefs.RESULT);
@@ -673,7 +679,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					}
 				}
 			};
-			SwingUtilities.invokeLater(doWork2);
+			try {
+				SwingUtilities.invokeAndWait(doWork2);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
 
 			return (s == null || s.length() == 0) ? "\n" : s + "\n";
 		}
