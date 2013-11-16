@@ -10,6 +10,7 @@ package org.rosuda.ibase.toolkit;
 
 import java.awt.Event;
 import java.awt.event.ActionListener;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -26,7 +27,7 @@ public class EzMenuSwing {
     static final String AC_WTMCLOSE = "WTMclose";
     static final String M_QUIT = "Quit";
     static final String AC_EXIT = "exit";
-    static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
+    static final int MENUMODIFIER = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     public static boolean staticInitDone=false;
     public static boolean hasSVG=false;
     
