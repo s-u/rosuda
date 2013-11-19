@@ -194,9 +194,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		//Set application icon (primarily for windows)
 		try{
 			URL url = getClass().getResource("/icons/JGR.png");
-			Toolkit kit = Toolkit.getDefaultToolkit();
-			Image img = kit.createImage(url);
-			getFrame().setIconImage(img);
+			if (url != null) {
+			    Toolkit kit = Toolkit.getDefaultToolkit();
+			    Image img = kit.createImage(url);
+			    getFrame().setIconImage(img);
+			}
 		}catch(Exception e){}
 
 		// Add History if we didn't found one in the user's home directory
