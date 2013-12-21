@@ -60,7 +60,7 @@ import org.rosuda.util.Global;
 public class JGR {
 
 	/** Version number of JGR */
-	public static final String VERSION = "1.7-16";
+	public static final String VERSION = "1.7-17";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
