@@ -6,8 +6,11 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
 
 import javax.swing.*;
 
@@ -63,6 +66,8 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	
 	public static final int numExtensionRows = 15;
 	public static final int numExtensionColumns = 4; 
+	
+	private WorkQueue pool = new WorkQueue(1);
 	
 	public RDataFrameModel(){}
 	
@@ -247,14 +252,20 @@ public class RDataFrameModel extends ExDefaultTableModel {
 		final int pcol = (col/numPageCols)*numPageCols;
 		
 		if(!pending(prow,pcol)){
-			//declarePending(prow,pcol);
-			new Thread(new Runnable(){
+			declarePending(prow,pcol);
+			pool.execute(new Runnable(){
+				public void run() {
+					loadPage(prow,pcol);
+				}
+				
+			});
+			/*new Thread(new Runnable(){
 
 				public void run() {
 					loadPage(prow,pcol);
 				}
 				
-			}).start();
+			}).start();*/
 		}
 	}
 	
@@ -292,12 +303,12 @@ public class RDataFrameModel extends ExDefaultTableModel {
 					column[i]="";
 			}else{
 				try {
-					column = Deducer.timedEval("format("+rDataName+"[("+
+					column = Deducer.eval("format("+rDataName+"[("+
 							(row+1)+"):("+Math.min(nrow,row+numPageRows+1)+"),"+
-							(j+col+1)+"])",false).asStrings();
-					boolean[] isNA = Deducer.timedEval(rDataName+"[("+
+							(j+col+1)+"])").asStrings();
+					boolean[] isNA = Deducer.eval(rDataName+"[("+
 							(row+1)+"):("+Math.min(nrow,row+numPageRows+1)+"),"+
-							(j+col+1)+"]",false).isNA();
+							(j+col+1)+"]").isNA();
 					for(int i=0;i<isNA.length;i++){
 						if(isNA[i])
 							column[i]=NA_STRING;
@@ -701,6 +712,7 @@ public class RDataFrameModel extends ExDefaultTableModel {
 	
 	protected void finalize() throws Throwable {
 		removeCachedData();
+		pool.stop();
 		super.finalize();
 	}
 	
@@ -829,10 +841,79 @@ public class RDataFrameModel extends ExDefaultTableModel {
 			return this;
 		}
 	}
-	
-
 
 	
+	public class WorkQueue
+	{
+	    private final int nThreads;
+	    private final PoolWorker[] threads;
+	    private final LinkedList queue;
+	    private boolean stopped = false;
+
+	    public WorkQueue(int nThreads)
+	    {
+	        this.nThreads = nThreads;
+	        queue = new LinkedList();
+	        threads = new PoolWorker[nThreads];
+
+	        for (int i=0; i<nThreads; i++) {
+	            threads[i] = new PoolWorker();
+	            threads[i].start();
+	        }
+	    }
+
+	    public void execute(Runnable r) {
+	        synchronized(queue) {
+	            queue.addLast(r);
+	            queue.notify();
+	        }
+	    }
+	    
+	    public void stop(){
+	    	stopped=true;
+	    	queue.notify();
+	    }
+
+	    private class PoolWorker extends Thread {
+	        public void run() {
+	            Runnable r;
+
+	            while (!stopped) {
+	                synchronized(queue) {
+	                    while (queue.isEmpty()) {
+	                        try
+	                        {
+	                            queue.wait();
+	                        }
+	                        catch (InterruptedException ignored)
+	                        {
+	                        }
+	                    }
+	                    try{
+	                    	r = (Runnable) queue.removeFirst();
+	                    }catch(Exception er){
+	                    	r = null;
+	                    }
+	                }
+
+	                // If we don't catch RuntimeException, 
+	                // the pool could leak threads
+	                try {
+	                	if(r != null)
+	                		r.run();
+	                }
+	                catch (RuntimeException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+	    }
+	}
 	
 }
+
+
+
+
+
 

@@ -141,7 +141,10 @@ public class Geom {
 		aes = Aes.makeAes("x");
 		aes.required = true;
 		g.aess.add(aes);	
-		
+
+		aes = Aes.makeAes("y");
+		aes.required = true;
+		g.aess.add(aes);
 		
 		aes = Aes.makeAes("colour");
 		aes.required = false;

@@ -172,13 +172,6 @@ public class DataView extends DataViewerTab implements ActionListener {
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
 				inputValue = Deducer.getUniqueName(inputValue);
 				if(inputValue!=null){
-					new Thread(new Runnable(){
-
-						public void run() {
-
-						}
-						
-					}).start();
 					Deducer.threadedEval(inputValue.trim()+"<-data.frame(Var1=NA)");
 				}
 			}else if (cmd == "loaddata"){
