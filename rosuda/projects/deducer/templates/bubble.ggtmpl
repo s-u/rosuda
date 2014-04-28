@@ -29,8 +29,8 @@
 <Position className="org.rosuda.deducer.plots.Position" name="identity"/>
 </ElementModel>
 </PlottingElement>
-<PlottingElement active="true" className="org.rosuda.deducer.plots.PlottingElement" compound="false" helpUrl="http://had.co.nz/ggplot2/scale_area.html" iconUrl="/icons/ggplot_icons/scale_area.png" name="area" type="scale">
-<ElementModel aesName="size" className="org.rosuda.deducer.plots.Scale" name="scale_area">
+<PlottingElement active="true" className="org.rosuda.deducer.plots.PlottingElement" compound="false" helpUrl="http://had.co.nz/ggplot2/scale_size_area.html" iconUrl="/icons/ggplot_icons/scale_area.png" name="area" type="scale">
+<ElementModel aesName="size" className="org.rosuda.deducer.plots.Scale" name="scale_size_area">
 <Param className="org.rosuda.deducer.plots.ParamScaleLegend" name="legend" required="true" requiresVariableSelector="false" title="" viewType="scale">
 <options/>
 <labels/>
@@ -148,7 +148,7 @@
 <assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;" element_2="&lt;auto&gt;" element_3="&lt;auto&gt;" element_4="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="Standard">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="pretty_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="scales::pretty_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="5.0" lowerBound="1.0" name="n" required="true" requiresVariableSelector="false" title="Approx. N" value="5.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -162,7 +162,7 @@
 </Param>
 </keyValuePair>
 <keyValuePair key="Date">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="date_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="scales::date_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="1 month" name="width" required="true" requiresVariableSelector="false" title="Width" value="1 month" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
@@ -172,7 +172,7 @@
 </Param>
 </keyValuePair>
 <keyValuePair key="Log">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="log_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="scales::log_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="5.0" lowerBound="1.0" name="n" required="true" requiresVariableSelector="false" title="Approx. N" value="5.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -186,7 +186,7 @@
 </Param>
 </keyValuePair>
 <keyValuePair key="Transformation">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="trans_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="scales::trans_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamAny" defaultValue="" name="trans" required="true" requiresVariableSelector="false" title="trans" value="log" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldLongWidget">
@@ -591,7 +591,7 @@
 <assignTo element_0="&lt;auto&gt;" element_1="&lt;auto&gt;" element_2="&lt;auto&gt;" element_3="&lt;auto&gt;" element_4="&lt;auto&gt;"/>
 <valueMap>
 <keyValuePair key="Standard">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="pretty_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="scales::pretty_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="5.0" lowerBound="1.0" name="n" required="true" requiresVariableSelector="false" title="Approx. N" value="5.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -605,7 +605,7 @@
 </Param>
 </keyValuePair>
 <keyValuePair key="Date">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="date_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="scales::date_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamCharacter" defaultValue="1 month" name="width" required="true" requiresVariableSelector="false" title="Width" value="1 month" viewType="org.rosuda.deducer.widgets.param.ParamEditableComboBoxWidget">
@@ -615,7 +615,7 @@
 </Param>
 </keyValuePair>
 <keyValuePair key="Log">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="log_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="scales::log_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamNumeric" defaultValue="5.0" lowerBound="1.0" name="n" required="true" requiresVariableSelector="false" title="Approx. N" value="5.0" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldWidget">
@@ -629,7 +629,7 @@
 </Param>
 </keyValuePair>
 <keyValuePair key="Transformation">
-<Param className="org.rosuda.deducer.widgets.param.RFunction" name="trans_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
+<Param className="org.rosuda.deducer.widgets.param.RFunction" name="scales::trans_breaks" paramName="" required="true" requiresVariableSelector="false" view="org.rosuda.deducer.widgets.param.DefaultRFunctionView" viewType="org.rosuda.deducer.widgets.param.DefaultRFunctionView">
 <options/>
 <labels/>
 <Param className="org.rosuda.deducer.widgets.param.ParamAny" defaultValue="" name="trans" required="true" requiresVariableSelector="false" title="trans" value="log" viewType="org.rosuda.deducer.widgets.param.ParamTextFieldLongWidget">
