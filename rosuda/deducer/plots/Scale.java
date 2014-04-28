@@ -755,7 +755,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeArea(){
 		Scale s = Scale.makeSize();
-		s.setName("scale_area");
+		s.setName("scale_size_area");
 		return s;
 	}
 	

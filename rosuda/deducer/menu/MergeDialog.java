@@ -95,8 +95,8 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			{
 				ListModel jList1Model = 
 					new DefaultComboBoxModel();
-				for(int i=0;i<JGR.DATA.size();i++){
-					((DefaultComboBoxModel)jList1Model).addElement(((RObject)JGR.DATA.elementAt(i)).getName());
+				for(int i=0;i<Deducer.DATA.size();i++){
+					((DefaultComboBoxModel)jList1Model).addElement(((RObject)Deducer.DATA.elementAt(i)).getName());
 				}
 				jList1 = new JList();
 				JScrollPane pane = new JScrollPane(jList1,
@@ -118,8 +118,8 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			{
 				ListModel dataListModel = 
 					new DefaultComboBoxModel();
-				for(int i=0;i<JGR.DATA.size();i++){
-					((DefaultComboBoxModel)dataListModel).addElement(((RObject)JGR.DATA.elementAt(i)).getName());
+				for(int i=0;i<Deducer.DATA.size();i++){
+					((DefaultComboBoxModel)dataListModel).addElement(((RObject)Deducer.DATA.elementAt(i)).getName());
 				}
 				dataList = new JList();
 				JScrollPane spane = new JScrollPane(dataList,

@@ -1,10 +1,11 @@
 package org.rosuda.deducer.models;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,6 +13,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import org.rosuda.JGR.robjects.RObject;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
@@ -34,6 +37,7 @@ public class GLMExplorerExport extends javax.swing.JDialog implements ActionList
 	private JCheckBox stResid;
 	private JCheckBox sdResid;
 	private JCheckBox resid;
+	private JComboBox predData;
 	private JPanel diagnosticPanel;
 	private GLMModel model;
 
@@ -91,6 +95,20 @@ public class GLMExplorerExport extends javax.swing.JDialog implements ActionList
 						predPanel.add(linearPred);
 						linearPred.setText("Linear");
 						linearPred.setBounds(17, 45, 127, 19);
+					}
+					{
+						predData = new JComboBox();
+						Vector d = Deducer.getData();
+						predData.addItem("");
+						for(int i=0;i<d.size();i++){
+							predData.addItem(((RObject)d.get(i)).getName());
+						}
+						
+						JLabel lab = new JLabel("Data:");
+						predPanel.add(lab);
+						lab.setBounds(20,72,37,22);
+						predPanel.add(predData);
+						predData.setBounds(67,72,100,22);
 					}
 				}
 				{
@@ -182,6 +200,7 @@ public class GLMExplorerExport extends javax.swing.JDialog implements ActionList
 		model.export.covratio=covratio.isSelected();
 		model.export.keepModel=keepModel.isSelected();
 		model.export.modelName=modelName.getText();
+		model.export.data = predData.getSelectedItem().toString();
 	}
 	
 	public void setModel(GLMModel mod){
@@ -198,6 +217,7 @@ public class GLMExplorerExport extends javax.swing.JDialog implements ActionList
 		covratio.setSelected(model.export.covratio);
 		keepModel.setSelected(model.export.keepModel);
 		modelName.setText(model.export.modelName);
+		predData.setSelectedItem(model.export.data);
 	}
 
 	public void actionPerformed(ActionEvent arg0) {

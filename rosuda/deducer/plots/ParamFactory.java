@@ -49,7 +49,7 @@ public class ParamFactory {
 			fList.setName("breaks");
 
 			//////////
-			RFunction rf = new RFunction("pretty_breaks");
+			RFunction rf = new RFunction("scales::pretty_breaks");
 			rf.setTitle("Standard");
 			
 			ParamNumeric rfpn = new ParamNumeric();
@@ -72,7 +72,7 @@ public class ParamFactory {
 			fList.addRFunction("Standard", rf);
 			
 			//////////////
-			rf = new RFunction("date_breaks");
+			rf = new RFunction("scales::date_breaks");
 			rf.setTitle("Date");
 			
 			ParamCharacter rfpc = new ParamCharacter();
@@ -87,7 +87,7 @@ public class ParamFactory {
 			fList.addRFunction("Date", rf);
 			
 			//////////////
-			rf = new RFunction("log_breaks");
+			rf = new RFunction("scales::log_breaks");
 			rf.setTitle("Log");
 			
 			rfpn = new ParamNumeric();
@@ -111,7 +111,7 @@ public class ParamFactory {
 			fList.addRFunction("Log", rf);
 			
 			//////////////
-			rf = new RFunction("trans_breaks");
+			rf = new RFunction("scales::trans_breaks");
 			rf.setTitle("Transformation");
 			
 			ParamAny rfpa = new ParamAny("trans");

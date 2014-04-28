@@ -16,6 +16,7 @@ import org.rosuda.JGR.util.*;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 
+import org.rosuda.deducer.Deducer;
 
 public class DataFrameList extends javax.swing.JPanel {
 	public JList dataList;
@@ -35,8 +36,8 @@ public class DataFrameList extends javax.swing.JPanel {
 			this.setLayout(thisLayout);
 			this.setBorder(BorderFactory.createTitledBorder("Data Frames"));
 			DefaultListModel data = new DefaultListModel();
-			for(int i=0;i<JGR.DATA.size();i++)
-				data.addElement(JGR.DATA.elementAt(i));
+			for(int i=0;i<Deducer.DATA.size();i++)
+				data.addElement(Deducer.DATA.elementAt(i));
 			dataList = new JList();
 			this.add(dataList, BorderLayout.CENTER);
 			dataList.setModel(data);

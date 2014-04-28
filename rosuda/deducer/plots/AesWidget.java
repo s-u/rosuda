@@ -590,13 +590,13 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	public void setVariable(String var){
 		String data = variableSelector.getSelectedData();
 		if(model.preferNumeric){
-			REXP exp = Deducer.timedEval("is.discrete(" + data + "$" + var+")");
+			REXP exp = Deducer.timedEval("plyr::is.discrete(" + data + "$" + var+")");
 			if(exp!=null && exp.isLogical()){
 				if(((REXPLogical)exp).isTRUE()[0])
 					var = "as.numeric("+var + ")";
 			}
 		}else if(model.preferCategorical){
-			REXP exp = Deducer.timedEval("is.discrete(" + data + "$" + var+")");
+			REXP exp = Deducer.timedEval("plyr::is.discrete(" + data + "$" + var+")");
 			//System.out.println(exp.toDebugString());
 			if(exp!=null && exp.isLogical()){
 				if(((REXPLogical)exp).isFALSE()[0])

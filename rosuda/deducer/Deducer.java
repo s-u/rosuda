@@ -68,7 +68,7 @@ public class Deducer {
 	public static boolean insideJGR;
 	public static boolean started;
 	private static RConnector rConnection = null;
-	
+	public static Vector DATA = new Vector();
 	
 	public Deducer(boolean jgr){
 		started=false;
@@ -814,18 +814,18 @@ public class Deducer {
 
 
 	public static synchronized void refreshData(){
-		REXP x = Deducer.idleEval(".getDataObjects()");
+		REXP x = Deducer.idleEval("ls()[sapply(ls(),function(x) \"data.frame\" %in% class(get(x)))]");
 		if(x==null)
 			return;
 		String[] data;
-		JGR.DATA.clear();
+		Deducer.DATA.clear();
 		try {
 			if (!x.isNull() && (data = x.asStrings()) != null) {	
 				int a = 1;
 				for (int i = 0; i < data.length; i++) {
 					boolean b = (data[i].equals("null") || data[i].trim().length() == 0);
 					String name = b ? a + "" : data[i];
-					JGR.DATA.add(RController.createRObject(name, data[++i], null, (!b)));
+					Deducer.DATA.add(RController.createRObject(name, "data.frame", null, (!b)));
 					a++;
 				}
 
@@ -834,7 +834,7 @@ public class Deducer {
 	}
 	
 	public static Vector getData(){
-		return JGR.DATA;
+		return Deducer.DATA;
 	}
 	
 	/**

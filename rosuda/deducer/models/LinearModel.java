@@ -158,6 +158,7 @@ public class LinearModel extends GLMModel {
 	protected String runPostHoc(String cmd,String modelName,boolean preview,ArrayList tmp){
 		String[] out = new String[]{};
 		if(posthoc.posthoc.size()>0){
+			cmd += "\nlibrary(multcomp)";
 			String postCall = "";
 			String cor = "univariate()";
 			if(posthoc.correction!="No Correction"){
@@ -171,6 +172,7 @@ public class LinearModel extends GLMModel {
 							"),test="+cor+")";
 				if(preview){
 					try {
+						Deducer.timedEval("library(multcomp)");
 						out = Deducer.timedEval("capture.output("+postCall+")").asStrings();
 					} catch (Exception e) {
 						out = new String[]{""};

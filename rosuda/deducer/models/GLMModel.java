@@ -161,6 +161,7 @@ public class GLMModel extends ModelModel {
 	protected String runPostHoc(String cmd,String modelName,boolean preview,ArrayList tmp){
 		String[] out = new String[]{};
 		if(posthoc.posthoc.size()>0){
+			cmd += "\nlibrary(multcomp)";
 			String postCall = "";
 			String cor = "univariate()";
 			if(posthoc.correction!="No Correction"){
@@ -188,6 +189,7 @@ public class GLMModel extends ModelModel {
 					"'=\""+posthoc.type+"\")))";
 					if(preview){
 						try {
+							Deducer.timedEval("library(multcomp)");
 							out = Deducer.timedEval("capture.output("+postCall+")").asStrings();
 						} catch (Exception e) {
 							out = new String[]{""};
@@ -225,6 +227,7 @@ public class GLMModel extends ModelModel {
 				}
 
 				Vector effectCalls=new Vector();
+				effectCalls.add("library(effects)");
 				for(int i=0;i<terms.size();i++){
 					if(effects.confInt)
 						effectCalls.add("summary(effect(term="+terms.get(i)+",mod="+modelName+"))");
@@ -278,6 +281,7 @@ public class GLMModel extends ModelModel {
 						terms.add("\""+plots.effects.get(i)+"\"");
 				}
 				Vector plotCalls=new Vector();
+				plotCalls.add("library(effects)");
 				for(int i=0;i<terms.size();i++){
 					plotCalls.add("dev.new()");
 					plotCalls.add("plot(effect(term="+terms.get(i)+",mod="+modelName+
@@ -419,20 +423,39 @@ public class GLMModel extends ModelModel {
 				}
 				if(export.pred && !isLm){
 					anyExport=true;
-					cmd+="\n"+temp+"<-predict("+modelName+",type='response')";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
-							"),\"predicted\")))[1]").asString()+"\"]<-"+temp;
+					String dn = export.data.equals("") ? dataName : export.data;
+					String dataArg = "newdata=" + dn;
+					String colName = Deducer.timedEval("rev(make.unique(c(names("+dn+
+							"),\"predicted.resp\")))[1]").asString();
+					cmd += "\n" + dn + "[[\"" + colName +"\"]] <- predict(" + modelName + ", " + 
+							dataArg + ",type='response')";
+					//cmd+="\n"+temp+"<-predict("+modelName+",type='response')";
+					//cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
+					//		"),\"predicted\")))[1]").asString()+"\"]<-"+temp;
 				}else if(export.pred){
+					String dn = export.data.equals("") ? dataName : export.data;
+					String dataArg = "newdata=" + dn;
+					String colName = Deducer.timedEval("rev(make.unique(c(names("+dn+
+							"),\"predicted.link\")))[1]").asString();
+					cmd += "\n" + dn + "[[\"" + colName +"\"]] <- predict(" + modelName + ", " + 
+							dataArg + ")";
+							
 					anyExport=true;
-					cmd+="\n"+temp+"<-predict("+modelName+")";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
-							"),\"predicted\")))[1]").asString()+"\"]<-"+temp;				
+					//cmd+="\n"+temp+"<-predict("+modelName+")";
+					//cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
+					//		"),\"predicted\")))[1]").asString()+"\"]<-"+temp;				
 				}
 				if(export.linearPred && !isLm){
+					String dn = export.data.equals("") ? dataName : export.data;
+					String dataArg = "newdata=" + dn;
+					String colName = Deducer.timedEval("rev(make.unique(c(names("+dn+
+							"),\"predicted\")))[1]").asString();
+					cmd += "\n" + dn + "[[\"" + colName +"\"]] <- predict(" + modelName + ", " + 
+							dataArg + ",type='link')";
 					anyExport=true;
-					cmd+="\n"+temp+"<-predict("+modelName+",type='link')";
-					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
-							"),\"linear.pred\")))[1]").asString()+"\"]<-"+temp;
+					//cmd+="\n"+temp+"<-predict("+modelName+",type='link')";
+					//cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
+					//		"),\"linear.pred\")))[1]").asString()+"\"]<-"+temp;
 				}
 				if(export.dfbeta){
 					anyExport=true;
@@ -456,8 +479,8 @@ public class GLMModel extends ModelModel {
 					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.timedEval("rev(make.unique(c(names("+dataName+
 							"),\"cov.ratio\")))[1]").asString()+"\"]<-"+temp;
 				}
-				if(anyExport)
-					cmd+="\nrm('"+temp+"')";
+				//if(anyExport)
+				//	cmd+="\nrm('"+temp+"')";
 				if(!export.keepModel)
 					cmd+="\nrm('"+modelName+"')";
 			}
@@ -498,6 +521,7 @@ public class GLMModel extends ModelModel {
 		public boolean cooks = false;
 		public boolean keepModel = false;
 		public String modelName = "<auto>";
+		public String data = "";
 	}
 	
 	class Effects{
