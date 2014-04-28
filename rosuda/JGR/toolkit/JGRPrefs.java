@@ -376,7 +376,8 @@ public class JGRPrefs {
 		prefs.putBoolean("UseHelpAgentEditor", useHelpAgentEditor);
 		prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
 		prefs.putBoolean("ShowHiddenFiles", showHiddenFiles);
-		prefs.put("PreviousPackages", RController.getCurrentPackages()
+		String tmp = RController.getCurrentPackages();
+		prefs.put("PreviousPackages", tmp.substring(0, Math.min(tmp.length(), 8192-10))
 				+ (JGRPackageManager.remindPackages == null ? ""
 						: ("," + JGRPackageManager.remindPackages)));
 		prefs.put("WorkingDirectory", workingDirectory);

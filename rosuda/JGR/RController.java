@@ -324,7 +324,8 @@ public class RController {
 		return s.toString();
 	}
 	public static String makeValidVariableName(String var) {
-		return var.replaceAll("[ -+*/\\()=!~`@#$%^&*<>,?;:\"\']", ".");
+		String v = var.replaceAll("[ -+*/\\()=!~`@#$%^&*<>,?;:\"\']", ".");
+		return v.replaceAll("^\\d", "d");
 	}
 
 	public static String makeRStringVector(ArrayList lis) {
