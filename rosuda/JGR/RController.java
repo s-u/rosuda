@@ -708,7 +708,7 @@ public class RController {
 		double[] res;
 		try {
 			y = JGR.timedEval("try(summary(" + sx + ")[[\"r.squared\"]],silent=TRUE)");
-			if (y!=null && !y.isNull() && (res = y.asDoubles()) != null)
+			if (y!=null && !y.isNull() && y.isNumeric() && (res = y.asDoubles()) != null)
 				m.setRsquared(res[0]);
 		}  catch (REXPMismatchException e) {
 			// TODO Auto-generated catch block
@@ -716,7 +716,7 @@ public class RController {
 		}
 		try {
 			y = JGR.timedEval("try(AIC(" + sx + "),silent=TRUE)");
-			if (y!=null && !y.isNull() && (res = y.asDoubles()) != null)
+           if (y!=null && !y.isNull() && y.isNumeric() && (res = y.asDoubles()) != null)
 				m.setAic(res[0]);
 		} catch (REXPMismatchException e) {
 			// TODO Auto-generated catch block
@@ -724,7 +724,7 @@ public class RController {
 		}
 		try {
 			y = JGR.timedEval("try(deviance(" + sx + "),silent=TRUE)");
-			if (y!=null && !y.isNull() && (res = y.asDoubles()) != null)
+			if (y!=null && !y.isNull() && y.isNumeric() && (res = y.asDoubles()) != null)
 				m.setDeviance(res[0]);
 		}  catch (REXPMismatchException e) {
 			// TODO Auto-generated catch block
@@ -734,7 +734,7 @@ public class RController {
 		REXP x;
 		try {
 			x = JGR.timedEval("try(summary(" + sx + ")[[\"df\"]],silent=TRUE)");
-			if (x!=null && x != null && !x.isNull() && (res1 = x.asIntegers()) != null)
+			if (x!=null && x != null && !x.isNull() && x.isNumeric() && (res1 = x.asIntegers()) != null)
 				m.setDf(res1[0]);
 		} catch (REXPMismatchException e) {
 			// TODO Auto-generated catch block
