@@ -60,7 +60,7 @@ import org.rosuda.util.Global;
 public class JGR {
 
 	/** Version number of JGR */
-	public static final String VERSION = "1.7-17";
+	public static final String VERSION = "1.7-18";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -69,7 +69,7 @@ public class JGR {
 	public static final String SUBTITLE = "Java Gui for R";
 
 	/** Develtime (used for displaying the splashscreen) */
-	public static final String DEVELTIME = "2003 - 2013";
+	public static final String DEVELTIME = "2003 - 2015";
 
 	/** Organization (used for displaying the splashscreen) */
 	public static final String INSTITUTION = "RoSuDa, Univ. Augsburg";
