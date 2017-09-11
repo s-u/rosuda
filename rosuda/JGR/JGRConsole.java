@@ -77,7 +77,7 @@ import org.rosuda.ibase.toolkit.WinTracker;
 
 /**
  * JGRConsole Console Frame, the main window of JGR.
- * 
+ *
  * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
@@ -116,7 +116,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	public int end = 0;
 
 	public static String guiEnv = "gui.working.env";
-	
+
 	public static String lastRPrompt = "> ";
 
 	private Integer clearpoint = null;
@@ -127,7 +127,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Create a new Console window.
-	 * 
+	 *
 	 * @param workSpace
 	 *            workspace which should be loaded when starting JGR
 	 */
@@ -190,7 +190,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				}
 			}
 		}
-		
+
 		//Set application icon (primarily for windows)
 		try{
 			URL url = getClass().getResource("/icons/JGR.png");
@@ -213,7 +213,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		input.addFocusListener(this);
 		inputDoc.addUndoableEditListener(toolBar.undoMgr);
 		input.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-		
+
 		output.setEditable(false);
 		output.addFocusListener(this);
 		output.addKeyListener(this);
@@ -231,7 +231,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				.setDividerLocation(((int) ((double) this.getHeight() * 0.65)));
 		consolePanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		consolePanel.setDividerSize(5);
-		
+
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent evt) {
 				super.componentResized(evt);
@@ -255,10 +255,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
 		this.getContentPane().add(consolePanel, BorderLayout.CENTER);
-		
-		
+
+
 		this.setMinimumSize(new Dimension(555, 650));
-		
+
 		this.setSize(new Dimension(JGRPrefs.consoleWidth,
 				Common.screenRes.height < JGRPrefs.consoleHeight ? Common.screenRes.height - 50
 						: JGRPrefs.consoleHeight));
@@ -304,7 +304,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Execute a coomand and add it to history
-	 * 
+	 *
 	 * @param cmd
 	 *            command for execution
 	 */
@@ -315,7 +315,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Execute a command and add it into history.
-	 * 
+	 *
 	 * @param cmd
 	 *            command for execution
 	 * @param addToHist
@@ -341,17 +341,17 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					c = cmdArray[i];
 					if (isSupported(c)){
 						final String c1 = c;
-						JGR.rSync.triggerNotification(c1.trim());				
+						JGR.rSync.triggerNotification(c1.trim());
 					}
 				}
 			}
 		}).start();
-		
+
 	}
 
 	/**
 	 * Gets a unique name based on a starting string
-	 * 
+	 *
 	 * @param var
 	 * @return the value of var concatinated with a number
 	 */
@@ -370,7 +370,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Gets a unique name based on a starting string
-	 * 
+	 *
 	 * @param var
 	 * @param envName
 	 *            The name of the enviroment in which to look
@@ -497,7 +497,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Save workspace with specified filename, R-command: save.image(...).
-	 * 
+	 *
 	 * @param file
 	 *            filename
 	 */
@@ -528,7 +528,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Get the font's width form current settings using {@see FontMetrics}.
-	 * 
+	 *
 	 * @return fontwidth
 	 */
 	public int getFontWidth() {
@@ -541,7 +541,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Write output from R into console (new R callback).
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 * @param text
@@ -565,7 +565,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Write output from R into console (old R callback).
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 * @param text
@@ -577,7 +577,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Invoke the busy cursor (R callback).
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 * @param which
@@ -603,7 +603,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Read the commands from input area (R callback).
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 * @param prompt
@@ -662,7 +662,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				SwingUtilities.invokeAndWait(doWork1);
 			} catch (Exception e1) {
 				e1.printStackTrace();
-			} 
+			}
 			final String s = JGR.rSync.waitForNotification();
 			Runnable doWork2 = new Runnable() {
 				public void run() {
@@ -685,7 +685,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				SwingUtilities.invokeAndWait(doWork2);
 			} catch (Exception e) {
 				e.printStackTrace();
-			} 
+			}
 
 			return (s == null || s.length() == 0) ? "\n" : s + "\n";
 		}
@@ -694,7 +694,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Showing a message from the rengine (R callback).
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 * @param message
@@ -707,7 +707,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Choose a file invoked be file.choose() (R callback).
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 * @param newFile
@@ -728,7 +728,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Flush the console (R callback). !! not implemented yet !!
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 */
@@ -737,7 +737,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Load history from a file (R callback).
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 * @param filename
@@ -761,7 +761,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/**
 	 * Save history to a file (R callback).
-	 * 
+	 *
 	 * @param re
 	 *            used Rengine
 	 * @param filename
@@ -847,7 +847,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			Point cloc = this.getLocationOnScreen();
 			int width = this.getWidth();
 			BrowserWindow win = new BrowserWindow();
-			win.setLocation(Math.min(cloc.x+width,Common.screenRes.width-200), 
+			win.setLocation(Math.min(cloc.x+width,Common.screenRes.width-200),
 					Math.min(Common.screenRes.height-200,cloc.y));
 			win.setVisible(true);
 			//execute("object.browser()", false);
@@ -885,7 +885,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 									+ "your workspace?\nAll unsaved objects will be deleted.",
 							"Clear Workspace", JOptionPane.YES_NO_OPTION);
 			if (doIt == JOptionPane.OK_OPTION)
-				execute("rm(list=ls())");
+				execute("rm(list=ls(all=TRUE))");
 		} else if (cmd == "search")
 			// textFinder.showFind(false);
 			FindReplaceDialog.findExt(this, output);
@@ -996,7 +996,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				input.setText("");
 				input.setCaretPosition(0);
 				input.requestFocus();
-				
+
 				execute(cmd);
 			}
 		if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V
@@ -1076,7 +1076,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		PrintStream p = new PrintStream(out);
 		return p;
 	}
-	
+
 	public PrintStream getStdErrPrintStream() {
 		final MutableAttributeSet coloring = JGRPrefs.RESULT;
 		return getPrintStream(coloring);
